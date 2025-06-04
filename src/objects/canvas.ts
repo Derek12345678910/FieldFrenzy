@@ -1,15 +1,20 @@
+import { Pair } from "../datastructures/pair.js";
+
+/**
+ * Controls canvas of the game
+ */
 export class Canvas {
-  private canvas: HTMLCanvasElement;
+  private _canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private coordDisplay: HTMLElement | null;
   private aspectRatio: number;
 
-  constructor(canvasId: string) {
+  public constructor(canvasId: string) {
     const el = document.getElementById(canvasId);
     if (!(el instanceof HTMLCanvasElement)) {
       throw new Error(`Element with id "${canvasId}" is not a <canvas>.`);
     }
-    this.canvas = el;
+    this._canvas = el;
     const context = this.canvas.getContext('2d');
     if (!context) {
       throw new Error('Unable to get 2D drawing context.');
@@ -18,8 +23,6 @@ export class Canvas {
 
     // Locate the coordinate display element
     this.coordDisplay = document.getElementById('coordDisplay');
-    // Add click listener to canvas
-    this.canvas.addEventListener('click', this.handleClick.bind(this));
 
     // Compute original aspect ratio from initial width/height attributes
     this.aspectRatio = this.canvas.width / this.canvas.height;
@@ -27,6 +30,7 @@ export class Canvas {
     // Resize to fit window on load and attach resize handler
     window.addEventListener('resize', this.resizeCanvas.bind(this));
     this.resizeCanvas();
+
   }
 
   private resizeCanvas(): void {
@@ -129,14 +133,8 @@ export class Canvas {
 
   }
 
-  private handleClick(event: MouseEvent): void {
-    if (!this.coordDisplay) return;
-    const rect = this.canvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
-    // Compute coordinates with origin at bottom-left
-    const xCoord = Math.floor(clickX);
-    const yCoord = Math.floor(this.canvas.height - clickY);
-    this.coordDisplay.innerText = `(${xCoord}, ${yCoord})`;
+  public get canvas() : HTMLCanvasElement{
+    return this._canvas;
   }
+
 }

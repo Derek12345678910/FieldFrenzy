@@ -6,6 +6,8 @@ import { Pair } from "../datastructures/pair.js";
 
 export class Player extends MovingObject {
 
+    protected _name : string;
+
     protected _power : number;
 
     protected _speed : number;
@@ -27,8 +29,15 @@ export class Player extends MovingObject {
         return this._speed;
     }
 
-    public calculateNewVector(newVector : Vector): Vector {
-        
+    public get name() : string{
+        return this._name;
     }
 
+    public calculateNewVector(newVector : Vector): Vector {
+        return newVector;
+    }
+
+    public isClicked(mouseX: number, mouseY: number): boolean {
+        return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
+    }
 }

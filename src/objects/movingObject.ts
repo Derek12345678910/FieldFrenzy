@@ -14,6 +14,22 @@ export abstract class MovingObject {
         this._image = image;
     }
 
+    public get position() : Vector{
+        return this._position;
+    }
+
+    public set position(pos : Vector) {
+        this._position = pos;
+    }
+
+    public get size() : Pair<number> {
+        return this._size;
+    }
+
+    public get image() : string {
+        return this._image;
+    }
+
     abstract calculateNewVector(newVector : Vector) : Vector
 
 }

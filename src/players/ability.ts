@@ -2,6 +2,8 @@
  * An ability class that is created everytime an ability is used
  */
 export abstract class Ability {
+
+    protected _name : string;
     
     protected _description : string;
 
@@ -9,12 +11,18 @@ export abstract class Ability {
 
     /**
      * Creates an ability
+     * @param name name of the ability
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(discription : string, passive : boolean){
+    protected constructor(name : string, discription : string, passive : boolean){
+        this._name = name;
         this._description = discription;
         this._isPassive = passive;
+    }
+
+    public get name() : string{
+        return this._name;
     }
 
     /**
