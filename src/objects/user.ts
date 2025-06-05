@@ -12,8 +12,9 @@ export class User {
         this._team = team;
     }
 
-    private moveCharacter(selectedCharacter : Player) : void{ 
-
+    public moveCharacter(selectedCharacter : Player, x : number, y : number) : void{ 
+        selectedCharacter.calculateNewVector(x, y);
+        
     }
 
     /**
