@@ -148,12 +148,7 @@ export class Canvas {
    * @param radius  Radius of the circle in pixels (default = 10).
    * @param lineLen Length of the direction line (default = 20).
    */
-  public drawPlayers(
-    team : Team,
-    color: string,
-    radius: number = 10,
-    lineLen: number = 20
-  ): void {
+  public drawPlayers(team : Team, color: string, radius: number = 10, lineLen: number = 20): void {
     let playersList : List<Player> = team.allPlayers;
     for (let i = 0; i < playersList.size(); i++) {
       const player = playersList.get(i) as Player;

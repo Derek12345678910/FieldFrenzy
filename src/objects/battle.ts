@@ -27,9 +27,6 @@ export class Battle {
             const mouseX = event.clientX - rect.left;
             const mouseY = event.clientY - rect.top;
 
-            console.log(user1);
-            console.log(user2)
-
             // if a player has not been found yet
             if(this.searchingForPlayer){
                 // check if any team is clicked on
@@ -38,6 +35,7 @@ export class Battle {
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // if clicked it means the user wants to edit him
                     if(player.isClicked(mouseX, mouseY)){
+                        console.log(player);
                         this.searchingForPlayer = false;
                     }
                 }

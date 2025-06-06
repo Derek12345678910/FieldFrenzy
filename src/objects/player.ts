@@ -38,7 +38,20 @@ export class Player extends MovingObject {
     }
 
     public isClicked(mouseX: number, mouseY: number): boolean {
-        console.log(this)
+    /*
+    console.log("mouseX:", mouseX);
+    console.log("mouseY:", mouseY);
+
+    console.log("this._position.position.x:", this._position.position.x);
+    console.log("this._position.position.y:", this._position.position.y);
+    console.log("this._size.x:", this._size.x);
+    console.log("this._size.y:", this._size.y);
+
+    console.log("mouseX >= this._position.position.x:", mouseX >= this._position.position.x);
+    console.log("mouseX <= this._position.position.x + this._size.x:", mouseX <= this._position.position.x + this._size.x);
+    console.log("mouseY >= this._position.position.y:", mouseY >= this._position.position.y);
+    console.log("mouseY <= this._position.position.y + this._size.y:", mouseY <= this._position.position.y + this._size.y);
+    */
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 }

@@ -13,11 +13,15 @@ import { Pair } from "./datastructures/pair.js";
 let canvas : Canvas = new Canvas("soccerField");
 
 let team11 : List<Player> = new List<Player>();
+let team22 : List<Player> = new List<Player>();
+
+let team1 : Team = new Team(team11, new Attackers.Yamal());
+let team2 : Team = new Team(team22, new Attackers.Yamal());
+
 team11.push(new Attackers.Yamal());
 team11.push(new Attackers.Yamal());
 team11.push(new Attackers.Yamal());
 
-let team22 : List<Player> = new List<Player>();
 team22.push(new Attackers.Yamal());
 team22.push(new Attackers.Yamal());
 team22.push(new Attackers.Yamal());
@@ -25,7 +29,7 @@ team22.push(new Attackers.Yamal());
 const canvasWidth = canvas.canvas.width;
 const canvasHeight = canvas.canvas.height;
 
-for (let i = 0; i < team11.size(); i++) {
+for (let i = 0; i < team1.allPlayers.size(); i++) {
   const player = team11.get(i) as Player;
 
   // Random position within canvas
@@ -42,7 +46,7 @@ for (let i = 0; i < team11.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
-for (let i = 0; i < team22.size(); i++) {
+for (let i = 0; i < team2.allPlayers.size(); i++) {
   const player = team22.get(i) as Player;
 
   // Random position within canvas
@@ -59,8 +63,6 @@ for (let i = 0; i < team22.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
-let team1 : Team = new Team(team11, new Attackers.Yamal());
-let team2 : Team = new Team(team22, new Attackers.Yamal());
 
 let user1 : User = new User(team1);
 let user2 : User = new User(team2);
