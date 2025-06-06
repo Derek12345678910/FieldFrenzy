@@ -38,6 +38,7 @@ export class Player extends MovingObject {
     }
 
     public isClicked(mouseX: number, mouseY: number): boolean {
+        console.log(this)
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 }
