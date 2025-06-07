@@ -7,9 +7,12 @@ export abstract class MovingObject {
 
     protected _size : Pair<number>; // x is width, y is height 
 
+    protected _hitbox : Pair<number>;
+
     protected _image : string;
 
-    protected constructor(size : Pair<number>, image : string) {
+    protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
+        this._hitbox = hitbox;
         this._size = size;
         this._image = image;
     }
@@ -24,6 +27,10 @@ export abstract class MovingObject {
 
     public get size() : Pair<number> {
         return this._size;
+    }
+
+    public get hitbox() : Pair<number> {
+        return this._hitbox;
     }
 
     public get image() : string {

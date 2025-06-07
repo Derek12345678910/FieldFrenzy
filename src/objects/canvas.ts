@@ -1,5 +1,3 @@
-import { Pair } from "../datastructures/pair.js";
-
 /**
  * Controls canvas of the game
  */
@@ -15,7 +13,7 @@ export class Canvas {
       throw new Error(`Element with id "${canvasId}" is not a <canvas>.`);
     }
     this._canvas = el;
-    const context = this.canvas.getContext('2d');
+    const context = this._canvas.getContext('2d');
     if (!context) {
       throw new Error('Unable to get 2D drawing context.');
     }
@@ -25,7 +23,7 @@ export class Canvas {
     this.coordDisplay = document.getElementById('coordDisplay');
 
     // Compute original aspect ratio from initial width/height attributes
-    this.aspectRatio = this.canvas.width / this.canvas.height;
+    this.aspectRatio = this._canvas.width / this._canvas.height;
 
     // Resize to fit window on load and attach resize handler
     window.addEventListener('resize', this.resizeCanvas.bind(this));
@@ -48,18 +46,18 @@ export class Canvas {
       newHeight = Math.floor(newWidth / ratio);
     }
 
-    // Update canvas dimensions
-    this.canvas.width = newWidth;
-    this.canvas.height = newHeight;
+    // Update _canvas dimensions
+    this._canvas.width = newWidth;
+    this._canvas.height = newHeight;
 
     // Redraw field
     this.drawField();
   }
 
   private drawField(): void {
-    const { ctx, canvas } = this;
-    const width = canvas.width;
-    const height = canvas.height;
+    const { ctx, _canvas } = this;
+    const width = _canvas.width;
+    const height = _canvas.height;
 
     // Clear any previous drawing
     ctx.clearRect(0, 0, width, height);
