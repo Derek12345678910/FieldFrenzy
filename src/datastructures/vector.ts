@@ -23,8 +23,16 @@ export class Vector {
         return this._position;
     }
 
+    public set position(newPos : Pair<number>){
+        this._position = this.position;
+    } 
+
     public get direction() : Pair<number> {
         return this._direction;
+    }
+
+    public set direction(newDir : Pair<number>) {
+        this._direction = newDir;
     }
 
 }

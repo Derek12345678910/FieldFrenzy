@@ -11,6 +11,8 @@ export abstract class MovingObject {
 
     protected _image : string;
 
+    protected _path : Vector | null;
+
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
         this._size = size;
@@ -37,6 +39,14 @@ export abstract class MovingObject {
         return this._image;
     }
 
-    abstract calculateNewVector(newVector : Vector) : Vector
+    public get path() : Vector | null{
+        return this._path;
+    }
+
+    public set path(path : Vector | null) {
+        this._path = path;
+    }
+
+    abstract calculatePath(x : number, y : number) : Vector
 
 }

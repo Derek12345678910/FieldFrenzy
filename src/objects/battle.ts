@@ -10,6 +10,11 @@ export class Battle {
     private user1 : User;
     private user2 : User;
 
+    private goal1 : number;
+    private goal2 : number;
+
+    private STAGETIME : number = 5 // time it takes for a stage to complete
+
     // if true it is the first players turn
     private firstPlayerTurn : boolean = true;
 
@@ -52,4 +57,5 @@ export class Battle {
         });
 
     }
+
 }
