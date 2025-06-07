@@ -17,6 +17,7 @@ team.push(new Attackers.Yamal());
 team.push(new Attackers.Yamal());
 team.push(new Attackers.Yamal());
 
+
 const canvasWidth = canvas.canvas.width;
 const canvasHeight = canvas.canvas.height;
 
