@@ -94,6 +94,10 @@ export class List<T> {
     return this.unsortedData.slice(0, this.numItems);
   }
 
+  public getSortedData(): T[] {
+    return this.sortedData.slice(0, this.numItems);
+  }
+  
   public sort(compareFn?: (a: T, b: T) => number): T[] {
     const defaultCompare = (a: T, b: T): number => {
         if (a === b) return 0;
@@ -133,11 +137,15 @@ export class List<T> {
     }
     return this.sortedData;
     }
+
+    // compare function for numbers in ascending order
     public ascending(a: number, b:number): number{
         if (a === b) return 0;
         return a < b ? 1 : -1;
     }
-    public alphaAscending(target: string, check:string): number{
+
+    // compare function for sorting in alphabetical order
+    public alphaAscendingSort(target: string, check:string): number{
         const len = Math.min(target.length,check.length);
         let a = target.toLowerCase();
         let b = check.toLowerCase();
@@ -162,6 +170,28 @@ export class List<T> {
         }
         return 0;
     }   
+
+    // compare function for binarySearch, when data is sorted ascendingly alphabetically
+    public alphaAscendingSearch(target: string, mid:string): number{
+        const len = Math.min(target.length,mid.length);
+        let a = target.toLowerCase()
+        let b = mid.toLowerCase();
+        for(let i=0;i<len;i++){
+            let aVal = a.charCodeAt(i);
+            let bVal = b.charCodeAt(i);
+            if(aVal === bVal){
+                continue;
+            }
+            else if(aVal<bVal){
+                return -1;
+            }
+            else{
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     // finds all indexes of target
     // does binary search to find first occurence, then goes to the left and right to find all other occurences
     public binarySearch(target: number | string, data: any[], compareFn: any): number[]{
@@ -171,6 +201,7 @@ export class List<T> {
         let foundIndex: number = -1;
 
         if(typeof compareFn !== 'function'){
+            console.log("Not a function")
             return [-1];
         }
         while(left <= right){
@@ -193,6 +224,7 @@ export class List<T> {
             }
         }
         if(foundIndex === -1){
+            console.log("No found index")
             return [-1];
         }
         foundIndexes.push(foundIndex);
@@ -204,7 +236,7 @@ export class List<T> {
         }
 
         let j: number = foundIndex +1;
-        while(j<=data.length && compareFn(target,data[j]) === 0){
+        while(j<=data.length-1 && compareFn(target,data[j]) === 0){
             foundIndexes.push(j);
             j++;
         }
