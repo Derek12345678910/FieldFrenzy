@@ -55,6 +55,7 @@ export class Battle {
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // if clicked it means the user wants to edit him
                     if(player.isClicked(mouseX, mouseY)){
+                        console.log(player);
                         this.searchingForPlayer = false;
                         this.selectedCharacter = player;
                     }
