@@ -7,11 +7,15 @@ export abstract class MovingObject {
 
     protected _size : Pair<number>; // x is width, y is height 
 
-    protected _image : string;
+    protected _imageSrc : string;
+
+    protected _image : HTMLImageElement;
 
     protected constructor(size : Pair<number>, image : string) {
         this._size = size;
-        this._image = image;
+        this._imageSrc = image;
+        this._image = new Image()
+        this._image.src = this._imageSrc;
     }
 
     public get position() : Vector{
@@ -26,7 +30,7 @@ export abstract class MovingObject {
         return this._size;
     }
 
-    public get image() : string {
+    public get image() : HTMLImageElement {
         return this._image;
     }
 

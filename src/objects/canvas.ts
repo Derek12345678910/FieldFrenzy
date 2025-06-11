@@ -2,7 +2,8 @@ import { User } from "./user.js";
 import { Player } from "./player.js";
 import { Team } from "./team.js";
 
-import { List } from "../datastructures/list.js";
+import { List, PairNode } from "../datastructures/list.js";
+import { Pair } from "../datastructures/pair.js";
 
 /**
  * Controls canvas of the game
@@ -148,31 +149,26 @@ export class Canvas {
    * @param radius  Radius of the circle in pixels (default = 10).
    * @param lineLen Length of the direction line (default = 20).
    */
-  public drawPlayers(
-    team : Team,
-    color: string,
-    radius: number = 10,
-    lineLen: number = 20
-  ): void {
+  public drawPlayers(team : Team, color: string, radius: number = 10, lineLen: number = 20): void {
     let playersList : List<Player> = team.allPlayers;
+    console.log(team.allPlayers);
     for (let i = 0; i < playersList.size(); i++) {
-      const player = playersList.get(i) as Player;
-      if (!player || !(player.position as any)) {
-        continue;
-      }
-      // Extract position Vector: has .position (Pair) and .direction (Pair)
-      const posPair: any = (player.position as any).position ?? (player.position as any).pos ?? player.position;
-      const dirPair: any = (player.position as any).direction ?? (player.position as any).dir;
-      const x = posPair.x ?? posPair.first ?? posPair[0];
-      const y = posPair.y ?? posPair.second ?? posPair[1];
-      const dx = dirPair.x ?? dirPair.first ?? dirPair[0];
-      const dy = dirPair.y ?? dirPair.second ?? dirPair[1];
+      let player = playersList.get(i) as Player;
 
-      // Draw circle
-      this.ctx.fillStyle = color;
-      this.ctx.beginPath();
-      this.ctx.arc(x, y, radius, 0, 2 * Math.PI);
-      this.ctx.fill();
+      let posPair: Pair<number> = player.position.position;
+      let dirPair: Pair<number> = player.position.direction;
+      let x : number = posPair.x;
+      let y : number = posPair.y;
+      let dx : number = dirPair.x;
+      let dy : number = dirPair.y;
+
+      let r = radius;
+      let sz: Pair<number> = player.size;
+      r = (sz.x + sz.y) / 2;
+
+      const img : HTMLImageElement = player.image as HTMLImageElement
+      // Draw image centered at (x, y) with size based on r
+      this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
 
       // Draw direction line
       const ex = x + dx * lineLen;
