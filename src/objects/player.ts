@@ -5,7 +5,7 @@ import { Vector } from "../datastructures/vector.js"
 import { Pair } from "../datastructures/pair.js";
 
 export class Player extends MovingObject {
-
+    static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
     protected _name : string;
 
     protected _power : number;
@@ -40,5 +40,19 @@ export class Player extends MovingObject {
 
     public isClicked(mouseX: number, mouseY: number): boolean {
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
+    }
+
+    public displayOptions(): void{
+        Player.container.innerHTML = ''
+        let options: string[] = ["Shoot", "Move", "Ability"];
+        for(let i=0;i<options.length;i++){
+            let button = document.createElement("button");
+            button.innerText = options[i];
+            button.className = "option-button";
+            button.addEventListener("click", ()=>{
+                console.log(`Action: ${options[i]}`)
+            });
+            Player.container.appendChild(button);
+        }
     }
 }

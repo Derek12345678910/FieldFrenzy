@@ -13,7 +13,9 @@ import { Pair } from "./datastructures/pair.js";
 let canvas : Canvas = new Canvas("soccerField");
 
 let team : List<Player> = new List<Player>();
-team.push(new Attackers.Yamal());
+let YAMAL: Player = new Attackers.Yamal();
+YAMAL.displayOptions();
+team.push(YAMAL);
 team.push(new Attackers.Yamal());
 team.push(new Attackers.Yamal());
 
