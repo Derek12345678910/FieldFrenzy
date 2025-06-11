@@ -63,6 +63,7 @@ for (let i = 0; i < team2.allPlayers.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
+
 let user1 : User = new User(team1);
 let user2 : User = new User(team2);
 

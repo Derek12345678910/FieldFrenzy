@@ -2,7 +2,7 @@ import { User } from "./user.js";
 import { Player } from "./player.js";
 import { Team } from "./team.js";
 
-import { List, PairNode } from "../datastructures/list.js";
+import { List } from "../datastructures/list.js";
 import { Pair } from "../datastructures/pair.js";
 
 /**
