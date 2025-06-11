@@ -30,7 +30,7 @@ const canvasWidth = canvas.canvas.width;
 const canvasHeight = canvas.canvas.height;
 
 for (let i = 0; i < team1.allPlayers.size(); i++) {
-  const player = team11.get(i) as Player;
+  const player = team1.allPlayers.get(i) as Player;
 
   // Random position within canvas
   const x = Math.random() * canvasWidth;
@@ -47,7 +47,7 @@ for (let i = 0; i < team1.allPlayers.size(); i++) {
 }
 
 for (let i = 0; i < team2.allPlayers.size(); i++) {
-  const player = team22.get(i) as Player;
+  const player = team2.allPlayers.get(i) as Player;
 
   // Random position within canvas
   const x = Math.random() * canvasWidth;
@@ -63,7 +63,6 @@ for (let i = 0; i < team2.allPlayers.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
-
 let user1 : User = new User(team1);
 let user2 : User = new User(team2);
 
@@ -71,6 +70,8 @@ let user2 : User = new User(team2);
 let battle : Battle = new Battle(canvas, user1, user2);
 
 // Draw both teams: red for team1's list, black for team2's list (both come from 'team')
+console.log(team1);
+console.log(team2)
 canvas.drawPlayers(team1, "#FF0000", 10, 20);
 canvas.drawPlayers(team2, "#000000", 10, 20);
 
