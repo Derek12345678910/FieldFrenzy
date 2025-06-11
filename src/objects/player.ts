@@ -14,8 +14,8 @@ export class Player extends MovingObject {
 
     protected _ability : Ability;
 
-    protected constructor(size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
-        super(size, image);
+    protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
+        super(hitbox, size, image);
         this._power = power;
         this._speed = speed;
         this._ability = ability;
@@ -33,8 +33,9 @@ export class Player extends MovingObject {
         return this._name;
     }
 
-    public calculateNewVector(newVector : Vector): Vector {
-        return newVector;
+    public calculateNewVector(x : number, y : number): Vector {
+        let coord : Pair<number> = new Pair<number>(x, y);
+        
     }
 
     public isClicked(mouseX: number, mouseY: number): boolean {

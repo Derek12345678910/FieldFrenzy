@@ -53,7 +53,7 @@ export class Canvas {
       newHeight = Math.floor(newWidth / ratio);
     }
 
-    // Update _canvas dimensions
+    // Update canvas dimensions
     this._canvas.width = newWidth;
     this._canvas.height = newHeight;
 
