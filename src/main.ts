@@ -37,9 +37,6 @@ for (let i = 0; i < team.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
-const canvasWidth = canvas.canvas.width;
-const canvasHeight = canvas.canvas.height;
-
 for (let i = 0; i < team.size(); i++) {
   const player = team.get(i) as Player;
 
@@ -63,5 +60,5 @@ let team2 : Team = new Team(team, new Attackers.Yamal());
 let user1 : User = new User(team1);
 let user2 : User = new User(team2);
 
-let battle : Battle = new Battle(canvas, user1, user2);
+let battle : Battle = new Battle(user1, user2);
 

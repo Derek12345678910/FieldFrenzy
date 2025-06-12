@@ -3,8 +3,14 @@ import { Ability } from "../players/ability.js";
 
 import { Vector } from "../datastructures/vector.js"
 import { Pair } from "../datastructures/pair.js";
+import { List } from "../datastructures/list.js";
+
+import { Ball } from "./ball.js";
+import { Mirage } from "./mirage.js";
 
 export class Player extends MovingObject {
+
+    protected _object : MovingObject = this;
 
     protected _name : string;
 
@@ -13,6 +19,12 @@ export class Player extends MovingObject {
     protected _speed : number;
 
     protected _ability : Ability;
+
+    // holds the move the player is about to do
+    protected _move : string;
+
+    // pointer to ball
+    protected _ball : Ball; 
 
     /**
      * (Startpoint, direction)
@@ -33,18 +45,6 @@ export class Player extends MovingObject {
         this._ability = ability;
     }
 
-    public get power() : number {
-        return this._power;
-    }
-
-    public get speed() : number {
-        return this._speed;
-    }
-
-    public get name() : string{
-        return this._name;
-    }
-
     public calculatePath(x : number, y : number): Vector {
         let directionPath : Pair<number> = new Pair<number>(x - this._position.position.x, y - this._position.position.y);
         
@@ -62,10 +62,18 @@ export class Player extends MovingObject {
 
         this.maxPathPoint = lastPoint;
 
+        let endPoint : Vector = new Vector(lastPoint, directionPath);
+        
+        this._mirage = new Mirage(this, endPoint)
+
         // set path to starting point
         this._path.position = this._position.position;
 
         return this._path;
+    }
+
+    public displayOptions() : void{
+
     }
 
     public getPointOnPath(scalerMutiple : number) : Pair<number> | null{
@@ -80,4 +88,37 @@ export class Player extends MovingObject {
     public isClicked(mouseX: number, mouseY: number): boolean {
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
+
+    public get power() : number {
+        return this._power;
+    }
+
+    public get speed() : number {
+        return this._speed;
+    }
+
+    public get name() : string{
+        return this._name;
+    }
+
+    public get ball() : Ball{
+        return this._ball;
+    }
+    
+    public set ball(ball : Ball){
+        this._ball = ball;
+    }
+
+    public get move() : string{
+        return this._move;
+    }
+
+    public set move(move : string){
+        this._move = move;
+    }
+
+    public get object() : MovingObject{
+        return this._object;
+    }
+
 }

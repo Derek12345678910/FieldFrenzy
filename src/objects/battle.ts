@@ -3,6 +3,7 @@ import { Canvas } from "./canvas";
 import { User } from "./user.js";
 import { Team } from "./team.js";
 import { Player } from "./player.js";
+import { Mirage } from "./mirage";
 
 export class Battle {
     private _canvas : Canvas;
@@ -31,15 +32,18 @@ export class Battle {
     // length of transistion
     private transistionDuration: number = 5000;
 
-    // if true it means that the user is still looking for a character to edit
-    private searchingForPlayer : boolean = true;
+    // action phase
+    // 0 --> searching for player to be clicked on
+    // 1 --> wait for action to be choose, ability, shot, pass, move
+    // 2 --> choose the spot of the action
+    private actionPhase : number = 0;
 
     // character selected by the user
-    private selectedCharacter : Player | null = null;
+    private selectedCharacter : Player | Mirage | null = null;
 
-    public constructor(canvas : Canvas, user1 : User, user2 : User){
+    public constructor(user1 : User, user2 : User){
 
-        this._canvas = canvas;
+        this._canvas = new Canvas("Battle");
         this.user1 = user1;
         this.user2 = user2;
 
@@ -48,31 +52,39 @@ export class Battle {
 
             let userTurn : User = (this.currentTurn === "user1") ? user1 : user2;
 
-            const rect = this._canvas.canvas.getBoundingClientRect();
-            const mouseX : number = event.clientX - rect.left;
-            const mouseY : number = event.clientY - rect.top;
+            let rect = this._canvas.canvas.getBoundingClientRect();
+            let mouseX : number = event.clientX - rect.left;
+            let mouseY : number = event.clientY - rect.top;
 
             // if a player has not been found yet
-            if(this.searchingForPlayer){
+            if(this.actionPhase === 0){
                 // check if any team is clicked on
-                let teamToCheck : Team = (this.currentTurn === "user1") ? user1.team : user2.team;
+                let teamToCheck : Team = userTurn.team;
                 for(let i=0; i<teamToCheck.player.size(); i++){
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // if clicked it means the user wants to edit him
                     if(player.isClicked(mouseX, mouseY)){
-                        this.searchingForPlayer = false;
+                        this.actionPhase++;
                         this.selectedCharacter = player;
+                        this.selectedCharacter.displayOptions();
+                    }
+                    else if(player.mirage?.isClicked(mouseX, mouseY)){
+                        this.actionPhase++;
+                        this.selectedCharacter
                     }
                 }
             }
-            else{
+            // click the new coord
+            else if(this.actionPhase === 2){
                 if(this.selectedCharacter){
                     // make it so that there is an arrow drawn from the player to the spot
-                    userTurn.moveCharacter(this.selectedCharacter, mouseX, mouseY);
+                    this.selectedCharacter.object.allPaths.push(this.selectedCharacter.object.calculatePath(mouseX, mouseY));
+                    this.selectedCharacter.object.stage++;
+                    this.selectedCharacter = null;
+                    this.actionPhase = 0;
                 }
             }
         });
-        this.startTurnTimer();
     }
     /**
      * Starts the timer for the current turn
@@ -102,12 +114,10 @@ export class Battle {
     private endCurrentTurn(): void{
         // clear timers and intervals
         this.clearTimers();
-        this.searchingForPlayer = false;
         this.selectedCharacter = null;
         // if it was just user1's turn, make it user2's turn and start their timer
         if(this.currentTurn === "user1"){
             this.currentTurn = "user2";
-            this.searchingForPlayer = true;
             this.startTurnTimer();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
@@ -127,7 +137,6 @@ export class Battle {
      */ 
     private startNextRound(){
         this.currentTurn = "user1";
-        this.searchingForPlayer = true;
         this.isTransitioning = false;
         this.startTurnTimer();
     }
@@ -149,6 +158,19 @@ export class Battle {
      */
     private drawMoves(): void{
         console.log("Round over, drawing moves")
+    }
+
+    /**
+     * Play all the turn
+     */
+    private playMoves() : void{
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+
+        }
+    }
+
+    public get Canvas() : Canvas{
+        return this._canvas;
     }
 
 }
