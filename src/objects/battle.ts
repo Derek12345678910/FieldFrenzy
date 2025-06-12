@@ -1,4 +1,4 @@
-import { Canvas } from "./canvas";
+import { Canvas } from "./canvas.js";
 
 import { User } from "./user.js";
 import { Team } from "./team.js";
@@ -43,7 +43,7 @@ export class Battle {
 
     public constructor(user1 : User, user2 : User){
 
-        this._canvas = new Canvas("Battle");
+        this._canvas = new Canvas("soccerField");
         this.user1 = user1;
         this.user2 = user2;
 
@@ -64,8 +64,9 @@ export class Battle {
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // if clicked it means the user wants to edit him
                     if(player.isClicked(mouseX, mouseY)){
-                        this.actionPhase++;
+                        //this.actionPhase++;
                         this.selectedCharacter = player;
+                        console.log(i);
                         this.selectedCharacter.displayOptions();
                     }
                     else if(player.mirage?.isClicked(mouseX, mouseY)){

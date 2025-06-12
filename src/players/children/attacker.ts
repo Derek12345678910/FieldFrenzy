@@ -8,7 +8,7 @@ export class Yamal extends Attacker{
     public constructor(){
         super(
             new Pair(5, 5),
-            new Pair(10, 10),
+            new Pair(30, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
             15,
             15,
