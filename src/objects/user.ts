@@ -13,7 +13,7 @@ export class User {
     }
 
     public moveCharacter(selectedCharacter : Player, x : number, y : number) : void{ 
-        selectedCharacter.calculateNewVector(x, y);
+        selectedCharacter.calculatePath(x, y);
         
     }
 

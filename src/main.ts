@@ -68,7 +68,7 @@ let user1 : User = new User(team1);
 let user2 : User = new User(team2);
 
 
-let battle : Battle = new Battle(canvas, user1, user2);
+let battle : Battle = new Battle(user1, user2);
 
 // Draw both teams: red for team1's list, black for team2's list (both come from 'team')
 console.log(team1);
