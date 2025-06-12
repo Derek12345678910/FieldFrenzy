@@ -9,7 +9,7 @@ import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 
 export class Player extends MovingObject {
-
+    static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
     protected _object : MovingObject = this;
 
     protected _name : string;
@@ -72,10 +72,6 @@ export class Player extends MovingObject {
         return this._path;
     }
 
-    public displayOptions() : void{
-
-    }
-
     public getPointOnPath(scalerMutiple : number) : Pair<number> | null{
         if(this._path !== null){
             let coord : Pair<number> = new Pair<number>(this._position.position.x + this._path.direction.x * scalerMutiple, this._position.position.y + this._path.direction.y * scalerMutiple);
@@ -83,10 +79,6 @@ export class Player extends MovingObject {
             return coord;
         }
         return null;
-    }
-
-    public isClicked(mouseX: number, mouseY: number): boolean {
-        return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 
     public get power() : number {
@@ -109,6 +101,10 @@ export class Player extends MovingObject {
         this._ball = ball;
     }
 
+    public get object() : MovingObject{
+        return this._object;
+    }
+
     public get move() : string{
         return this._move;
     }
@@ -117,8 +113,35 @@ export class Player extends MovingObject {
         this._move = move;
     }
 
-    public get object() : MovingObject{
-        return this._object;
+    public isClicked(mouseX: number, mouseY: number): boolean {
+    /*
+    console.log("mouseX:", mouseX);
+    console.log("mouseY:", mouseY);
+
+    console.log("this._position.position.x:", this._position.position.x);
+    console.log("this._position.position.y:", this._position.position.y);
+    console.log("this._size.x:", this._size.x);
+    console.log("this._size.y:", this._size.y);
+
+    console.log("mouseX >= this._position.position.x:", mouseX >= this._position.position.x);
+    console.log("mouseX <= this._position.position.x + this._size.x:", mouseX <= this._position.position.x + this._size.x);
+    console.log("mouseY >= this._position.position.y:", mouseY >= this._position.position.y);
+    console.log("mouseY <= this._position.position.y + this._size.y:", mouseY <= this._position.position.y + this._size.y);
+    */
+        return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 
+    public displayOptions(): void{
+        Player.container.innerHTML = ''
+        let options: string[] = ["Shoot", "Move", "Ability"];
+        for(let i=0;i<options.length;i++){
+            let button = document.createElement("button");
+            button.innerText = options[i];
+            button.className = "option-button";
+            button.addEventListener("click", ()=>{
+                console.log(`Action: ${options[i]}`)
+            });
+            Player.container.appendChild(button);
+        }
+    }
 }

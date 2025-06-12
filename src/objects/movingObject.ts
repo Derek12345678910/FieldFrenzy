@@ -12,7 +12,9 @@ export abstract class MovingObject {
 
     protected _hitbox : Pair<number>;
 
-    protected _image : string;
+    protected _imageSrc : string;
+ 
+    protected _image : HTMLImageElement;
 
     protected _path : Vector | null;
 
@@ -29,7 +31,9 @@ export abstract class MovingObject {
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
         this._size = size;
-        this._image = image;
+        this._imageSrc = image;
+        this._image = new Image()
+        this._image.src = this._imageSrc;
     }
 
     public get position() : Vector{
@@ -45,10 +49,10 @@ export abstract class MovingObject {
     }
 
     public get hitbox() : Pair<number> {
-        return this._hitbox;
+        return this._hitbox; 
     }
 
-    public get image() : string {
+    public get image() : HTMLImageElement {
         return this._image;
     }
 
