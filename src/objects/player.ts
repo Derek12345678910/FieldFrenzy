@@ -38,8 +38,9 @@ export class Player extends MovingObject {
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
-    protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
+    protected constructor(name : string, hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
+        this._name = name;
         this._power = power;
         this._speed = speed;
         this._ability = ability;

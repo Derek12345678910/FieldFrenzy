@@ -9,3 +9,13 @@ export class CurveShot extends Shooting{
         )
     }
 }
+
+export class AutomaticGoal extends Shooting{
+    public constructor(){
+        super(
+            "Vickings Wrath",
+            "Goal No Matter What",
+            false
+        )
+    }
+}
