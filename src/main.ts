@@ -16,8 +16,8 @@ let team22 : List<Player> = new List<Player>();
 let team1 : Team = new Team(team11, new Attackers.Yamal());
 let team2 : Team = new Team(team22, new Attackers.Yamal());
 
-let user1 : User = new User(team1);
-let user2 : User = new User(team2);
+let user1 : User = new User(team1, "#FF0000");
+let user2 : User = new User(team2, "#000000");
 
 let battle : Battle = new Battle(user1, user2);
 
@@ -71,12 +71,12 @@ for (let i = 0; i < team2.allPlayers.size(); i++) {
 // Draw both teams: red for team1's list, black for team2's list (both come from 'team')
 console.log(team1);
 console.log(team2)
-canvas.drawPlayers(team1, "#FF0000", 10, 20);
-canvas.drawPlayers(team2, "#000000", 10, 20);
+canvas.drawPlayers(team1, user1.colour, 10, 20);
+canvas.drawPlayers(team2, user2.colour, 10, 20);
 
 // Re-draw on window resize
 window.addEventListener("resize", () => {
   canvas.resizeCanvas();
-  canvas.drawPlayers(team1, "#FF0000", 10, 20);
-  canvas.drawPlayers(team2, "#000000", 10, 20);
+  canvas.drawPlayers(team1, user1.colour, 10, 20);
+  canvas.drawPlayers(team2, user2.colour, 10, 20);
 });

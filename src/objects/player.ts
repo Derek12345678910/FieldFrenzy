@@ -7,9 +7,12 @@ import { List } from "../datastructures/list.js";
 
 import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
+import { Battle } from "./battle.js";
 
 export class Player extends MovingObject {
+    
     static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
+
     protected _object : MovingObject = this;
 
     protected _name : string;
@@ -57,8 +60,22 @@ export class Player extends MovingObject {
         // so solve for T
         let sx :  number = this._position.position.x; let sy : number = this._position.position.y;
         let dx : number = directionPath.x; let dy : number = directionPath.y;
-        let t1 : number = (-(sx * dx + sy * dy) + (Math.sqrt((sx * dx + sy * dy)**2 - 4*(dx*dx + dy*dy) * (sx*sx + sy*sy - this.MOVELIMIT)))) / 2*(dx*dx + dy*dy);
-        let lastPoint : Pair<number> = new Pair<number>(this._position.position.x + t1*dx, this._position.position.y + t1*dy);
+
+        const A = dx * dx + dy * dy;
+        const B = 2 * (sx * dx + sy * dy);
+        const C = sx * sx + sy * sy - this.MOVELIMIT;
+
+        const discriminant = B * B - 4 * A * C;
+
+        const sqrtDiscriminant = Math.sqrt(discriminant);
+
+        const t1 = (-B + sqrtDiscriminant) / (2 * A);
+
+        //let t1 : number = (-(sx * dx + sy * dy) + (Math.sqrt((sx * dx + sy * dy)**2 - 4*(dx*dx + dy*dy) * (sx*sx + sy*sy - this.MOVELIMIT)))) / 2*(dx*dx + dy*dy);
+        console.log(t1)
+        //let lastPoint : Pair<number> = new Pair<number>(this._position.position.x + t1*dx, this._position.position.y + t1*dy);
+
+        let lastPoint : Pair<number> = new Pair<number>(x, y);
 
         this.maxPathPoint = lastPoint;
 
@@ -131,7 +148,7 @@ export class Player extends MovingObject {
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 
-    public displayOptions(): void{
+    public displayOptions(battle : Battle): void{
         Player.container.innerHTML = ''
         let options: string[] = ["Shoot", "Move", "Ability"];
         for(let i=0;i<options.length;i++){
@@ -140,6 +157,7 @@ export class Player extends MovingObject {
             button.className = "option-button";
             button.addEventListener("click", ()=>{
                 console.log(`Action: ${options[i]}`)
+                battle.actionPhase++;
             });
             Player.container.appendChild(button);
         }

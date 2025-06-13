@@ -65,7 +65,10 @@ export abstract class MovingObject {
     }
 
     public get mirage() : Mirage | null{
-        return this._mirage;
+        if(this._mirage){
+            return this._mirage;
+        }
+        return null
     }
 
     public get allPaths() : List<Vector>{

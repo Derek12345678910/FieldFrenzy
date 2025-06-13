@@ -36,7 +36,7 @@ export class Battle {
     // 0 --> searching for player to be clicked on
     // 1 --> wait for action to be choose, ability, shot, pass, move
     // 2 --> choose the spot of the action
-    private actionPhase : number = 0;
+    private _actionPhase : number = 0;
 
     // character selected by the user
     private selectedCharacter : Player | Mirage | null = null;
@@ -51,38 +51,42 @@ export class Battle {
             if(this.isTransitioning || this.currentTurn === "transition") return;
 
             let userTurn : User = (this.currentTurn === "user1") ? user1 : user2;
+            // check if any team is clicked on
+            let teamToCheck : Team = userTurn.team;
 
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
             let mouseY : number = event.clientY - rect.top;
-
+            console.log(this._actionPhase);
             // if a player has not been found yet
-            if(this.actionPhase === 0){
-                // check if any team is clicked on
-                let teamToCheck : Team = userTurn.team;
+            if(this._actionPhase === 0){
                 for(let i=0; i<teamToCheck.player.size(); i++){
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // if clicked it means the user wants to edit him
                     if(player.isClicked(mouseX, mouseY)){
-                        //this.actionPhase++;
+                        this._actionPhase++;
                         this.selectedCharacter = player;
                         console.log(i);
-                        this.selectedCharacter.displayOptions();
+                        this.selectedCharacter.displayOptions(this);
                     }
                     else if(player.mirage?.isClicked(mouseX, mouseY)){
-                        this.actionPhase++;
+                        this._actionPhase++;
                         this.selectedCharacter
+                        if(this.selectedCharacter?.object instanceof Player){
+                            this.selectedCharacter.object.displayOptions(this);
+                        }
                     }
                 }
             }
             // click the new coord
-            else if(this.actionPhase === 2){
+            else if(this._actionPhase === 2){
                 if(this.selectedCharacter){
                     // make it so that there is an arrow drawn from the player to the spot
                     this.selectedCharacter.object.allPaths.push(this.selectedCharacter.object.calculatePath(mouseX, mouseY));
                     this.selectedCharacter.object.stage++;
                     this.selectedCharacter = null;
-                    this.actionPhase = 0;
+                    this._actionPhase = 0;
+                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10, 20)
                 }
             }
         });
@@ -172,6 +176,14 @@ export class Battle {
 
     public get Canvas() : Canvas{
         return this._canvas;
+    }
+    
+    public get actionPhase() : number{
+        return this._actionPhase;
+    }
+
+    public set actionPhase(num : number){
+        this._actionPhase = num
     }
 
 }
