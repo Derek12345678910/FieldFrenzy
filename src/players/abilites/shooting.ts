@@ -24,7 +24,7 @@ export class LongShot extends Shooting{
     public constructor(){
         super(
             "Long Shot",
-            "Curves the shot",
+            "Increase the range and strength of the shot",
             false
         )
     }
