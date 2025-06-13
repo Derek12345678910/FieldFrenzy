@@ -1,1 +1,43 @@
 import { Defender } from "../playertypes.js";
+
+export class Maldini extends Defender{
+    public constructor(){
+        super(
+            "Paolo Maldini",
+            new Pair(5, 5),
+            new Pair(20, 20),
+            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
+            15,
+            15,
+            new shooting.CurveShot()
+        )
+    }
+}
+
+export class VanDijk extends Defender{
+    public constructor(){
+        super(
+            "Virgil Van Dijk",
+            new Pair(5, 5),
+            new Pair(20, 20),
+            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
+            15,
+            15,
+            new shooting.CurveShot()
+        )
+    }
+}
+
+export class Alphonso extends Defender{
+    public constructor(){
+        super(
+            "Alphonso Davies",
+            new Pair(5, 5),
+            new Pair(20, 20),
+            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
+            15,
+            15,
+            new shooting.CurveShot()
+        )
+    }
+}
