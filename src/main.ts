@@ -10,13 +10,18 @@ import { List } from "./datastructures/list.js";
 import { Vector } from "./datastructures/vector.js";
 import { Pair } from "./datastructures/pair.js";
 
-let canvas : Canvas = new Canvas("soccerField");
-
 let team11 : List<Player> = new List<Player>();
 let team22 : List<Player> = new List<Player>();
 
 let team1 : Team = new Team(team11, new Attackers.Yamal());
 let team2 : Team = new Team(team22, new Attackers.Yamal());
+
+let user1 : User = new User(team1);
+let user2 : User = new User(team2);
+
+let battle : Battle = new Battle(user1, user2);
+
+let canvas : Canvas = battle.Canvas;
 
 team11.push(new Attackers.Yamal());
 team11.push(new Attackers.Yamal());
@@ -63,18 +68,11 @@ for (let i = 0; i < team2.allPlayers.size(); i++) {
   player.position = new Vector(position, direction);
 }
 
-
-let user1 : User = new User(team1);
-let user2 : User = new User(team2);
-
-
-let battle : Battle = new Battle(user1, user2);
-
 // Draw both teams: red for team1's list, black for team2's list (both come from 'team')
 console.log(team1);
 console.log(team2)
-canvas.drawPlayers(team1, "#FF0000", 10, 20);
-canvas.drawPlayers(team2, "#000000", 10, 20);
+canvas.drawPlayers(team1, "#FF0000", 10, 40);
+canvas.drawPlayers(team2, "#000000", 10, 40);
 
 // Re-draw on window resize
 window.addEventListener("resize", () => {

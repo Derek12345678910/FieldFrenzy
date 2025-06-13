@@ -149,55 +149,72 @@ export class Canvas {
    * @param radius  Radius of the circle in pixels (default = 10).
    * @param lineLen Length of the direction line (default = 20).
    */
-  public drawPlayers(team : Team, color: string, radius: number = 10, lineLen: number = 20): void {
-    let playersList : List<Player> = team.allPlayers;
-    console.log(team.allPlayers);
-    for (let i = 0; i < playersList.size(); i++) {
-      let player = playersList.get(i) as Player;
+public drawPlayers(team: Team, color: string, radius: number, lineLen: number): void {
+  let playersList: List<Player> = team.allPlayers;
+  for (let i = 0; i < playersList.size(); i++) {
+    let player = playersList.get(i) as Player;
 
-      let posPair: Pair<number> = player.position.position;
-      let dirPair: Pair<number> = player.position.direction;
-      let x : number = posPair.x;
-      let y : number = posPair.y;
-      let dx : number = dirPair.x;
-      let dy : number = dirPair.y;
+    let posPair: Pair<number> = player.position.position;
+    let dirPair: Pair<number> = player.position.direction;
+    let x: number = posPair.x;
+    let y: number = posPair.y;
+    let dx: number = dirPair.x;
+    let dy: number = dirPair.y;
 
-      let r = radius;
-      let sz: Pair<number> = player.size;
-      r = (sz.x + sz.y) / 2;
+    let r = radius;
+    let sz: Pair<number> = player.size;
+    r = (sz.x + sz.y) / 2;
 
-      const img : HTMLImageElement = player.image as HTMLImageElement
-      // Draw image centered at (x, y) with size based on r
-      this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+    let img: HTMLImageElement = player.image as HTMLImageElement;
 
-      // Draw direction line
-      const ex = x + dx * lineLen;
-      const ey = y + dy * lineLen;
-      this.ctx.strokeStyle = "#FFFFFF";
-      this.ctx.lineWidth = 2;
-      this.ctx.beginPath();
-      this.ctx.moveTo(x, y);
-      this.ctx.lineTo(ex, ey);
-      this.ctx.stroke();
+    // === Draw circular image ===
+    this.ctx.save(); // Save current canvas state
 
-      // Draw arrowhead at (ex, ey)
-      const ahLen = 6;
-      const ahWidth = 4;
-      const bx = ex - dx * ahLen;
-      const by = ey - dy * ahLen;
-      const px = -dy;
-      const py = dx;
-      const leftX = bx + px * ahWidth;
-      const leftY = by + py * ahWidth;
-      const rightX = bx - px * ahWidth;
-      const rightY = by - py * ahWidth;
-      this.ctx.fillStyle = "#FFFFFF";
-      this.ctx.beginPath();
-      this.ctx.moveTo(ex, ey);
-      this.ctx.lineTo(leftX, leftY);
-      this.ctx.lineTo(rightX, rightY);
-      this.ctx.closePath();
-      this.ctx.fill();
-    }
-  }
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.closePath();
+    this.ctx.clip();
+
+    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+
+    this.ctx.restore(); // Restore to remove clipping
+
+    // === Draw circular border ===
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+
+    // === Draw direction line ===
+    const ex = x + dx * lineLen;
+    const ey = y + dy * lineLen;
+    this.ctx.strokeStyle = "#FFFFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, y);
+    this.ctx.lineTo(ex, ey);
+    this.ctx.stroke();
+
+    // === Draw arrowhead ===
+    const ahLen = 6;
+    const ahWidth = 4;
+    const bx = ex - dx * ahLen;
+    const by = ey - dy * ahLen;
+    const px = -dy;
+    const py = dx;
+    const leftX = bx + px * ahWidth;
+    const leftY = by + py * ahWidth;
+    const rightX = bx - px * ahWidth;
+    const rightY = by - py * ahWidth;
+
+    this.ctx.fillStyle = "#FFFFFF";
+    this.ctx.beginPath();
+    this.ctx.moveTo(ex, ey);
+    this.ctx.lineTo(leftX, leftY);
+    this.ctx.lineTo(rightX, rightY);
+    this.ctx.closePath();
+    this.ctx.fill();
+}
+}
 }
