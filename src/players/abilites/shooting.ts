@@ -19,3 +19,13 @@ export class AutomaticGoal extends Shooting{
         )
     }
 }
+
+export class LongShot extends Shooting{
+    public constructor(){
+        super(
+            "Long Shot",
+            "Curves the shot",
+            false
+        )
+    }
+}
