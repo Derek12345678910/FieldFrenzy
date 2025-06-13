@@ -16,8 +16,8 @@ let team22 : List<Player> = new List<Player>();
 let team1 : Team = new Team(team11, new Attackers.Yamal());
 let team2 : Team = new Team(team22, new Attackers.Yamal());
 
-let user1 : User = new User(team1, "#FF0000");
-let user2 : User = new User(team2, "#000000");
+let user1 : User = new User("TEST1", team1, "#FF0000");
+let user2 : User = new User("TEST2", team2, "#000000");
 
 let battle : Battle = new Battle(user1, user2);
 

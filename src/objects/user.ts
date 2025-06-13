@@ -6,11 +6,14 @@ import { Vector } from "../datastructures/vector.js";
 
 export class User {
 
+    private _name : string;
+
     private _team : Team;
 
     private _colour : string;
 
-    public constructor(team : Team, colour : string){
+    public constructor(name : string, team : Team, colour : string){
+        this._name = name;
         this._team = team;
         this._colour = colour;
     }
@@ -26,6 +29,10 @@ export class User {
      */
     public displayOptions(character : Player) : void{
         // this should show the page and an option to either move, shoot, or use ability
+    }
+
+    public get name() : string{
+        return this._name;
     }
 
     public get team() : Team {

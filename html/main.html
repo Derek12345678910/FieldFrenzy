@@ -11,8 +11,9 @@
       padding: 0;
       height: 100%;
       display: flex;
+      flex-direction: column;   /* stack scoreboard on top of canvas */
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       background-color: #000; /* optional: add contrast around the field */
     }
     body {
@@ -22,10 +23,23 @@
       display: block;
     }
   </style>
+  <!-- External stylesheet for the draggable player card -->
+  <link rel="stylesheet" href="../css/playerCard2.css">
 </head>
 <body>
+  <!-- Scoreboard -->
+  <div id="scoreboard">
+    <div class="team">
+      <div id="homeName"  class="team-name"></div>
+      <div id="homeScore" class="team-score"></div>
+    </div>
+    <div class="team">
+      <div id="guestName"  class="team-name"></div>
+      <div id="guestScore" class="team-score"></div>
+    </div>
+  </div>
   <!-- Canvas element for the soccer field -->
-  <canvas id="soccerField" width="800" height="500"></canvas>
+  <canvas id="soccerField" width="800" height="360"></canvas>
   <div id="coordDisplay" style="position: absolute; top: 10px; right: 10px; color: #fff; font-size: 16px;"></div>
   <div id="optionDisplay"></div>
   <!-- Import and initialize the Canvas class -->

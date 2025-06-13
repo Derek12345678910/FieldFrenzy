@@ -39,7 +39,11 @@ export class Canvas {
   }
 
   public resizeCanvas(): void {
-    const { innerWidth, innerHeight } = window;
+    const { innerWidth } = window;
+    // Subtract scoreboard height (if present) so canvas fits without scrolling
+    const scoreboard = document.getElementById('scoreboard');
+    const scoreboardH = scoreboard ? scoreboard.getBoundingClientRect().height : 0;
+    const innerHeight = window.innerHeight - scoreboardH;
     const ratio = this.aspectRatio;
 
     // Determine the maximum dimensions that fit the window while preserving aspect ratio
