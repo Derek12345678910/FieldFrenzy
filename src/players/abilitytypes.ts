@@ -59,3 +59,23 @@ export class Passing extends Ability {
         
     }
 }
+
+/**
+ * An ability that is related to functonality
+ */
+export class Functionality extends Ability {
+
+    /**
+     * Creates an ability
+     * @param name name of the ability
+     * @param discription description of the ability
+     * @param passive whether or not the ability is a passive
+     */
+    protected constructor(name : string, discription : string, passive : boolean){
+        super(name, discription, passive);
+    }
+
+    public override ability(): void {
+        
+    }
+}
