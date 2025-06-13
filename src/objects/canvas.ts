@@ -149,7 +149,7 @@ export class Canvas {
    * @param radius  Radius of the circle in pixels (default = 10).
    * @param lineLen Length of the direction line (default = 20).
    */
-  public drawPlayers(team : Team, color: string, radius: number, lineLen: number): void {
+  public drawPlayers(team : Team, color: string, radius: number = 10, lineLen: number = 20): void {
     let playersList : List<Player> = team.allPlayers;
     console.log(team.allPlayers);
     for (let i = 0; i < playersList.size(); i++) {
@@ -166,9 +166,7 @@ export class Canvas {
       let sz: Pair<number> = player.size;
       r = (sz.x + sz.y) / 2;
 
-      let img : HTMLImageElement = player.image as HTMLImageElement
-      this.ctx.fillStyle = color;
-      this.ctx.fillRect(x - r, y - r, r * 2, r * 2);
+      const img : HTMLImageElement = player.image as HTMLImageElement
       // Draw image centered at (x, y) with size based on r
       this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
 
