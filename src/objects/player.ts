@@ -145,7 +145,11 @@ export class Player extends MovingObject {
     console.log("mouseY >= this._position.position.y:", mouseY >= this._position.position.y);
     console.log("mouseY <= this._position.position.y + this._size.y:", mouseY <= this._position.position.y + this._size.y);
     */
-        return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
+        let left: number = this._position.position.x - (this.size.x)
+        let right: number = this._position.position.x + (this.size.x)
+        let top: number = this._position.position.y - (this.size.y)
+        let bottom: number = this._position.position.y + (this.size.y);
+        return (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom);
     }
 
     public displayOptions(battle : Battle): void{
@@ -162,4 +166,24 @@ export class Player extends MovingObject {
             Player.container.appendChild(button);
         }
     }
+
+    /**
+     * Checks if the ball is within the player's hitbox
+     */
+    public touchingBall(): boolean{
+        let hitboxRight: number = this.position.position.x+(this.hitbox.x/2);
+        let hitboxLeft: number = this.position.position.x-(this.hitbox.x/2);
+        let hitboxTop: number = this.position.position.y+(this.hitbox.y/2);
+        let hitboxBottom: number = this.position.position.y-(this.hitbox.y/2);
+        let ballPositionX: number = this.ball.position.position.x;
+        let ballPositionY: number = this.ball.position.position.y;
+        let ballRadius: number = (this.ball.hitbox.x/2);
+        if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 }
