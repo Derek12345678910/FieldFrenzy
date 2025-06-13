@@ -147,10 +147,10 @@ export class Cristiano extends Attacker{
     }
 }
 
-export class DeBruyne extends Attacker{
+export class Buffon extends Attacker{
     public constructor(){
         super(
-            "Kevin De Bruyne",
+            "Gigi Buffon",
             new Pair(5, 5),
             new Pair(20, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
@@ -161,10 +161,10 @@ export class DeBruyne extends Attacker{
     }
 }
 
-export class DeBruyne extends Attacker{
+export class Deerek extends Attacker{
     public constructor(){
         super(
-            "Kevin De Bruyne",
+            "Derek Lau",
             new Pair(5, 5),
             new Pair(20, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
@@ -175,10 +175,10 @@ export class DeBruyne extends Attacker{
     }
 }
 
-export class DeBruyne extends Attacker{
+export class Hsiung extends Attacker{
     public constructor(){
         super(
-            "Kevin De Bruyne",
+            "Jeremy Hsiung",
             new Pair(5, 5),
             new Pair(20, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
@@ -189,10 +189,10 @@ export class DeBruyne extends Attacker{
     }
 }
 
-export class DeBruyne extends Attacker{
+export class Maldini extends Attacker{
     public constructor(){
         super(
-            "Kevin De Bruyne",
+            "Paolo Maldini",
             new Pair(5, 5),
             new Pair(20, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
@@ -203,10 +203,10 @@ export class DeBruyne extends Attacker{
     }
 }
 
-export class DeBruyne extends Attacker{
+export class Iniesta extends Attacker{
     public constructor(){
         super(
-            "Kevin De Bruyne",
+            "Andres Iniesta",
             new Pair(5, 5),
             new Pair(20, 20),
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
