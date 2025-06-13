@@ -86,7 +86,7 @@ export class Battle {
                     this.selectedCharacter.object.stage++;
                     this.selectedCharacter = null;
                     this._actionPhase = 0;
-                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10, 20)
+                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
                 }
             }
         });

@@ -71,12 +71,12 @@ for (let i = 0; i < team2.allPlayers.size(); i++) {
 // Draw both teams: red for team1's list, black for team2's list (both come from 'team')
 console.log(team1);
 console.log(team2)
-canvas.drawPlayers(team1, user1.colour, 10, 20);
-canvas.drawPlayers(team2, user2.colour, 10, 20);
+canvas.drawPlayers(team1, user1.colour, 10);
+canvas.drawPlayers(team2, user2.colour, 10);
 
 // Re-draw on window resize
 window.addEventListener("resize", () => {
   canvas.resizeCanvas();
-  canvas.drawPlayers(team1, user1.colour, 10, 20);
-  canvas.drawPlayers(team2, user2.colour, 10, 20);
+  canvas.drawPlayers(team1, user1.colour, 10);
+  canvas.drawPlayers(team2, user2.colour, 10);
 });

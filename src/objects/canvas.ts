@@ -149,7 +149,7 @@ export class Canvas {
    * @param radius  Radius of the circle in pixels (default = 10).
    * @param lineLen Length of the direction line (default = 20).
    */
-  public drawPlayers(team : Team, color: string, radius: number, lineLen: number): void {
+  public drawPlayers(team : Team, color: string, radius: number): void {
     let playersList : List<Player> = team.allPlayers;
     for (let i = 0; i < playersList.size(); i++) {
       let player = playersList.get(i) as Player;
@@ -168,27 +168,20 @@ export class Canvas {
     let img: HTMLImageElement = player.image as HTMLImageElement;
 
     // === Draw circular image ===
-    this.ctx.save(); // Save current canvas state
 
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
-    this.ctx.closePath();
-    this.ctx.clip();
+    this.drawPlayer(x, y, img, r, color);
 
-    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
-
-    this.ctx.restore(); // Restore to remove clipping
-
-    // === Draw circular border ===
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
-    this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = 2;
-    this.ctx.stroke();
+    // draw the mirage
+    if(player.mirage !== null){
+      let miragePos : Pair<number> = player.mirage.position.position;
+      let mx : number = miragePos.x;
+      let my : number = miragePos.y;
+      this.drawPlayer(mx, my, img, r, color);
+    }
 
     // === Draw direction line ===
-    const ex = x + dx * lineLen;
-    const ey = y + dy * lineLen;
+    const ex = x + dx
+    const ey = y + dy
     this.ctx.strokeStyle = "#FFFFFF";
     this.ctx.lineWidth = 2;
     this.ctx.beginPath();
@@ -196,6 +189,7 @@ export class Canvas {
     this.ctx.lineTo(ex, ey);
     this.ctx.stroke();
 
+    /*
     // === Draw arrowhead ===
     const ahLen = 6;
     const ahWidth = 4;
@@ -215,6 +209,30 @@ export class Canvas {
     this.ctx.lineTo(rightX, rightY);
     this.ctx.closePath();
     this.ctx.fill();
-}
-}
+    */
+    } 
+  }
+
+  private drawPlayer(x : number, y : number, img : HTMLImageElement, r : number, color : string) : void{
+
+    this.ctx.save(); // Save current canvas state
+
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.closePath();
+    this.ctx.clip();
+
+    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+
+    // === Draw circular border ===
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+
+    this.ctx.restore(); // Restore to remove clipping
+
+  }
+
 }

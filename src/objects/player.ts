@@ -161,7 +161,7 @@ export class Player extends MovingObject {
             button.className = "option-button";
             button.addEventListener("click", ()=>{
                 console.log(`Action: ${options[i]}`)
-                battle.actionPhase++;
+                battle.actionPhase = 2;
             });
             Player.container.appendChild(button);
         }
