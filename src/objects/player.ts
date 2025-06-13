@@ -22,6 +22,17 @@ export class Player extends MovingObject {
     /** Keeps track of every Player created */
     static instances: Player[] = [];
 
+    // ---------- Info Card DOM references ----------
+    private static card       = document.getElementById('playerCard')  as HTMLElement;
+    private static elName     = document.getElementById('pcName')      as HTMLElement;
+    private static elImage    = document.getElementById('pcImage')     as HTMLImageElement;
+    private static elPower    = document.getElementById('pcPower')     as HTMLElement;
+    private static elSpeed    = document.getElementById('pcSpeed')     as HTMLElement;
+    private static elSize     = document.getElementById('pcSize')      as HTMLElement;
+    private static elHitbox   = document.getElementById('pcHitbox')    as HTMLElement;
+    private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
+    private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
+
     protected _object : MovingObject = this;
 
     protected _name : string;
@@ -147,7 +158,7 @@ export class Player extends MovingObject {
         return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + this._size.x && mouseY >= this._position.position.y && mouseY <= this._position.position.y + this._size.y);
     }
 
-    public displayOptions(): void{ //----
+    public displayOptions(): void{ 
 
         Player.container.innerHTML = ''
         let options: string[] = ["Shoot", "Move", "Ability"];
@@ -161,83 +172,76 @@ export class Player extends MovingObject {
             Player.container.appendChild(button);
         }
     }
-}
-// ---------- Player Info Card Logic (moved from main.ts) ----------
-const card      = document.getElementById('playerCard')  as HTMLElement;
-const elName    = document.getElementById('pcName')      as HTMLElement;
-const elImage   = document.getElementById('pcImage')     as HTMLImageElement;
-const elPower   = document.getElementById('pcPower')     as HTMLElement;
-const elSpeed   = document.getElementById('pcSpeed')     as HTMLElement;
-const elSize    = document.getElementById('pcSize')      as HTMLElement;
-const elHitbox  = document.getElementById('pcHitbox')    as HTMLElement;
-const elAbilityName  = document.getElementById('pcAbilityName')  as HTMLElement;
-const elAbilityDesc  = document.getElementById('pcAbilityDesc')  as HTMLElement;
 
-function showPlayerInfo(p: Player) {
-  elName.textContent  = p.name;
-  elImage.src         = p.image.src;
-  elPower.textContent = String(p.power);
-  elSpeed.textContent = String(p.speed);
-  elSize.textContent  = `${p.size.x} × ${p.size.y}`;
-  elHitbox.textContent = `${(p as any)._hitbox?.x ?? ''} × ${(p as any)._hitbox?.y ?? ''}`;
-  elAbilityName.textContent = (p as any)._ability?.name ?? '';
-  elAbilityDesc.textContent = (p as any)._ability?.description ?? '';
-  card.style.display  = 'block';
-}
-function hidePlayerInfo() {
-  card.style.display = 'none';
-}
-
-// Attach click detection once DOM is ready
-window.addEventListener('DOMContentLoaded', () => {
-  const canvasEl = document.getElementById('soccerField') as HTMLCanvasElement;
-  if (!canvasEl) return;
-
-  canvasEl.addEventListener('click', (e: MouseEvent) => {
-    const rect = canvasEl.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    for (const p of Player.instances) {
-      if (p.isClicked(mouseX, mouseY)) {
-        showPlayerInfo(p);
-        return;
-      }
+    /** Fills and shows the player info card */
+    private static showInfo(p: Player): void {
+        Player.elName.textContent  = p.name;
+        Player.elImage.src         = p.image.src;
+        Player.elPower.textContent = String(p.power);
+        Player.elSpeed.textContent = String(p.speed);
+        Player.elSize.textContent  = `${p.size.x} × ${p.size.y}`;
+        Player.elHitbox.textContent = `${(p as any)._hitbox?.x ?? ''} × ${(p as any)._hitbox?.y ?? ''}`;
+        Player.elAbilityName.textContent = (p as any)._ability?.name ?? '';
+        Player.elAbilityDesc.textContent = (p as any)._ability?.description ?? '';
+        Player.card.style.display  = 'block';
     }
-    hidePlayerInfo();
-  });
 
-  // --- Draggable playerCard ---
-  let drag = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  // On mousedown inside the card, start dragging
-  card.addEventListener('mousedown', (e: MouseEvent) => {
-    drag = true;
-    card.classList.add('dragging');
-    // ensure card has absolute left/top instead of right
-    if (card.style.right) {
-      card.style.left = `${card.offsetLeft}px`;
-      card.style.right = '';
+    private static hideInfo(): void {
+        Player.card.style.display = 'none';
     }
-    offsetX = e.clientX - card.offsetLeft;
-    offsetY = e.clientY - card.offsetTop;
-    e.preventDefault(); // prevent text selection
-  });
 
-  // Move with mouse
-  window.addEventListener('mousemove', (e: MouseEvent) => {
-    if (!drag) return;
-    card.style.left = `${e.clientX - offsetX}px`;
-    card.style.top  = `${e.clientY - offsetY}px`;
-  });
+    /** Attach a single click listener to the canvas (called once) */
+    public static initClickListener(): void {
+        window.addEventListener('DOMContentLoaded', () => {
+            const canvasEl = document.getElementById('soccerField') as HTMLCanvasElement;
+            if (!canvasEl) return;
 
-  // Stop dragging on mouseup
-  window.addEventListener('mouseup', () => {
-    if (drag) {
-      drag = false;
-      card.classList.remove('dragging');
+            // ---- Draggable behaviour moved unchanged ----
+            let drag = false;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            Player.card.addEventListener('mousedown', (e: MouseEvent) => {
+              drag = true;
+              Player.card.classList.add('dragging');
+              if (Player.card.style.right) {  // convert to left/top on first drag
+                Player.card.style.left = `${Player.card.offsetLeft}px`;
+                Player.card.style.right = '';
+              }
+              offsetX = e.clientX - Player.card.offsetLeft;
+              offsetY = e.clientY - Player.card.offsetTop;
+              e.preventDefault();
+            });
+            window.addEventListener('mousemove', (e: MouseEvent) => {
+              if (!drag) return;
+              Player.card.style.left = `${e.clientX - offsetX}px`;
+              Player.card.style.top  = `${e.clientY - offsetY}px`;
+            });
+            window.addEventListener('mouseup', () => {
+              if (drag) {
+                drag = false;
+                Player.card.classList.remove('dragging');
+              }
+            });
+
+            // ---- Canvas click detection ----
+            canvasEl.addEventListener('click', (e: MouseEvent) => {
+              const rect = canvasEl.getBoundingClientRect();
+              const mouseX = e.clientX - rect.left;
+              const mouseY = e.clientY - rect.top;
+
+              for (const p of Player.instances) {
+                if (p.isClicked(mouseX, mouseY)) {
+                  // Show card and display action buttons
+                  Player.showInfo(p);
+                  p.displayOptions();
+                  return;
+                }
+              }
+              Player.hideInfo();
+            });
+        });
     }
-  });
-});
+}
+// Initialise click listener once the script loads
+Player.initClickListener();
