@@ -69,11 +69,13 @@ export class Battle {
                         console.log(i);
                         this.selectedCharacter.displayOptions(this);
                     }
+                    // check click on mirage
                     else if(player.mirage?.isClicked(mouseX, mouseY)){
                         this._actionPhase++;
-                        this.selectedCharacter
-                        if(this.selectedCharacter?.object instanceof Player){
-                            this.selectedCharacter.object.displayOptions(this);
+                        console.log(player.mirage);
+                        if(player?.object instanceof Player){
+                            this.selectedCharacter = player;
+                            this.selectedCharacter.displayOptions(this);
                         }
                     }
                 }
@@ -81,8 +83,9 @@ export class Battle {
             // click the new coord
             else if(this._actionPhase === 2){
                 if(this.selectedCharacter){
-                    // make it so that there is an arrow drawn from the player to the spot
-                    this.selectedCharacter.object.allPaths.push(this.selectedCharacter.object.calculatePath(mouseX, mouseY));
+                    console.log(this.selectedCharacter)
+                    // collect the path taken
+                    this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                     this.selectedCharacter.object.stage++;
                     this.selectedCharacter = null;
                     this._actionPhase = 0;

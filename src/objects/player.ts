@@ -30,11 +30,6 @@ export class Player extends MovingObject {
     protected _ball : Ball; 
 
     /**
-     * (Startpoint, direction)
-     */
-    protected _path : Vector | null;
-
-    /**
      * Final point
      */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
@@ -48,11 +43,12 @@ export class Player extends MovingObject {
         this._ability = ability;
     }
 
-    public calculatePath(x : number, y : number): Vector {
+    public calculatePath(x : number, y : number) : void {
+
         let directionPath : Pair<number> = new Pair<number>(x - this._position.position.x, y - this._position.position.y);
         
         // set path to this
-        this._path = new Vector(this._position.position, directionPath);
+        let newPath : Vector = new Vector(this._position.position, directionPath);
         this._position.direction = directionPath; // make the player face the direction its heading
 
         // find max point
@@ -84,14 +80,20 @@ export class Player extends MovingObject {
         this._mirage = new Mirage(this, endPoint)
 
         // set path to starting point
-        this._path.position = this._position.position;
+        newPath.position = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage) as Pair<number>; 
+        console.log(this._destinations.get(this._curPath + this._stage))
+        console.log(newPath)
 
-        return this._path;
+        // push into paths
+        this._paths.push(newPath);
+        this._destinations.push(lastPoint);
+
     }
 
     public getPointOnPath(scalerMutiple : number) : Pair<number> | null{
-        if(this._path !== null){
-            let coord : Pair<number> = new Pair<number>(this._position.position.x + this._path.direction.x * scalerMutiple, this._position.position.y + this._path.direction.y * scalerMutiple);
+        let path : Vector = this._paths.get(this._curPath) as Vector;
+        if(this._paths.get(this._curPath) !== null){
+            let coord : Pair<number> = new Pair<number>(this._position.position.x + path.direction.x * scalerMutiple, this._position.position.y + path.direction.y * scalerMutiple);
             this._position.position = coord;
             return coord;
         }

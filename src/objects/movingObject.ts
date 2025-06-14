@@ -16,7 +16,7 @@ export abstract class MovingObject {
  
     protected _image : HTMLImageElement;
 
-    protected _path : Vector | null;
+    protected _curPath : number;
 
     protected _mirage : Mirage | null;
 
@@ -24,10 +24,10 @@ export abstract class MovingObject {
     protected _stage : number = 0;
 
     // store all paths that have happened (replay system or something if wanted)
-    protected _allPaths : List<Vector> = new List<Vector>;
-    
-    protected _curPath : number = 0;
+    protected _paths : List<Vector> = new List<Vector>;
 
+    protected _destinations : List<Pair<number>> = new List<Pair<number>>;
+    
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
         this._size = size;
@@ -56,12 +56,8 @@ export abstract class MovingObject {
         return this._image;
     }
 
-    public get path() : Vector | null{
-        return this._path;
-    }
-
-    public set path(path : Vector | null) {
-        this._path = path;
+    public get paths() : List<Vector>{
+        return this._paths;
     }
 
     public get mirage() : Mirage | null{
@@ -71,12 +67,12 @@ export abstract class MovingObject {
         return null
     }
 
-    public get allPaths() : List<Vector>{
-        return this._allPaths;
+    public get curPath() : number{
+        return this._curPath;
     }
 
-    public get curPath() : number {
-        return this._curPath;
+    public get destinations() : List<Pair<number>> {
+        return this._destinations;
     }
 
     public set curPath(cur : number){
@@ -91,6 +87,6 @@ export abstract class MovingObject {
         this._stage = stage;
     }
 
-    abstract calculatePath(x : number, y : number) : Vector
+    abstract calculatePath(x : number, y : number) : void
 
 }
