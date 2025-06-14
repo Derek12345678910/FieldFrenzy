@@ -9,7 +9,26 @@ import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 
 export class Player extends MovingObject {
-    static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
+
+    // name
+    // image
+    // stats --> power, speed, size
+    // choice of move --> ability, move, shoot
+    // ability description
+
+    /** Where the option buttons (Shoot/Move/Ability) will be rendered */
+    static container: HTMLElement = document.getElementById("optionButtons") as HTMLElement;
+
+    private static card = document.getElementById('playerCard') as HTMLElement;
+    private static elName = document.getElementById('pcName') as HTMLElement;
+    private static elImage = document.getElementById('pcImage') as HTMLImageElement;
+    private static elPower = document.getElementById('pcPower') as HTMLElement;
+    private static elSpeed = document.getElementById('pcSpeed') as HTMLElement;
+    private static elSize = document.getElementById('pcSize') as HTMLElement;
+    private static elHitbox = document.getElementById('pcHitbox') as HTMLElement;
+    private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
+    private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
+
     protected _object : MovingObject = this;
 
     protected _name : string;
@@ -38,8 +57,9 @@ export class Player extends MovingObject {
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
-    protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
+    protected constructor(name : string, hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
+        this._name = name;
         this._power = power;
         this._speed = speed;
         this._ability = ability;
@@ -135,7 +155,10 @@ export class Player extends MovingObject {
         return (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom);
     }
 
-    public displayOptions(): void{
+    public displayOptions(): void{ 
+
+        // add x button
+
         Player.container.innerHTML = ''
         let options: string[] = ["Shoot", "Move", "Ability"];
         for(let i=0;i<options.length;i++){
@@ -147,6 +170,44 @@ export class Player extends MovingObject {
             });
             Player.container.appendChild(button);
         }
+
+        let drag = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        Player.card.addEventListener('mousedown', (e: MouseEvent) => {
+            drag = true;
+            Player.card.classList.add('dragging');
+            if (Player.card.style.right) {  // convert to left/top on first drag
+            Player.card.style.left = `${Player.card.offsetLeft}px`;
+            Player.card.style.right = '';
+            }
+            offsetX = e.clientX - Player.card.offsetLeft;
+            offsetY = e.clientY - Player.card.offsetTop;
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!drag) return;
+            Player.card.style.left = `${e.clientX - offsetX}px`;
+            Player.card.style.top  = `${e.clientY - offsetY}px`;
+        });
+        window.addEventListener('mouseup', () => {
+            if (drag) {
+            drag = false;
+            Player.card.classList.remove('dragging');
+            }
+        });
+
+        Player.elName.textContent = this.name;
+        Player.elImage.src = this.image.src;
+        Player.elPower.textContent = String(this.power);
+        Player.elSpeed.textContent = String(this.speed);
+        Player.elSize.textContent = `${this.size.x} × ${this.size.y}`;
+        Player.elHitbox.textContent = `${this._hitbox?.x ?? ''} × ${this._hitbox?.y ?? ''}`;
+        Player.elAbilityName.textContent = this._ability?.name ?? '';
+        Player.elAbilityDesc.textContent = this._ability?.description ?? '';
+        Player.card.style.display = 'block';
+
     }
 
     /**
@@ -167,5 +228,6 @@ export class Player extends MovingObject {
             return false;
         }
     }
-
 }
+
+//Player.card.style.display = 'none';
