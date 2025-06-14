@@ -19,17 +19,13 @@ export class Player extends MovingObject {
     /** Where the option buttons (Shoot/Move/Ability) will be rendered */
     static container: HTMLElement = document.getElementById("optionButtons") as HTMLElement;
 
-    /** Keeps track of every Player created */
-    static instances: Player[] = [];
-
-    // ---------- Info Card DOM references ----------
-    private static card       = document.getElementById('playerCard')  as HTMLElement;
-    private static elName     = document.getElementById('pcName')      as HTMLElement;
-    private static elImage    = document.getElementById('pcImage')     as HTMLImageElement;
-    private static elPower    = document.getElementById('pcPower')     as HTMLElement;
-    private static elSpeed    = document.getElementById('pcSpeed')     as HTMLElement;
-    private static elSize     = document.getElementById('pcSize')      as HTMLElement;
-    private static elHitbox   = document.getElementById('pcHitbox')    as HTMLElement;
+    private static card = document.getElementById('playerCard') as HTMLElement;
+    private static elName = document.getElementById('pcName') as HTMLElement;
+    private static elImage = document.getElementById('pcImage') as HTMLImageElement;
+    private static elPower = document.getElementById('pcPower') as HTMLElement;
+    private static elSpeed = document.getElementById('pcSpeed') as HTMLElement;
+    private static elSize = document.getElementById('pcSize') as HTMLElement;
+    private static elHitbox = document.getElementById('pcHitbox') as HTMLElement;
     private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
     private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
 
@@ -67,9 +63,6 @@ export class Player extends MovingObject {
         this._power = power;
         this._speed = speed;
         this._ability = ability;
-
-        // Register this player globally for click detection
-        Player.instances.push(this);
     }
 
     public calculatePath(x : number, y : number): Vector {
@@ -164,6 +157,8 @@ export class Player extends MovingObject {
 
     public displayOptions(): void{ 
 
+        // add x button
+
         Player.container.innerHTML = ''
         let options: string[] = ["Shoot", "Move", "Ability"];
         for(let i=0;i<options.length;i++){
@@ -175,6 +170,44 @@ export class Player extends MovingObject {
             });
             Player.container.appendChild(button);
         }
+
+        let drag = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        Player.card.addEventListener('mousedown', (e: MouseEvent) => {
+            drag = true;
+            Player.card.classList.add('dragging');
+            if (Player.card.style.right) {  // convert to left/top on first drag
+            Player.card.style.left = `${Player.card.offsetLeft}px`;
+            Player.card.style.right = '';
+            }
+            offsetX = e.clientX - Player.card.offsetLeft;
+            offsetY = e.clientY - Player.card.offsetTop;
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!drag) return;
+            Player.card.style.left = `${e.clientX - offsetX}px`;
+            Player.card.style.top  = `${e.clientY - offsetY}px`;
+        });
+        window.addEventListener('mouseup', () => {
+            if (drag) {
+            drag = false;
+            Player.card.classList.remove('dragging');
+            }
+        });
+
+        Player.elName.textContent = this.name;
+        Player.elImage.src = this.image.src;
+        Player.elPower.textContent = String(this.power);
+        Player.elSpeed.textContent = String(this.speed);
+        Player.elSize.textContent = `${this.size.x} × ${this.size.y}`;
+        Player.elHitbox.textContent = `${this._hitbox?.x ?? ''} × ${this._hitbox?.y ?? ''}`;
+        Player.elAbilityName.textContent = this._ability?.name ?? '';
+        Player.elAbilityDesc.textContent = this._ability?.description ?? '';
+        Player.card.style.display = 'block';
+
     }
 
     /**
@@ -195,77 +228,6 @@ export class Player extends MovingObject {
             return false;
         }
     }
-
-
-    /** Fills and shows the player info card */
-    private static showInfo(p: Player): void {
-        Player.elName.textContent  = p.name;
-        Player.elImage.src         = p.image.src;
-        Player.elPower.textContent = String(p.power);
-        Player.elSpeed.textContent = String(p.speed);
-        Player.elSize.textContent  = `${p.size.x} × ${p.size.y}`;
-        Player.elHitbox.textContent = `${(p as any)._hitbox?.x ?? ''} × ${(p as any)._hitbox?.y ?? ''}`;
-        Player.elAbilityName.textContent = (p as any)._ability?.name ?? '';
-        Player.elAbilityDesc.textContent = (p as any)._ability?.description ?? '';
-        Player.card.style.display  = 'block';
-    }
-
-    private static hideInfo(): void {
-        Player.card.style.display = 'none';
-    }
-
-    /** Attach a single click listener to the canvas (called once) */
-    public static initClickListener(): void {
-        window.addEventListener('DOMContentLoaded', () => {
-            const canvasEl = document.getElementById('soccerField') as HTMLCanvasElement;
-            if (!canvasEl) return;
-
-            // ---- Draggable behaviour moved unchanged ----
-            let drag = false;
-            let offsetX = 0;
-            let offsetY = 0;
-
-            Player.card.addEventListener('mousedown', (e: MouseEvent) => {
-              drag = true;
-              Player.card.classList.add('dragging');
-              if (Player.card.style.right) {  // convert to left/top on first drag
-                Player.card.style.left = `${Player.card.offsetLeft}px`;
-                Player.card.style.right = '';
-              }
-              offsetX = e.clientX - Player.card.offsetLeft;
-              offsetY = e.clientY - Player.card.offsetTop;
-              e.preventDefault();
-            });
-            window.addEventListener('mousemove', (e: MouseEvent) => {
-              if (!drag) return;
-              Player.card.style.left = `${e.clientX - offsetX}px`;
-              Player.card.style.top  = `${e.clientY - offsetY}px`;
-            });
-            window.addEventListener('mouseup', () => {
-              if (drag) {
-                drag = false;
-                Player.card.classList.remove('dragging');
-              }
-            });
-
-            // ---- Canvas click detection ----
-            canvasEl.addEventListener('click', (e: MouseEvent) => {
-              const rect = canvasEl.getBoundingClientRect();
-              const mouseX = e.clientX - rect.left;
-              const mouseY = e.clientY - rect.top;
-
-              for (const p of Player.instances) {
-                if (p.isClicked(mouseX, mouseY)) {
-                  // Show card and display action buttons
-                  Player.showInfo(p);
-                  p.displayOptions();
-                  return;
-                }
-              }
-              Player.hideInfo();
-            });
-        });
-    }
 }
-// Initialise click listener once the script loads
-Player.initClickListener();
+
+//Player.card.style.display = 'none';
