@@ -62,20 +62,23 @@ export class Battle {
             if(this._actionPhase === 0){
                 for(let i=0; i<teamToCheck.player.size(); i++){
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
-                    // if clicked it means the user wants to edit him
-                    if(player.isClicked(mouseX, mouseY)){
-                        this._actionPhase++;
-                        this.selectedCharacter = player;
-                        console.log(i);
-                        this.selectedCharacter.displayOptions(this);
-                    }
-                    // check click on mirage
-                    else if(player.mirage?.isClicked(mouseX, mouseY)){
-                        this._actionPhase++;
-                        console.log(player.mirage);
-                        if(player?.object instanceof Player){
+                    // check if player is allowed to move
+                    if(player.canAct()){
+                        // if clicked it means the user wants to edit him
+                        if(player.isClicked(mouseX, mouseY)){
+                            this._actionPhase++;
                             this.selectedCharacter = player;
+                            console.log(i);
                             this.selectedCharacter.displayOptions(this);
+                        }
+                        // check click on mirage
+                        else if(player.mirage?.isClicked(mouseX, mouseY)){
+                            this._actionPhase++;
+                            console.log(player.mirage);
+                            if(player?.object instanceof Player){
+                                this.selectedCharacter = player;
+                                this.selectedCharacter.displayOptions(this);
+                            }
                         }
                     }
                 }

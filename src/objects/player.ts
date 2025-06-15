@@ -24,18 +24,16 @@ export class Player extends MovingObject {
 
     protected _ability : Ability;
 
-    // holds the move the player is about to do
     protected _move : string;
 
-    // pointer to ball
     protected _ball : Ball; 
 
-    /**
-     * Final point
-     */
+    /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
     private MOVELIMIT : number = 20; // 20 units move limit
+
+    protected canMove : boolean = true;
 
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
@@ -186,6 +184,19 @@ export class Player extends MovingObject {
         else{
             return false;
         }
+    }
+
+    public canAct() : boolean{
+
+        if(this._stage === 2){
+            return false;
+        }
+
+        if(!this.canMove){
+            return false;
+        }
+
+        return true;
     }
 
 }
