@@ -11,7 +11,7 @@
         <h1 id="selection-title">Team Selection</h1>
         <div class="users">
             <div class="user1">
-                <h3>User 1</h3>
+                <h2>User 1</h2>
                 <label for="user1-name">Name:</label>
                 <input type="text" id="user1-name" placeholder="Enter your name:" >
                 <label for="1goalkeeper">Goalkeeper:</label>
@@ -72,7 +72,7 @@
                 </select>                   
             </div>
             <div class="user2">
-                <h3>User 2</h3>
+                <h2>User 2</h2>
                 <label for="user2-name">Name:</label>
                 <input type="text" id="user2-name" placeholder="Enter your name:" >   
                 <label for="2goalkeeper">Goalkeeper:</label>
@@ -133,7 +133,23 @@
                 </select>                   
             </div>
         </div>
-        <button type="button">Start Game</button>
+        <button type="button" id="game-start-button">Start Game</button>
+    </div>
+    <div id="player-display">
+        <label for="filter-type">Filter by:</label>
+        <select id="filter-type">
+            <option value="">Select</option>
+            <option value="alpha-ascending">Alpha (A-Z)</option>
+            <option value="alpha-descending">Alpha (Z-A)</option>
+            <option value="pace">Highest Pace</option>
+            <option value="shot">Highest Shot</option>
+            <option value="goalkeeper">Goalkeeper</option>
+            <option value="defender">Defender</option>
+            <option value="midfielder">Midfielder</option>
+            <option value="attacker">Attacker</option>
+        </select>
+        <button type="button" id="filter-button">Filter</button>
+        <p id="players"></p>
     </div>
     <div class="startpage">
         <h1 id="title">Field Frenzy</h1>
