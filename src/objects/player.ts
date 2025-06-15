@@ -8,6 +8,7 @@ import { List } from "../datastructures/list.js";
 import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 import { Battle } from "./battle.js";
+import { dir } from "console";
 
 export class Player extends MovingObject {
     
@@ -45,17 +46,24 @@ export class Player extends MovingObject {
 
     public calculatePath(x : number, y : number) : void {
 
-        let directionPath : Pair<number> = new Pair<number>(x - this._position.position.x, y - this._position.position.y);
-        
+        let lastPoint : Pair<number> = new Pair<number>(x, y);
+
+        this._destinations.push(lastPoint);
+
+        // take from the new start
+        let newStart : Pair<number> = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage - 1) as Pair<number>;
+
+        let directionPath : Pair<number> = new Pair<number>(x - newStart.x, y - newStart.y);
+
         // set path to this
-        let newPath : Vector = new Vector(this._position.position, directionPath);
-        this._position.direction = directionPath; // make the player face the direction its heading
+        let newPath : Vector = new Vector(newStart, directionPath);
 
         // find max point
         // we have the max magnitude so we just need the T value of where the point is
         // so solve for T
-        let sx :  number = this._position.position.x; let sy : number = this._position.position.y;
-        let dx : number = directionPath.x; let dy : number = directionPath.y;
+        /*
+        let sx :  number = newStart.x; let sy : number = newStart.y;
+        let dx : number = newPath.direction.x; let dy : number = newPath.direction.y;
 
         const A = dx * dx + dy * dy;
         const B = 2 * (sx * dx + sy * dy);
@@ -70,23 +78,15 @@ export class Player extends MovingObject {
         //let t1 : number = (-(sx * dx + sy * dy) + (Math.sqrt((sx * dx + sy * dy)**2 - 4*(dx*dx + dy*dy) * (sx*sx + sy*sy - this.MOVELIMIT)))) / 2*(dx*dx + dy*dy);
         console.log(t1)
         //let lastPoint : Pair<number> = new Pair<number>(this._position.position.x + t1*dx, this._position.position.y + t1*dy);
-
-        let lastPoint : Pair<number> = new Pair<number>(x, y);
-
+        */
         this.maxPathPoint = lastPoint;
 
         let endPoint : Vector = new Vector(lastPoint, directionPath);
         
         this._mirage = new Mirage(this, endPoint)
 
-        // set path to starting point
-        newPath.position = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage) as Pair<number>; 
-        console.log(this._destinations.get(this._curPath + this._stage))
-        console.log(newPath)
-
         // push into paths
         this._paths.push(newPath);
-        this._destinations.push(lastPoint);
 
     }
 

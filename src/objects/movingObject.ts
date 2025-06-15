@@ -16,7 +16,7 @@ export abstract class MovingObject {
  
     protected _image : HTMLImageElement;
 
-    protected _curPath : number;
+    protected _curPath : number = 0;
 
     protected _mirage : Mirage | null;
 
@@ -26,7 +26,7 @@ export abstract class MovingObject {
     // store all paths that have happened (replay system or something if wanted)
     protected _paths : List<Vector> = new List<Vector>;
 
-    protected _destinations : List<Pair<number>> = new List<Pair<number>>;
+    protected _destinations : List<Pair<number>> = new List<Pair<number>>();
     
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
