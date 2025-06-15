@@ -1,0 +1,31 @@
+/* -------- Scoreboard styles -------- */
+#scoreboard{
+  margin-top: 12px;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg,#0d1a07 0%, #17330d 100%);
+  color: #e0ffe0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  display: flex;
+  gap: 80px;
+  padding: 12px 48px;
+  border: 2px solid #44aa44;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  user-select: none;
+}
+#scoreboard .team{
+  text-align: center;
+}
+#scoreboard .team-name{
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-shadow: 0 0 6px rgba(0,255,0,0.6);
+}
+#scoreboard .team-score{
+  font-size: 50px;
+  line-height: 1;
+  font-family: "Digital-7", monospace;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.75);
+}

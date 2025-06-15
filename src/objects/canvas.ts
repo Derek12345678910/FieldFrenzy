@@ -41,7 +41,11 @@ export class Canvas {
   }
 
   public resizeCanvas(): void {
-    const { innerWidth, innerHeight } = window;
+    const { innerWidth } = window;
+    // Subtract scoreboard height (if present) so canvas fits without scrolling
+    const scoreboard = document.getElementById('scoreboard');
+    const scoreboardH = scoreboard ? scoreboard.getBoundingClientRect().height : 0;
+    const innerHeight = window.innerHeight - scoreboardH;
     const ratio = this.aspectRatio;
 
     // Determine the maximum dimensions that fit the window while preserving aspect ratio
@@ -149,7 +153,6 @@ export class Canvas {
    * @param playersList List<Player> to render.
    * @param color   The fill color for the player's circle (e.g. "#FF0000").
    * @param radius  Radius of the circle in pixels (default = 10).
-   * @param lineLen Length of the direction line (default = 20).
    */
   public drawPlayers(team : Team, color: string, radius: number): void {
     let playersList : List<Player> = team.allPlayers;
@@ -168,7 +171,7 @@ export class Canvas {
 
       this.drawCircle(x, y, img, r, color);
 
-      // draw the paths of the character\
+      // draw the paths of the character
       for(let i=0; i<player.stage; i++){
         let destination : Pair<number> = player.destinations.get(i) as Pair<number>;
         
@@ -182,10 +185,8 @@ export class Canvas {
         let start : Pair<number> = path.position;
         let dir : Pair<number> = path.direction;
 
-        let sx : number = start.x;
-        let sy : number = start.y;
-        let dx : number = dir.x;
-        let dy : number = dir.y;
+        let sx : number = start.x; let sy : number = start.y;
+        let dx : number = dir.x; let dy : number = dir.y;
 
         this.drawLine(sx, sy, dx, dy);
 
