@@ -11,8 +11,8 @@ export class Battle {
     private user1 : User;
     private user2 : User;
 
-    private goal1 : number;
-    private goal2 : number;
+    private _goal1 : number = 0;
+    private _goal2 : number = 0;
 
     private STAGETIME : number = 5 // time it takes for a stage to complete
 
@@ -46,6 +46,9 @@ export class Battle {
         this._canvas = new Canvas("soccerField");
         this.user1 = user1;
         this.user2 = user2;
+
+        // sync initial scoreboard (names and 0‑0 score)
+        this.updateScoreboard();
 
         this._canvas.canvas.addEventListener('click', (event) => {
             if(this.isTransitioning || this.currentTurn === "transition") return;
@@ -196,4 +199,31 @@ export class Battle {
         this._actionPhase = num
     }
 
+    /**
+     * Updates the on‑screen scoreboard with the current team names and scores.
+     * Relies on four DOM elements: #homeName, #guestName, #homeScore, #guestScore
+     */
+    private updateScoreboard(): void {
+        const homeNameEl = document.getElementById('homeName');
+        const guestNameEl = document.getElementById('guestName');
+        const homeScoreEl = document.getElementById('homeScore');
+        const guestScoreEl = document.getElementById('guestScore');
+
+        if (homeNameEl) homeNameEl.textContent = this.user1.name;
+        if (guestNameEl) guestNameEl.textContent = this.user2.name;
+        if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
+        if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
+    }
+
+    /** Call this whenever user1 scores */
+    public set goal1(val: number) {
+        this._goal1 = val;
+        this.updateScoreboard();
+    }
+
+    /** Call this whenever user2 scores */
+    public set goal2(val: number) {
+        this._goal2 = val;
+        this.updateScoreboard();
+    }
 }
