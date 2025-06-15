@@ -240,7 +240,6 @@ export class Player extends MovingObject {
         let ballPositionY: number = ballPos.y;
         let ballRadius: number = (this.ball.hitbox.x/2);
         if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
-            console.log("A")
             return true;
         }
         return false;
