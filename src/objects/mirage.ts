@@ -24,9 +24,11 @@ export class Mirage{
     }
 
     public isClicked(mouseX: number, mouseY: number): boolean {
-        let sizeX : number = this._object.size.x;
-        let sizeY : number = this._object.size.y;
-        return (mouseX >= this._position.position.x && mouseX <= this._position.position.x + sizeX && mouseY >= this._position.position.y && mouseY <= this._position.position.y + sizeY);
+        let left: number = this._position.position.x - (this._object.size.x)
+        let right: number = this._position.position.x + (this._object.size.x)
+        let top: number = this._position.position.y - (this._object.size.y)
+        let bottom: number = this._position.position.y + (this._object.size.y);
+        return (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom);
     }
 
 }

@@ -24,7 +24,7 @@ export class Vector {
     }
 
     public set position(newPos : Pair<number>){
-        this._position = this.position;
+        this._position = newPos;
     } 
 
     public get direction() : Pair<number> {

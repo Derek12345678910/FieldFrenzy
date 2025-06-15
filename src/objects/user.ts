@@ -8,8 +8,11 @@ export class User {
 
     private _team : Team;
 
-    public constructor(team : Team){
+    private _colour : string;
+
+    public constructor(team : Team, colour : string){
         this._team = team;
+        this._colour = colour;
     }
 
     public moveCharacter(selectedCharacter : Player, x : number, y : number) : void{ 
@@ -27,6 +30,10 @@ export class User {
 
     public get team() : Team {
         return this._team;
+    }
+
+    public get colour() : string{
+        return this._colour;
     }
 
 }
