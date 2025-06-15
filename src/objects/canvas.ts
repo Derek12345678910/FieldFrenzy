@@ -200,6 +200,38 @@ export class Canvas {
     }
   }
 
+  public drawPlayersReg(team : Team, color: string, radius: number): void {
+    let playersList : List<Player> = team.allPlayers;
+    for (let i = 0; i < playersList.size(); i++) {
+      let player = playersList.get(i) as Player;
+
+      let posPair: Pair<number> = player.position.position;
+      let x: number = posPair.x; let y: number = posPair.y;
+
+      let r = radius;
+      let sz: Pair<number> = player.size;
+      r = (sz.x + sz.y) / 2;
+
+      let img: HTMLImageElement = player.image as HTMLImageElement;
+
+      this.drawCircle(x, y, img, r, color);
+    }
+  }
+
+  public drawBallReg(ball : Ball, color: string, radius: number){
+
+    let posPair: Pair<number> = ball.position.position;
+    let x: number = posPair.x; let y: number = posPair.y;
+
+    let r = radius;
+    let sz: Pair<number> = ball.size;
+    r = (sz.x + sz.y) / 2;
+
+    let img: HTMLImageElement = ball.image as HTMLImageElement;
+
+    this.drawCircle(x, y, img, r, color);
+  }
+
   /**
    * Draws the ball on the field
    * @param ball ball object to draw
@@ -280,5 +312,15 @@ export class Canvas {
   public get width() : number{
     return this._width;
   }
+
+  /**
+   * Clear the canvas of drawing
+   */
+  public clearCanvas(): void {
+    this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    this.drawField();
+}
+
 
 }

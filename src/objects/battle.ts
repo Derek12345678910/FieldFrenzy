@@ -22,6 +22,7 @@ export class Battle {
 
     // stores whose turn it is
     private currentTurn: string = "user1";
+    private userTurn : User;
 
     // timer for each users turn
     private turnTimer : ReturnType<typeof setTimeout> | null = null;
@@ -55,6 +56,8 @@ export class Battle {
         this.user1 = user1;
         this.user2 = user2;
 
+        this.userTurn = user1;
+
         this.ball = new Ball(
             new Pair(15,15),
             new Pair(15,15),
@@ -74,14 +77,12 @@ export class Battle {
         this._canvas.canvas.addEventListener('click', (event) => {
             if(this.isTransitioning || this.currentTurn === "transition") return;
 
-            let userTurn : User = (this.currentTurn === "user1") ? user1 : user2;
             // check if any team is clicked on
-            let teamToCheck : Team = userTurn.team;
+            let teamToCheck : Team = this.userTurn.team;
 
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
             let mouseY : number = event.clientY - rect.top;
-            console.log(this._actionPhase);
             // if a player has not been found yet
             if(this._actionPhase === 0){
                 for(let i=0; i<teamToCheck.allPlayers.size(); i++){
@@ -123,8 +124,10 @@ export class Battle {
                         }
                     }
                     this.checkNewPossession();
-                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
-                    this._canvas.drawBall(this.ball, this.teamPossession.colour, 10);
+                    let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+                    this._canvas.drawPlayers(this.userTurn.team, this.userTurn.colour, 10)
+                    this._canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
+                    if(this.teamPossession === this.userTurn) this._canvas.drawBall(this.ball, this.teamPossession.colour, 10);
                     this.selectedCharacter = null;
                     this._actionPhase = 0;
                 }
@@ -138,13 +141,15 @@ export class Battle {
             this.Canvas.drawBall(this.ball, user2.colour, 10);
             this.teamPossession = user2;
         }
-        this.Canvas.drawPlayers(this.user1.team, user1.colour, 10);
-        this.Canvas.drawPlayers(this.user2.team, user2.colour, 10);
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
+        this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
         
         window.addEventListener("resize", () => {
+            console.log("A")
             this.Canvas.resizeCanvas();
-            this.Canvas.drawPlayers(this.user1.team, user1.colour, 10);
-            this.Canvas.drawPlayers(this.user2.team, user2.colour, 10);
+            this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
+            this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
             this.Canvas.drawBall(this.ball, this.teamPossession.colour, 10);
         });
 
@@ -195,9 +200,8 @@ export class Battle {
      */
     public checkNewPossession() : void{
         if(this.ball.stage !== 2){
-            let curTeam : Team = (this.currentTurn === "user1") ? this.user1.team : this.user2.team;
-            for(let i=0; i<curTeam.allPlayers.size(); i++){
-                let pl : Player = curTeam.allPlayers.get(i) as Player;
+            for(let i=0; i<this.userTurn.team.allPlayers.size(); i++){
+                let pl : Player = this.userTurn.team.allPlayers.get(i) as Player;
                 if(pl.touchingBallStage()){
                     console.log(pl);
                     this.ball.possession = pl;
@@ -238,12 +242,15 @@ export class Battle {
         // if it was just user1's turn, make it user2's turn and start their timer
         if(this.currentTurn === "user1"){
             this.currentTurn = "user2";
+            this.userTurn = this.user2;
             this.startTurnTimer();
+            this.resetField();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
         else if(this.currentTurn === "user2"){
             this.currentTurn = "transition";
             this.isTransitioning = true;
+            this.resetField();
             this.drawMoves();
             // start the next round after 5 seconds
             setTimeout(()=>{
@@ -278,6 +285,7 @@ export class Battle {
      */
     private drawMoves(): void{
         console.log("Round over, drawing moves")
+
     }
 
     public get Canvas() : Canvas{
@@ -290,6 +298,13 @@ export class Battle {
 
     public set actionPhase(num : number){
         this._actionPhase = num
+    }
+
+    private resetField() : void{
+        this.Canvas.clearCanvas();
+        this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
+        this.Canvas.drawPlayersReg(this.user1.team, this.user1.colour, 10);
+        this.Canvas.drawPlayersReg(this.user2.team, this.user2.colour, 10);
     }
 
     /**
