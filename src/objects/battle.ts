@@ -11,8 +11,8 @@ export class Battle {
     private user1 : User;
     private user2 : User;
 
-    private goal1 : number = 0;
-    private goal2 : number = 0;
+    private _goal1 : number = 0;
+    private _goal2 : number = 0;
 
     private STAGETIME : number = 5 // time it takes for a stage to complete
 
@@ -65,18 +65,23 @@ export class Battle {
             if(this._actionPhase === 0){
                 for(let i=0; i<teamToCheck.player.size(); i++){
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
-                    // if clicked it means the user wants to edit him
-                    if(player.isClicked(mouseX, mouseY)){
-                        this._actionPhase++;
-                        this.selectedCharacter = player;
-                        console.log(i);
-                        this.selectedCharacter.displayOptions(this);
-                    }
-                    else if(player.mirage?.isClicked(mouseX, mouseY)){
-                        this._actionPhase++;
-                        this.selectedCharacter
-                        if(this.selectedCharacter?.object instanceof Player){
-                            this.selectedCharacter.object.displayOptions(this);
+                    // check if player is allowed to move
+                    if(player.canAct()){
+                        // if clicked it means the user wants to edit him
+                        if(player.isClicked(mouseX, mouseY)){
+                            this._actionPhase++;
+                            this.selectedCharacter = player;
+                            console.log(i);
+                            this.selectedCharacter.displayOptions(this);
+                        }
+                        // check click on mirage
+                        else if(player.mirage?.isClicked(mouseX, mouseY)){
+                            this._actionPhase++;
+                            console.log(player.mirage);
+                            if(player?.object instanceof Player){
+                                this.selectedCharacter = player;
+                                this.selectedCharacter.displayOptions(this);
+                            }
                         }
                     }
                 }
@@ -84,8 +89,13 @@ export class Battle {
             // click the new coord
             else if(this._actionPhase === 2){
                 if(this.selectedCharacter){
-                    // make it so that there is an arrow drawn from the player to the spot
-                    this.selectedCharacter.object.allPaths.push(this.selectedCharacter.object.calculatePath(mouseX, mouseY));
+                    console.log(this.selectedCharacter)
+                    // hide options
+                    if(this.selectedCharacter.object instanceof Player){
+                        this.selectedCharacter.object.hideOptions();
+                    }
+                    // collect the path taken
+                    this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                     this.selectedCharacter.object.stage++;
                     this.selectedCharacter = null;
                     this._actionPhase = 0;
@@ -206,14 +216,14 @@ export class Battle {
     }
 
     /** Call this whenever user1 scores */
-    public setGoal1(val: number): void {
-        this.goal1 = val;
+    public set goal1(val: number) {
+        this._goal1 = val;
         this.updateScoreboard();
     }
 
     /** Call this whenever user2 scores */
-    public setGoal2(val: number): void {
-        this.goal2 = val;
+    public set goal2(val: number) {
+        this._goal2 = val;
         this.updateScoreboard();
     }
 }

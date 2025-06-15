@@ -23,8 +23,8 @@
       display: block;
     }
   </style>
-  <!-- External stylesheet for the draggable player card -->
-  <link rel="stylesheet" href="../css/playerCard2.css">
+  <link rel="stylesheet" href="../css/playercard.css">
+  <link rel="stylesheet" href="../css/scoreboard.css">
 </head>
 <body>
   <!-- Scoreboard -->
@@ -42,6 +42,19 @@
   <canvas id="soccerField" width="800" height="360"></canvas>
   <div id="coordDisplay" style="position: absolute; top: 10px; right: 10px; color: #fff; font-size: 16px;"></div>
   <div id="optionDisplay"></div>
+  <!-- Player Information Box (hidden by default; CSS will style/position) -->
+  <div id="playerCard" style="display:none">
+    <h3 id="pcName"></h3>
+    <img id="pcImage" src="" alt="Player Image" />
+    <p><strong>Power:</strong> <span id="pcPower"></span></p>
+    <p><strong>Speed:</strong> <span id="pcSpeed"></span></p>
+    <p><strong>Size:</strong> <span id="pcSize"></span></p>
+    <p><strong>Hitbox:</strong> <span id="pcHitbox"></span></p>
+    <p><strong>Ability:</strong> <span id="pcAbilityName"></span></p>
+    <p id="pcAbilityDesc"></p>
+    <!-- Action buttons will be injected here by Player.displayOptions() -->
+    <div id="optionButtons"></div>
+  </div>
   <!-- Import and initialize the Canvas class -->
   <script type="module" src="../dist/main.js"></script>
 </body>

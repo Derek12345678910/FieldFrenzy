@@ -10,8 +10,25 @@ import { Mirage } from "./mirage.js";
 import { Battle } from "./battle.js";
 
 export class Player extends MovingObject {
-    
-    static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
+
+    // name
+    // image
+    // stats --> power, speed, size
+    // choice of move --> ability, move, shoot
+    // ability description
+
+    /** Where the option buttons (Shoot/Move/Ability) will be rendered */
+    static container: HTMLElement = document.getElementById("optionButtons") as HTMLElement;
+
+    private static card = document.getElementById('playerCard') as HTMLElement;
+    private static elName = document.getElementById('pcName') as HTMLElement;
+    private static elImage = document.getElementById('pcImage') as HTMLImageElement;
+    private static elPower = document.getElementById('pcPower') as HTMLElement;
+    private static elSpeed = document.getElementById('pcSpeed') as HTMLElement;
+    private static elSize = document.getElementById('pcSize') as HTMLElement;
+    private static elHitbox = document.getElementById('pcHitbox') as HTMLElement;
+    private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
+    private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
 
     protected _object : MovingObject = this;
 
@@ -23,43 +40,45 @@ export class Player extends MovingObject {
 
     protected _ability : Ability;
 
-    // holds the move the player is about to do
     protected _move : string;
 
-    // pointer to ball
     protected _ball : Ball; 
 
-    /**
-     * (Startpoint, direction)
-     */
-    protected _path : Vector | null;
-
-    /**
-     * Final point
-     */
+    /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
-    protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
+    protected canMove : boolean = true;
+
+    protected constructor(name : string, hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
+        this._name = name;
         this._power = power;
         this._speed = speed;
         this._ability = ability;
     }
 
-    public calculatePath(x : number, y : number): Vector {
-        let directionPath : Pair<number> = new Pair<number>(x - this._position.position.x, y - this._position.position.y);
-        
+    public calculatePath(x : number, y : number) : void {
+
+        let lastPoint : Pair<number> = new Pair<number>(x, y);
+
+        this._destinations.push(lastPoint);
+
+        // take from the new start
+        let newStart : Pair<number> = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage - 1) as Pair<number>;
+
+        let directionPath : Pair<number> = new Pair<number>(x - newStart.x, y - newStart.y);
+
         // set path to this
-        this._path = new Vector(this._position.position, directionPath);
-        this._position.direction = directionPath; // make the player face the direction its heading
+        let newPath : Vector = new Vector(newStart, directionPath);
 
         // find max point
         // we have the max magnitude so we just need the T value of where the point is
         // so solve for T
-        let sx :  number = this._position.position.x; let sy : number = this._position.position.y;
-        let dx : number = directionPath.x; let dy : number = directionPath.y;
+        /*
+        let sx :  number = newStart.x; let sy : number = newStart.y;
+        let dx : number = newPath.direction.x; let dy : number = newPath.direction.y;
 
         const A = dx * dx + dy * dy;
         const B = 2 * (sx * dx + sy * dy);
@@ -74,28 +93,140 @@ export class Player extends MovingObject {
         //let t1 : number = (-(sx * dx + sy * dy) + (Math.sqrt((sx * dx + sy * dy)**2 - 4*(dx*dx + dy*dy) * (sx*sx + sy*sy - this.MOVELIMIT)))) / 2*(dx*dx + dy*dy);
         console.log(t1)
         //let lastPoint : Pair<number> = new Pair<number>(this._position.position.x + t1*dx, this._position.position.y + t1*dy);
-
-        let lastPoint : Pair<number> = new Pair<number>(x, y);
-
+        */
         this.maxPathPoint = lastPoint;
 
         let endPoint : Vector = new Vector(lastPoint, directionPath);
         
         this._mirage = new Mirage(this, endPoint)
 
-        // set path to starting point
-        this._path.position = this._position.position;
+        // push into paths
+        this._paths.push(newPath);
 
-        return this._path;
     }
 
     public getPointOnPath(scalerMutiple : number) : Pair<number> | null{
-        if(this._path !== null){
-            let coord : Pair<number> = new Pair<number>(this._position.position.x + this._path.direction.x * scalerMutiple, this._position.position.y + this._path.direction.y * scalerMutiple);
+        let path : Vector = this._paths.get(this._curPath) as Vector;
+        if(this._paths.get(this._curPath) !== null){
+            let coord : Pair<number> = new Pair<number>(this._position.position.x + path.direction.x * scalerMutiple, this._position.position.y + path.direction.y * scalerMutiple);
             this._position.position = coord;
             return coord;
         }
         return null;
+    }
+
+    public isClicked(mouseX: number, mouseY: number): boolean {
+    /*
+    console.log("mouseX:", mouseX);
+    console.log("mouseY:", mouseY);
+
+    console.log("this._position.position.x:", this._position.position.x);
+    console.log("this._position.position.y:", this._position.position.y);
+    console.log("this._size.x:", this._size.x);
+    console.log("this._size.y:", this._size.y);
+
+    console.log("mouseX >= this._position.position.x:", mouseX >= this._position.position.x);
+    console.log("mouseX <= this._position.position.x + this._size.x:", mouseX <= this._position.position.x + this._size.x);
+    console.log("mouseY >= this._position.position.y:", mouseY >= this._position.position.y);
+    console.log("mouseY <= this._position.position.y + this._size.y:", mouseY <= this._position.position.y + this._size.y);
+    */
+        let left: number = this._position.position.x - (this.size.x)
+        let right: number = this._position.position.x + (this.size.x)
+        let top: number = this._position.position.y - (this.size.y)
+        let bottom: number = this._position.position.y + (this.size.y);
+        return (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom);
+    }
+
+    public displayOptions(battle : Battle): void{
+
+        // add x button
+
+        Player.container.innerHTML = ''
+        let options: string[] = ["Shoot", "Move", "Ability"];
+        for(let i=0;i<options.length;i++){
+            let button = document.createElement("button");
+            button.innerText = options[i];
+            button.className = "option-button";
+            button.addEventListener("click", ()=>{
+                console.log(`Action: ${options[i]}`)
+                battle.actionPhase = 2;
+            });
+            Player.container.appendChild(button);
+        }
+
+        let drag = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        Player.card.addEventListener('mousedown', (e: MouseEvent) => {
+            drag = true;
+            Player.card.classList.add('dragging');
+            if (Player.card.style.right) {  // convert to left/top on first drag
+            Player.card.style.left = `${Player.card.offsetLeft}px`;
+            Player.card.style.right = '';
+            }
+            offsetX = e.clientX - Player.card.offsetLeft;
+            offsetY = e.clientY - Player.card.offsetTop;
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', (e: MouseEvent) => {
+            if (!drag) return;
+            Player.card.style.left = `${e.clientX - offsetX}px`;
+            Player.card.style.top  = `${e.clientY - offsetY}px`;
+        });
+        window.addEventListener('mouseup', () => {
+            if (drag) {
+            drag = false;
+            Player.card.classList.remove('dragging');
+            }
+        });
+
+        Player.elName.textContent = this.name;
+        Player.elImage.src = this.image.src;
+        Player.elPower.textContent = String(this.power);
+        Player.elSpeed.textContent = String(this.speed);
+        Player.elSize.textContent = `${this.size.x} × ${this.size.y}`;
+        Player.elHitbox.textContent = `${this._hitbox?.x ?? ''} × ${this._hitbox?.y ?? ''}`;
+        Player.elAbilityName.textContent = this._ability?.name ?? '';
+        Player.elAbilityDesc.textContent = this._ability?.description ?? '';
+        Player.card.style.display = 'block';
+
+    }
+
+    public hideOptions() : void{
+        Player.card.style.display = 'none';
+    }
+
+    /**
+     * Checks if the ball is within the player's hitbox
+     */
+    public touchingBall(): boolean{
+        let hitboxRight: number = this.position.position.x+(this.hitbox.x/2);
+        let hitboxLeft: number = this.position.position.x-(this.hitbox.x/2);
+        let hitboxTop: number = this.position.position.y+(this.hitbox.y/2);
+        let hitboxBottom: number = this.position.position.y-(this.hitbox.y/2);
+        let ballPositionX: number = this.ball.position.position.x;
+        let ballPositionY: number = this.ball.position.position.y;
+        let ballRadius: number = (this.ball.hitbox.x/2);
+        if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public canAct() : boolean{
+
+        if(this._stage === 2){
+            return false;
+        }
+
+        if(!this.canMove){
+            return false;
+        }
+
+        return true;
     }
 
     public get power() : number {
@@ -128,62 +259,6 @@ export class Player extends MovingObject {
 
     public set move(move : string){
         this._move = move;
-    }
-
-    public isClicked(mouseX: number, mouseY: number): boolean {
-    /*
-    console.log("mouseX:", mouseX);
-    console.log("mouseY:", mouseY);
-
-    console.log("this._position.position.x:", this._position.position.x);
-    console.log("this._position.position.y:", this._position.position.y);
-    console.log("this._size.x:", this._size.x);
-    console.log("this._size.y:", this._size.y);
-
-    console.log("mouseX >= this._position.position.x:", mouseX >= this._position.position.x);
-    console.log("mouseX <= this._position.position.x + this._size.x:", mouseX <= this._position.position.x + this._size.x);
-    console.log("mouseY >= this._position.position.y:", mouseY >= this._position.position.y);
-    console.log("mouseY <= this._position.position.y + this._size.y:", mouseY <= this._position.position.y + this._size.y);
-    */
-        let left: number = this._position.position.x - (this.size.x)
-        let right: number = this._position.position.x + (this.size.x)
-        let top: number = this._position.position.y - (this.size.y)
-        let bottom: number = this._position.position.y + (this.size.y);
-        return (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom);
-    }
-
-    public displayOptions(battle : Battle): void{
-        Player.container.innerHTML = ''
-        let options: string[] = ["Shoot", "Move", "Ability"];
-        for(let i=0;i<options.length;i++){
-            let button = document.createElement("button");
-            button.innerText = options[i];
-            button.className = "option-button";
-            button.addEventListener("click", ()=>{
-                console.log(`Action: ${options[i]}`)
-                battle.actionPhase = 2;
-            });
-            Player.container.appendChild(button);
-        }
-    }
-
-    /**
-     * Checks if the ball is within the player's hitbox
-     */
-    public touchingBall(): boolean{
-        let hitboxRight: number = this.position.position.x+(this.hitbox.x/2);
-        let hitboxLeft: number = this.position.position.x-(this.hitbox.x/2);
-        let hitboxTop: number = this.position.position.y+(this.hitbox.y/2);
-        let hitboxBottom: number = this.position.position.y-(this.hitbox.y/2);
-        let ballPositionX: number = this.ball.position.position.x;
-        let ballPositionY: number = this.ball.position.position.y;
-        let ballRadius: number = (this.ball.hitbox.x/2);
-        if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
-            return true;
-        }
-        else{
-            return false;
-        }
     }
 
 }
