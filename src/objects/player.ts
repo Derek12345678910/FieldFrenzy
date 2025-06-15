@@ -8,6 +8,7 @@ import { List } from "../datastructures/list.js";
 import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 import { Battle } from "./battle.js";
+import { User } from "./user.js";
 
 export class Player extends MovingObject {
 

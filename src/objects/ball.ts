@@ -2,12 +2,13 @@ import { Vector } from "../datastructures/vector.js";
 import { MovingObject } from "./movingObject.js";
 import { Player } from "./player.js";
 import { Mirage } from "./mirage.js";
+import { Team } from "./team.js";
 
 import { Pair } from "../datastructures/pair.js";
 
 export class Ball extends MovingObject{
 
-    private _possession : Player;
+    private _possession : Player | null;
 
     protected _object : MovingObject = this;
 
@@ -29,12 +30,8 @@ export class Ball extends MovingObject{
         super(hitbox, size, image)
     }
 
-    public get possession() : Player{
+    public get possession() : Player | null{
         return this._possession;
-    }
-
-    public set possession(player : Player){
-        this._possession = player;
     }
 
     public get canBePossessed() : boolean{
