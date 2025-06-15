@@ -72,7 +72,7 @@ export class Cristiano extends Attacker{
             "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
             15,
             15,
-            new shooting.CurveShot()
+            new shooting.LongShot()
         )
     }
 }
