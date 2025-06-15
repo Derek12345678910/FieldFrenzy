@@ -61,6 +61,13 @@ export class Battle {
             "../assets/ball.png"
         )
 
+        // add ball to players
+        for(let i=0; i<user1.team.allPlayers.size(); i++){
+            let pl1 : Player = user1.team.allPlayers.get(i) as Player;
+            let pl2 : Player = user2.team.allPlayers.get(i) as Player;
+            pl1.ball = this.ball; pl2.ball = this.ball;
+        }
+
         // sync initial scoreboard (names and 0‑0 score)
         this.updateScoreboard();
 
@@ -161,10 +168,12 @@ export class Battle {
         if(Math.random() < 0.5){
             // heads --> user 1 ball
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 - 30, this.Canvas.height / 2), new Pair(0, 0));
+            this.ball.possession = p3t1;
             return true;
         }
         else {
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 + 30, this.Canvas.height / 2), new Pair(0, 0));
+            this.ball.possession = p3t2;
             return false;
         }
 

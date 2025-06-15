@@ -41,6 +41,7 @@ export class Player extends MovingObject {
 
     protected _ability : Ability;
 
+    /** Action */
     protected _move : string;
 
     protected _ball : Ball; 
@@ -50,7 +51,10 @@ export class Player extends MovingObject {
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
-    protected canMove : boolean = true;
+    /** Can do an action */
+    protected _canMove : boolean = true;
+
+    protected _canRun : boolean = true;
 
     protected constructor(name : string, hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
@@ -143,13 +147,17 @@ export class Player extends MovingObject {
         // add x button
 
         Player.container.innerHTML = ''
-        let options: string[] = ["Shoot", "Move", "Ability"];
-        for(let i=0;i<options.length;i++){
+        let options : List<string> = new List<string>();
+        if(this._canRun) options.push("Move");
+        if(this._ball.possession === this) options.push("Shoot");
+        options.push("Ability");
+        for(let i=0;i<options.size();i++){
             let button = document.createElement("button");
-            button.innerText = options[i];
+            let type : string = options.get(i) as string;
+            button.innerText = type;
             button.className = "option-button";
             button.addEventListener("click", ()=>{
-                console.log(`Action: ${options[i]}`)
+                console.log(`Action: ${type}`)
                 battle.actionPhase = 2;
             });
             Player.container.appendChild(button);
@@ -223,7 +231,7 @@ export class Player extends MovingObject {
             return false;
         }
 
-        if(!this.canMove){
+        if(!this._canMove){
             return false;
         }
 
@@ -260,6 +268,22 @@ export class Player extends MovingObject {
 
     public set move(move : string){
         this._move = move;
+    }
+
+    public get canMove() : boolean{
+        return this._canMove;
+    }
+
+    public set canMove(can : boolean){
+        this._canMove = can;
+    }
+
+    public get canRun() : boolean{
+        return this._canRun;
+    }
+
+    public set canRun(can : boolean){
+        this._canRun = can;
     }
 
 }

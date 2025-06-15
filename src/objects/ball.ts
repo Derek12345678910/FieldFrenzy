@@ -34,6 +34,12 @@ export class Ball extends MovingObject{
         return this._possession;
     }
 
+    public set possession(player : Player | null) {
+        this._possession = player;
+        // if the player has possession they cant move
+        if(player !== null) player.canRun =  false;
+    }
+
     public get canBePossessed() : boolean{
         return this._canBePossessed;
     }
