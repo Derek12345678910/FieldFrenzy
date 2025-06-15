@@ -169,7 +169,9 @@ export class Canvas {
 
       let img: HTMLImageElement = player.image as HTMLImageElement;
 
-      // draw the paths of the character\
+      this.drawCircle(x, y, img, r, color);
+
+      // draw the paths of the character
       for(let i=0; i<player.stage; i++){
         let destination : Pair<number> = player.destinations.get(i) as Pair<number>;
         
@@ -183,10 +185,8 @@ export class Canvas {
         let start : Pair<number> = path.position;
         let dir : Pair<number> = path.direction;
 
-        let sx : number = start.x;
-        let sy : number = start.y;
-        let dx : number = dir.x;
-        let dy : number = dir.y;
+        let sx : number = start.x; let sy : number = start.y;
+        let dx : number = dir.x; let dy : number = dir.y;
 
         this.drawLine(sx, sy, dx, dy);
 

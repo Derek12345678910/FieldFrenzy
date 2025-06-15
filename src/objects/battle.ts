@@ -204,15 +204,15 @@ export class Battle {
      * Relies on four DOM elements: #homeName, #guestName, #homeScore, #guestScore
      */
     private updateScoreboard(): void {
-        const homeNameEl  = document.getElementById('homeName');
+        const homeNameEl = document.getElementById('homeName');
         const guestNameEl = document.getElementById('guestName');
         const homeScoreEl = document.getElementById('homeScore');
-        const guestScoreEl= document.getElementById('guestScore');
+        const guestScoreEl = document.getElementById('guestScore');
 
-        if (homeNameEl)  homeNameEl.textContent  = this.user1.name;
+        if (homeNameEl) homeNameEl.textContent = this.user1.name;
         if (guestNameEl) guestNameEl.textContent = this.user2.name;
-        if (homeScoreEl) homeScoreEl.textContent = String(this.goal1);
-        if (guestScoreEl)guestScoreEl.textContent= String(this.goal2);
+        if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
+        if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
     }
 
     /** Call this whenever user1 scores */
