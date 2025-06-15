@@ -147,6 +147,9 @@ export class Battle {
             this.Canvas.drawPlayers(this.user2.team, user2.colour, 10);
             this.Canvas.drawBall(this.ball, this.teamPossession.colour, 10);
         });
+
+        this.startNextRound();
+
     }
     /**
      * Starts the game and flips a coin determining who starts with ball
