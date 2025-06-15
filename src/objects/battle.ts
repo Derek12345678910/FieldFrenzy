@@ -56,7 +56,7 @@ export class Battle {
         this.user2 = user2;
 
         this.ball = new Ball(
-            new Pair(5,5),
+            new Pair(15,15),
             new Pair(15,15),
             "../assets/ball.png"
         )
@@ -107,18 +107,26 @@ export class Battle {
             }
             // click the new coord
             else if(this._actionPhase === 2){
-                if(this.selectedCharacter){
+                if(this.selectedCharacter !== null){
                     console.log(this.selectedCharacter)
-                    // hide options
                     if(this.selectedCharacter.object instanceof Player){
                         this.selectedCharacter.object.hideOptions();
+                        if(this.selectedCharacter.object.move === "Move"){
+                            this.selectedCharacter.object.calculatePath(mouseX, mouseY);
+                            this.selectedCharacter.object.stage++;
+                        }
+                        else if(this.selectedCharacter.object.move === "Shoot"){
+                            this.selectedCharacter.object.ball.calculatePath(mouseX, mouseY);
+                            this.selectedCharacter.object.shotStage++;
+                            this.selectedCharacter.object.canRun = true;
+                            this.selectedCharacter.object.ball.stage++;
+                        }
                     }
-                    // collect the path taken
-                    this.selectedCharacter.object.calculatePath(mouseX, mouseY);
-                    this.selectedCharacter.object.stage++;
+                    this.checkNewPossession();
+                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
+                    this._canvas.drawBall(this.ball, this.teamPossession.colour, 10);
                     this.selectedCharacter = null;
                     this._actionPhase = 0;
-                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
                 }
             }
         });
@@ -177,6 +185,22 @@ export class Battle {
             return false;
         }
 
+    }
+
+    /**
+     * When ball is moved to a new stage check if there is a new player on it to take poessession
+     */
+    public checkNewPossession() : void{
+        if(this.ball.stage !== 2){
+            let curTeam : Team = (this.currentTurn === "user1") ? this.user1.team : this.user2.team;
+            for(let i=0; i<curTeam.allPlayers.size(); i++){
+                let pl : Player = curTeam.allPlayers.get(i) as Player;
+                if(pl.touchingBallStage()){
+                    console.log(pl);
+                    this.ball.possession = pl;
+                }
+            }
+        }
     }
 
     /**

@@ -46,6 +46,9 @@ export class Player extends MovingObject {
 
     protected _ball : Ball; 
 
+    /** is the stage for shots because we don't want player to take 2 shots and 2 moves */
+    protected _shotStage : number = 0;
+
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
@@ -158,6 +161,7 @@ export class Player extends MovingObject {
             button.className = "option-button";
             button.addEventListener("click", ()=>{
                 console.log(`Action: ${type}`)
+                this._move = type;
                 battle.actionPhase = 2;
             });
             Player.container.appendChild(button);
@@ -225,9 +229,32 @@ export class Player extends MovingObject {
         }
     }
 
+    public touchingBallStage(): boolean{
+        let curPos : Pair<number> = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage - 1) as Pair<number>;
+        let ballPos : Pair<number> = (this._ball.stage === 0) ? this._ball.position.position : this._ball.destinations.get(this._ball.curPath + this._ball.stage - 1) as Pair<number>;
+        let hitboxRight: number = curPos.x+(this.hitbox.x/2);
+        let hitboxLeft: number = curPos.x-(this.hitbox.x/2);
+        let hitboxTop: number = curPos.y+(this.hitbox.y/2);
+        let hitboxBottom: number = curPos.y-(this.hitbox.y/2);
+        let ballPositionX: number = ballPos.x;
+        let ballPositionY: number = ballPos.y;
+        let ballRadius: number = (this.ball.hitbox.x/2);
+        if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
+            console.log("A")
+            return true;
+        }
+        return false;
+    }
+
     public canAct() : boolean{
 
-        if(this._stage === 2){
+        if(this._ball.possession === this){
+            if(this._ball.stage === 2){
+                return false;
+            }
+        }
+
+        if(this._stage + this._shotStage === 2){
             return false;
         }
 
@@ -284,6 +311,14 @@ export class Player extends MovingObject {
 
     public set canRun(can : boolean){
         this._canRun = can;
+    }
+
+    public get shotStage() : number {
+        return this._shotStage;
+    }
+
+    public set shotStage(stage : number) {
+        this._shotStage = stage;
     }
 
 }
