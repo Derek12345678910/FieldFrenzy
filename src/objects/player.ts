@@ -193,6 +193,10 @@ export class Player extends MovingObject {
 
     }
 
+    public hideOptions() : void{
+        Player.card.style.display = 'none';
+    }
+
     /**
      * Checks if the ball is within the player's hitbox
      */
@@ -258,5 +262,3 @@ export class Player extends MovingObject {
     }
 
 }
-
-//Player.card.style.display = 'none';

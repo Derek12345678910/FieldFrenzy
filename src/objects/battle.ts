@@ -87,6 +87,10 @@ export class Battle {
             else if(this._actionPhase === 2){
                 if(this.selectedCharacter){
                     console.log(this.selectedCharacter)
+                    // hide options
+                    if(this.selectedCharacter.object instanceof Player){
+                        this.selectedCharacter.object.hideOptions();
+                    }
                     // collect the path taken
                     this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                     this.selectedCharacter.object.stage++;
