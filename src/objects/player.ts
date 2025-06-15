@@ -8,7 +8,6 @@ import { List } from "../datastructures/list.js";
 import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 import { Battle } from "./battle.js";
-import { dir } from "console";
 
 export class Player extends MovingObject {
     
@@ -98,38 +97,6 @@ export class Player extends MovingObject {
         return null;
     }
 
-    public get power() : number {
-        return this._power;
-    }
-
-    public get speed() : number {
-        return this._speed;
-    }
-
-    public get name() : string{
-        return this._name;
-    }
-
-    public get ball() : Ball{
-        return this._ball;
-    }
-    
-    public set ball(ball : Ball){
-        this._ball = ball;
-    }
-
-    public get object() : MovingObject{
-        return this._object;
-    }
-
-    public get move() : string{
-        return this._move;
-    }
-
-    public set move(move : string){
-        this._move = move;
-    }
-
     public isClicked(mouseX: number, mouseY: number): boolean {
     /*
     console.log("mouseX:", mouseX);
@@ -197,6 +164,38 @@ export class Player extends MovingObject {
         }
 
         return true;
+    }
+
+    public get power() : number {
+        return this._power;
+    }
+
+    public get speed() : number {
+        return this._speed;
+    }
+
+    public get name() : string{
+        return this._name;
+    }
+
+    public get ball() : Ball{
+        return this._ball;
+    }
+    
+    public set ball(ball : Ball){
+        this._ball = ball;
+    }
+
+    public get object() : MovingObject{
+        return this._object;
+    }
+
+    public get move() : string{
+        return this._move;
+    }
+
+    public set move(move : string){
+        this._move = move;
     }
 
 }
