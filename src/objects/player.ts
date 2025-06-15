@@ -8,6 +8,7 @@ import { List } from "../datastructures/list.js";
 import { Ball } from "./ball.js";
 import { Mirage } from "./mirage.js";
 import { Battle } from "./battle.js";
+import { User } from "./user.js";
 
 export class Player extends MovingObject {
 
@@ -40,16 +41,23 @@ export class Player extends MovingObject {
 
     protected _ability : Ability;
 
+    /** Action */
     protected _move : string;
 
     protected _ball : Ball; 
+
+    /** is the stage for shots because we don't want player to take 2 shots and 2 moves */
+    protected _shotStage : number = 0;
 
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
-    protected canMove : boolean = true;
+    /** Can do an action */
+    protected _canMove : boolean = true;
+
+    protected _canRun : boolean = true;
 
     protected constructor(name : string, hitbox : Pair<number>, size : Pair<number>, image : string, power : number, speed : number, ability : Ability){
         super(hitbox, size, image);
@@ -142,13 +150,18 @@ export class Player extends MovingObject {
         // add x button
 
         Player.container.innerHTML = ''
-        let options: string[] = ["Shoot", "Move", "Ability"];
-        for(let i=0;i<options.length;i++){
+        let options : List<string> = new List<string>();
+        if(this._canRun) options.push("Move");
+        if(this._ball.possession === this) options.push("Shoot");
+        options.push("Ability");
+        for(let i=0;i<options.size();i++){
             let button = document.createElement("button");
-            button.innerText = options[i];
+            let type : string = options.get(i) as string;
+            button.innerText = type;
             button.className = "option-button";
             button.addEventListener("click", ()=>{
-                console.log(`Action: ${options[i]}`)
+                console.log(`Action: ${type}`)
+                this._move = type;
                 battle.actionPhase = 2;
             });
             Player.container.appendChild(button);
@@ -216,13 +229,36 @@ export class Player extends MovingObject {
         }
     }
 
+    public touchingBallStage(): boolean{
+        let curPos : Pair<number> = (this._stage === 0) ? this._position.position : this._destinations.get(this._curPath + this._stage - 1) as Pair<number>;
+        let ballPos : Pair<number> = (this._ball.stage === 0) ? this._ball.position.position : this._ball.destinations.get(this._ball.curPath + this._ball.stage - 1) as Pair<number>;
+        let hitboxRight: number = curPos.x+(this.hitbox.x/2);
+        let hitboxLeft: number = curPos.x-(this.hitbox.x/2);
+        let hitboxTop: number = curPos.y+(this.hitbox.y/2);
+        let hitboxBottom: number = curPos.y-(this.hitbox.y/2);
+        let ballPositionX: number = ballPos.x;
+        let ballPositionY: number = ballPos.y;
+        let ballRadius: number = (this.ball.hitbox.x/2);
+        if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
+            console.log("A")
+            return true;
+        }
+        return false;
+    }
+
     public canAct() : boolean{
 
-        if(this._stage === 2){
+        if(this._ball.possession === this){
+            if(this._ball.stage === 2){
+                return false;
+            }
+        }
+
+        if(this._stage + this._shotStage === 2){
             return false;
         }
 
-        if(!this.canMove){
+        if(!this._canMove){
             return false;
         }
 
@@ -259,6 +295,30 @@ export class Player extends MovingObject {
 
     public set move(move : string){
         this._move = move;
+    }
+
+    public get canMove() : boolean{
+        return this._canMove;
+    }
+
+    public set canMove(can : boolean){
+        this._canMove = can;
+    }
+
+    public get canRun() : boolean{
+        return this._canRun;
+    }
+
+    public set canRun(can : boolean){
+        this._canRun = can;
+    }
+
+    public get shotStage() : number {
+        return this._shotStage;
+    }
+
+    public set shotStage(stage : number) {
+        this._shotStage = stage;
     }
 
 }

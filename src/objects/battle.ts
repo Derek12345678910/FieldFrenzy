@@ -4,6 +4,10 @@ import { User } from "./user.js";
 import { Team } from "./team.js";
 import { Player } from "./player.js";
 import { Mirage } from "./mirage";
+import { Ball } from "./ball.js";
+
+import { Pair } from "../datastructures/pair.js";
+import { Vector } from "../datastructures/vector.js";
 
 export class Battle {
     private _canvas : Canvas;
@@ -41,11 +45,28 @@ export class Battle {
     // character selected by the user
     private selectedCharacter : Player | Mirage | null = null;
 
+    private ball : Ball;
+
+    private teamPossession : User;
+
     public constructor(user1 : User, user2 : User){
 
         this._canvas = new Canvas("soccerField");
         this.user1 = user1;
         this.user2 = user2;
+
+        this.ball = new Ball(
+            new Pair(15,15),
+            new Pair(15,15),
+            "../assets/ball.png"
+        )
+
+        // add ball to players
+        for(let i=0; i<user1.team.allPlayers.size(); i++){
+            let pl1 : Player = user1.team.allPlayers.get(i) as Player;
+            let pl2 : Player = user2.team.allPlayers.get(i) as Player;
+            pl1.ball = this.ball; pl2.ball = this.ball;
+        }
 
         // sync initial scoreboard (names and 0‑0 score)
         this.updateScoreboard();
@@ -63,7 +84,7 @@ export class Battle {
             console.log(this._actionPhase);
             // if a player has not been found yet
             if(this._actionPhase === 0){
-                for(let i=0; i<teamToCheck.player.size(); i++){
+                for(let i=0; i<teamToCheck.allPlayers.size(); i++){
                     let player : Player = teamToCheck.allPlayers.get(i) as Player;
                     // check if player is allowed to move
                     if(player.canAct()){
@@ -71,13 +92,11 @@ export class Battle {
                         if(player.isClicked(mouseX, mouseY)){
                             this._actionPhase++;
                             this.selectedCharacter = player;
-                            console.log(i);
                             this.selectedCharacter.displayOptions(this);
                         }
                         // check click on mirage
                         else if(player.mirage?.isClicked(mouseX, mouseY)){
                             this._actionPhase++;
-                            console.log(player.mirage);
                             if(player?.object instanceof Player){
                                 this.selectedCharacter = player;
                                 this.selectedCharacter.displayOptions(this);
@@ -88,22 +107,105 @@ export class Battle {
             }
             // click the new coord
             else if(this._actionPhase === 2){
-                if(this.selectedCharacter){
+                if(this.selectedCharacter !== null){
                     console.log(this.selectedCharacter)
-                    // hide options
                     if(this.selectedCharacter.object instanceof Player){
                         this.selectedCharacter.object.hideOptions();
+                        if(this.selectedCharacter.object.move === "Move"){
+                            this.selectedCharacter.object.calculatePath(mouseX, mouseY);
+                            this.selectedCharacter.object.stage++;
+                        }
+                        else if(this.selectedCharacter.object.move === "Shoot"){
+                            this.selectedCharacter.object.ball.calculatePath(mouseX, mouseY);
+                            this.selectedCharacter.object.shotStage++;
+                            this.selectedCharacter.object.canRun = true;
+                            this.selectedCharacter.object.ball.stage++;
+                        }
                     }
-                    // collect the path taken
-                    this.selectedCharacter.object.calculatePath(mouseX, mouseY);
-                    this.selectedCharacter.object.stage++;
+                    this.checkNewPossession();
+                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
+                    this._canvas.drawBall(this.ball, this.teamPossession.colour, 10);
                     this.selectedCharacter = null;
                     this._actionPhase = 0;
-                    this._canvas.drawPlayers(teamToCheck, userTurn.colour, 10)
                 }
             }
         });
+        if(this.gameStart()){
+            this.Canvas.drawBall(this.ball, user1.colour, 10);
+            this.teamPossession = user1;
+        }
+        else{
+            this.Canvas.drawBall(this.ball, user2.colour, 10);
+            this.teamPossession = user2;
+        }
+        this.Canvas.drawPlayers(this.user1.team, user1.colour, 10);
+        this.Canvas.drawPlayers(this.user2.team, user2.colour, 10);
+        
+        window.addEventListener("resize", () => {
+            this.Canvas.resizeCanvas();
+            this.Canvas.drawPlayers(this.user1.team, user1.colour, 10);
+            this.Canvas.drawPlayers(this.user2.team, user2.colour, 10);
+            this.Canvas.drawBall(this.ball, this.teamPossession.colour, 10);
+        });
+
+        this.startNextRound();
+
     }
+    /**
+     * Starts the game and flips a coin determining who starts with ball
+     */
+    private gameStart() : boolean{
+
+        this.user1.team.goalie.position = new Vector(new Pair(10, this.Canvas.height / 2), new Pair(0, 0));
+
+        this.user2.team.goalie.position = new Vector(new Pair(this.Canvas.width - 10, this.Canvas.height / 2), new Pair(0, 0));
+
+        // only works for team of 3
+        let p1t1 : Player = this.user1.team.player.get(0) as Player
+        let p2t1 : Player = this.user1.team.player.get(1) as Player
+        let p3t1 : Player = this.user1.team.player.get(2) as Player
+        p1t1.position = new Vector(new Pair(200, this.Canvas.height / 2), new Pair(0, 0));
+        p2t1.position = new Vector(new Pair(400, this.Canvas.height / 2), new Pair(0, 0));
+        p3t1.position = new Vector(new Pair(this.Canvas.width / 2 - 50, this.Canvas.height / 2), new Pair(0, 0));
+
+        let p1t2 : Player = this.user2.team.player.get(0) as Player
+        let p2t2 : Player = this.user2.team.player.get(1) as Player
+        let p3t2 : Player = this.user2.team.player.get(2) as Player
+        p1t2.position = new Vector(new Pair(this.Canvas.width - 200, this.Canvas.height / 2), new Pair(0, 0));
+        p2t2.position = new Vector(new Pair(this.Canvas.width - 400, this.Canvas.height / 2), new Pair(0, 0));
+        p3t2.position = new Vector(new Pair(this.Canvas.width / 2 + 50, this.Canvas.height / 2), new Pair(0, 0));
+
+        // coin toss
+        if(Math.random() < 0.5){
+            // heads --> user 1 ball
+            this.ball.position = new Vector(new Pair(this.Canvas.width / 2 - 30, this.Canvas.height / 2), new Pair(0, 0));
+            this.ball.possession = p3t1;
+            return true;
+        }
+        else {
+            this.ball.position = new Vector(new Pair(this.Canvas.width / 2 + 30, this.Canvas.height / 2), new Pair(0, 0));
+            this.ball.possession = p3t2;
+            return false;
+        }
+
+    }
+
+    /**
+     * When ball is moved to a new stage check if there is a new player on it to take poessession
+     */
+    public checkNewPossession() : void{
+        if(this.ball.stage !== 2){
+            let curTeam : Team = (this.currentTurn === "user1") ? this.user1.team : this.user2.team;
+            for(let i=0; i<curTeam.allPlayers.size(); i++){
+                let pl : Player = curTeam.allPlayers.get(i) as Player;
+                if(pl.touchingBallStage()){
+                    console.log(pl);
+                    this.ball.possession = pl;
+                }
+            }
+        }
+    }
+
     /**
      * Starts the timer for the current turn
      */
@@ -176,15 +278,6 @@ export class Battle {
      */
     private drawMoves(): void{
         console.log("Round over, drawing moves")
-    }
-
-    /**
-     * Play all the turn
-     */
-    private playMoves() : void{
-        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
-
-        }
     }
 
     public get Canvas() : Canvas{

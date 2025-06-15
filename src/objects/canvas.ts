@@ -6,6 +6,7 @@ import { List } from "../datastructures/list.js";
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
 import { Mirage } from "./mirage.js";
+import { Ball } from "./ball.js";
 
 /**
  * Controls canvas of the game
@@ -15,6 +16,9 @@ export class Canvas {
   private ctx: CanvasRenderingContext2D;
   private coordDisplay: HTMLElement | null;
   private aspectRatio: number;
+
+  private _height : number;
+  private _width : number;
 
   public constructor(canvasId: string) {
     const el = document.getElementById(canvasId);
@@ -37,6 +41,9 @@ export class Canvas {
     // Resize to fit window on load and attach resize handler
     window.addEventListener('resize', this.resizeCanvas.bind(this));
     this.resizeCanvas();
+
+    this._height = this._canvas.height;
+    this._width = this._canvas.width;
 
   }
 
@@ -160,8 +167,7 @@ export class Canvas {
       let player = playersList.get(i) as Player;
 
       let posPair: Pair<number> = player.position.position;
-      let x: number = posPair.x;
-      let y: number = posPair.y;
+      let x: number = posPair.x; let y: number = posPair.y;
 
       let r = radius;
       let sz: Pair<number> = player.size;
@@ -191,6 +197,46 @@ export class Canvas {
         this.drawLine(sx, sy, dx, dy);
 
       }
+    }
+  }
+
+  /**
+   * Draws the ball on the field
+   * @param ball ball object to draw
+   * @param color colour of the team in possesion
+   * @param radius radius of the circle in pixels
+   */
+  public drawBall(ball : Ball, color: string, radius: number){
+
+    let posPair: Pair<number> = ball.position.position;
+    let x: number = posPair.x; let y: number = posPair.y;
+
+    let r = radius;
+    let sz: Pair<number> = ball.size;
+    r = (sz.x + sz.y) / 2;
+
+    let img: HTMLImageElement = ball.image as HTMLImageElement;
+
+    this.drawCircle(x, y, img, r, color);
+
+    for(let i=0; i<ball.stage; i++){
+      let destination : Pair<number> = ball.destinations.get(i) as Pair<number>;
+      
+      let path : Vector = ball.paths.get(i) as Vector
+
+      let mx : number = destination.x;
+      let my : number = destination.y;
+
+      this.drawCircle(mx, my, img, r, color);
+
+      let start : Pair<number> = path.position;
+      let dir : Pair<number> = path.direction;
+
+      let sx : number = start.x; let sy : number = start.y;
+      let dx : number = dir.x; let dy : number = dir.y;
+
+      this.drawLine(sx, sy, dx, dy);
+
     }
   }
 
@@ -226,4 +272,13 @@ export class Canvas {
     this.ctx.lineTo(ex, ey);
     this.ctx.stroke();
   }
+
+  public get height() : number{
+    return this._height;
+  }
+
+  public get width() : number{
+    return this._width;
+  }
+
 }
