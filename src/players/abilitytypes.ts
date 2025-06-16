@@ -11,8 +11,8 @@ export class Shooting extends Ability {
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(name : string, discription : string, passive : boolean){
-        super(name, discription, passive);
+    protected constructor(name : string, discription : string, passive : boolean, cooldown : number){
+        super(name, discription, passive, cooldown);
     }
 
     public override ability(): void {
@@ -31,8 +31,8 @@ export class Hitbox extends Ability {
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(name : string, discription : string, passive : boolean){
-        super(name, discription, passive);
+    protected constructor(name : string, discription : string, passive : boolean, cooldown : number){
+        super(name, discription, passive, cooldown);
     }
 
     public override ability(): void {
@@ -51,8 +51,8 @@ export class Passing extends Ability {
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(name : string, discription : string, passive : boolean){
-        super(name, discription, passive);
+    protected constructor(name : string, discription : string, passive : boolean, cooldown : number){
+        super(name, discription, passive, cooldown);
     }
 
     public override ability(): void {
@@ -71,8 +71,8 @@ export class Functionality extends Ability {
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(name : string, discription : string, passive : boolean){
-        super(name, discription, passive);
+    protected constructor(name : string, discription : string, passive : boolean, cooldown : number){
+        super(name, discription, passive, cooldown);
     }
 
     public override ability(): void {
@@ -91,8 +91,8 @@ export class Unique extends Ability {
      * @param discription description of the ability
      * @param passive whether or not the ability is a passive
      */
-    protected constructor(name : string, discription : string, passive : boolean){
-        super(name, discription, passive);
+    protected constructor(name : string, discription : string, passive : boolean, cooldown : number){
+        super(name, discription, passive, cooldown);
     }
 
     public override ability(): void {
