@@ -6,9 +6,9 @@ export class Maldini extends Defender{
             "Paolo Maldini",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Maldini.png",
+            56,
+            86,
             new shooting.CurveShot()
         )
     }
@@ -20,9 +20,9 @@ export class VanDijk extends Defender{
             "Virgil Van Dijk",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/VanDijk.png",
+            60,
+            78,
             new shooting.CurveShot()
         )
     }
@@ -34,9 +34,9 @@ export class Alphonso extends Defender{
             "Alphonso Davies",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Davies",
+            66,
+            95,
             new shooting.CurveShot()
         )
     }

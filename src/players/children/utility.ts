@@ -3,12 +3,12 @@ import { Utility } from "../playertypes.js";
 export class Derek extends Utility{
     public constructor(){
         super(
-            "Derek Lau",
+            "Bum Derek",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Lau.png",
+            99,
+            99,
             new shooting.CurveShot()
         )
     }
@@ -20,9 +20,9 @@ export class Iniesta extends Utility{
             "Andres Iniesta",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Iniesta.png",
+            72,
+            75,
             new shooting.CurveShot()
         )
     }
@@ -34,9 +34,9 @@ export class Modric extends Utility{
             "Luka Modric",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Modric.png",
+            76,
+            72,
             new shooting.CurveShot()
         )
     }
@@ -48,9 +48,9 @@ export class DeBruyne extends Utility{
             "Kevin De Bruyne",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/DeBruyne.png",
+            87,
+            67,
             new shooting.CurveShot()
         )
     }

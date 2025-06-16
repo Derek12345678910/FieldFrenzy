@@ -6,9 +6,9 @@ export class Hsiung extends Goalie{
             "Jeremy Hsiung",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Hsiung.png",
+            20,
+            64,
             new shooting.CurveShot()
         )
     }
@@ -20,9 +20,9 @@ export class Buffon extends Goalie{
             "Gigi Buffon",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Imnages/Buffon.png",
+            30,
+            76,
             new shooting.CurveShot()
         )
     }
@@ -34,9 +34,9 @@ export class Courtois extends Defender{
             "Thibaut Courtois",
             new Pair(5, 5),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
+            "./Images/Courtois.png",
+            70,
+            70,
             new shooting.CurveShot()
         )
     }
