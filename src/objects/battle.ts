@@ -321,8 +321,8 @@ export class Battle {
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
-            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 10, this.user1.colour, 1000);
-            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 10, this.user2.colour, 1000);
+            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 22, this.user1.colour, 1000);
+            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 22, this.user2.colour, 1000);
         }
     }
 
