@@ -14,7 +14,7 @@ export class Hsiung extends Goalie{
     public constructor(){
         super(
             "Jeremy Hsiung",
-            new Pair(5, 5),
+            new Pair(20, 20),
             new Pair(20, 20),
             "./Images/Hsiung.png",
             20,
@@ -28,7 +28,7 @@ export class Buffon extends Goalie{
     public constructor(){
         super(
             "Gigi Buffon",
-            new Pair(5, 5),
+            new Pair(30, 30),
             new Pair(20, 20),
             "./Imnages/Buffon.png",
             30,
@@ -42,7 +42,7 @@ export class Courtois extends Goalie{
     public constructor(){
         super(
             "Thibaut Courtois",
-            new Pair(5, 5),
+            new Pair(30, 30),
             new Pair(20, 20),
             "./Images/Courtois.png",
             70,

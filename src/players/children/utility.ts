@@ -16,7 +16,7 @@ export class Derek extends Utility{
     public constructor(){
         super(
             "Bum Derek",
-            new Pair(5, 5),
+            new Pair(15, 15),
             new Pair(20, 20),
             "./Images/Lau.png",
             99,
@@ -30,7 +30,7 @@ export class Iniesta extends Utility{
     public constructor(){
         super(
             "Andres Iniesta",
-            new Pair(5, 5),
+            new Pair(25, 25),
             new Pair(20, 20),
             "./Images/Iniesta.png",
             72,
@@ -44,7 +44,7 @@ export class Modric extends Utility{
     public constructor(){
         super(
             "Luka Modric",
-            new Pair(5, 5),
+            new Pair(25, 25),
             new Pair(20, 20),
             "./Images/Modric.png",
             76,
@@ -58,7 +58,7 @@ export class DeBruyne extends Utility{
     public constructor(){
         super(
             "Kevin De Bruyne",
-            new Pair(5, 5),
+            new Pair(25, 25),
             new Pair(20, 20),
             "./Images/DeBruyne.png",
             87,
