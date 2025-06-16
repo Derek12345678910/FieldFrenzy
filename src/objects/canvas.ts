@@ -115,6 +115,9 @@ export class Canvas {
     const sixYardBoxHeight = penaltyBoxHeight * 0.4;
     const sixYardBoxWidth = penaltyBoxWidth * 0.4;
 
+    console.log(width);
+    console.log(sixYardBoxWidth);
+    console.log(height);
     // Left big penalty box
     ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = 2;

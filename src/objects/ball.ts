@@ -5,6 +5,7 @@ import { Mirage } from "./mirage.js";
 import { Team } from "./team.js";
 
 import { Pair } from "../datastructures/pair.js";
+import { Canvas } from "./canvas.js";
 
 export class Ball extends MovingObject{
 
@@ -87,6 +88,30 @@ export class Ball extends MovingObject{
         // the possession is for now no one
         this._possession = null;
 
+    }
+
+    /**
+     * Used to check if the ball is inside of the net 
+     * @param canvas Game canvas
+     * @returns True if the ball is in the net, false if it is not
+     */
+    public isTouchingNet(canvas: Canvas): boolean{
+        // width of the next (vertical on canvas)
+        let netWidth = (canvas.height - canvas.width*0.08)/2
+        // min y coord of the ball for it to be in the net
+        let minWidth = Math.ceil((canvas.height - netWidth)/2)
+        // max y coord of the ball for the ball to be in the net
+        let maxWidth = Math.floor(minWidth+netWidth);
+        console.log(netWidth);
+        console.log(minWidth);
+        console.log(maxWidth);
+        // if the ball is inside the net, return true
+        if((this.position.position.x-this.hitbox.x) <= 0 || (this.position.position.x+this.hitbox.x) >= canvas.width){
+            if(this.position.position.y >= minWidth && this.position.position.y <= maxWidth){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
