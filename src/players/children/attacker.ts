@@ -2,6 +2,10 @@ import { Attacker, Utility } from "../playertypes.js";
 
 import { Pair } from "../../datastructures/pair.js";
 
+import * as unique from "../abilites/unique.js"
+
+import * as functionalilty from "../abilites/functionality.js"
+
 import * as shooting from "../abilites/shooting.js"
 
 export class Mbappe extends Attacker{
@@ -13,7 +17,7 @@ export class Mbappe extends Attacker{
             "./Images/Mbappe.png",
             90,
             97,
-            new shooting.StunOpponenet()
+            new functionalilty.stunOpponent()
         )
     }
 }
@@ -27,7 +31,7 @@ export class Haaland extends Attacker{
             "./Images/Haaland.png",
             92,
             88,
-            new shooting.AutomaticGoal()
+            new shooting.automaticGoal()
         )
     }
 }
@@ -44,7 +48,7 @@ export class Yamal extends Attacker{
             "./Images/Yamal.png",
             75,
             82,
-            new shooting.CurveShot()
+            new shooting.curveShot()
         )
     }
 }
@@ -58,7 +62,7 @@ export class Messi extends Attacker{
             "./Images/Messi.png",
             15,
             15,
-            new shooting.CurveShot()
+            new shooting.curveShot()
         )
     }
 }
@@ -72,7 +76,7 @@ export class Cristiano extends Attacker{
             "./Images/Ronaldo.png",
             93,
             92,
-            new shooting.LongShot()
+            new shooting.longShot()
         )
     }
 }

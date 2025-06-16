@@ -1,5 +1,17 @@
 import { Utility } from "../playertypes.js";
 
+import { Pair } from "../../datastructures/pair.js";
+
+import * as unique from "../abilites/unique.js"
+
+import * as hitbox from "../abilites/hitbox.js"
+
+import * as functionalilty from "../abilites/functionality.js"
+
+import * as shooting from "../abilites/shooting.js"
+
+import * as passing from "../abilites/passing.js"
+
 export class Derek extends Utility{
     public constructor(){
         super(
@@ -9,7 +21,7 @@ export class Derek extends Utility{
             "./Images/Lau.png",
             99,
             99,
-            new shooting.CurveShot()
+            new functionalilty.certifiedBumMode()
         )
     }
 }
@@ -23,7 +35,7 @@ export class Iniesta extends Utility{
             "./Images/Iniesta.png",
             72,
             75,
-            new shooting.CurveShot()
+            new passing.perfectPass()
         )
     }
 }
@@ -37,7 +49,7 @@ export class Modric extends Utility{
             "./Images/Modric.png",
             76,
             72,
-            new shooting.CurveShot()
+            new passing.curvePassing()
         )
     }
 }
@@ -51,7 +63,7 @@ export class DeBruyne extends Utility{
             "./Images/DeBruyne.png",
             87,
             67,
-            new shooting.CurveShot()
+            new passing.perfectPass()
         )
     }
 }

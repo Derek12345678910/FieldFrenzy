@@ -1,5 +1,15 @@
 import { Defender } from "../playertypes.js";
 
+import { Pair } from "../../datastructures/pair.js";
+
+import * as unique from "../abilites/unique.js"
+
+import * as hitbox from "../abilites/hitbox.js"
+
+import * as functionalilty from "../abilites/functionality.js"
+
+import * as shooting from "../abilites/shooting.js"
+
 export class Maldini extends Defender{
     public constructor(){
         super(
@@ -9,7 +19,7 @@ export class Maldini extends Defender{
             "./Images/Maldini.png",
             56,
             86,
-            new shooting.CurveShot()
+            new functionalilty.disableAbility()
         )
     }
 }
@@ -23,7 +33,7 @@ export class VanDijk extends Defender{
             "./Images/VanDijk.png",
             60,
             78,
-            new shooting.CurveShot()
+            new hitbox.extendedHitbox()
         )
     }
 }
@@ -37,7 +47,7 @@ export class Alphonso extends Defender{
             "./Images/Davies",
             66,
             95,
-            new shooting.CurveShot()
+            new functionalilty.fasterSpeed()
         )
     }
 }

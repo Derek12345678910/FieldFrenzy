@@ -1,5 +1,15 @@
 import { Goalie } from "../playertypes.js";
 
+import { Pair } from "../../datastructures/pair.js";
+
+import * as unique from "../abilites/unique.js"
+
+import * as hitbox from "../abilites/hitbox.js"
+
+import * as functionalilty from "../abilites/functionality.js"
+
+import * as shooting from "../abilites/shooting.js"
+
 export class Hsiung extends Goalie{
     public constructor(){
         super(
@@ -9,7 +19,7 @@ export class Hsiung extends Goalie{
             "./Images/Hsiung.png",
             20,
             64,
-            new shooting.CurveShot()
+            new unique.theGreatWallOfChina()
         )
     }
 }
@@ -23,12 +33,12 @@ export class Buffon extends Goalie{
             "./Imnages/Buffon.png",
             30,
             76,
-            new shooting.CurveShot()
+            new hitbox.automaticSave()
         )
     }
 }
 
-export class Courtois extends Defender{
+export class Courtois extends Goalie{
     public constructor(){
         super(
             "Thibaut Courtois",
@@ -37,7 +47,7 @@ export class Courtois extends Defender{
             "./Images/Courtois.png",
             70,
             70,
-            new shooting.CurveShot()
+            new hitbox.automaticSave()
         )
     }
 }
