@@ -57,6 +57,7 @@ export class Battle {
         this.user2 = user2;
 
         this.userTurn = user1;
+        this.updateTimerPosition();
 
         this.ball = new Ball(
             new Pair(15,15),
@@ -214,6 +215,12 @@ export class Battle {
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
+        // hide BREAK banners
+        const breakL = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR = document.getElementById('breakRight') as HTMLElement;
+        if (breakL) breakL.style.display = 'none';
+        if (breakR) breakR.style.display = 'none';
+        this.updateTimerPosition();
         // Reset time
         this.timeRemaining = this.turnTimeLimit;
         // clear timers and intervals
@@ -243,6 +250,7 @@ export class Battle {
         if(this.currentTurn === "user1"){
             this.currentTurn = "user2";
             this.userTurn = this.user2;
+            this.updateTimerPosition();
             this.startTurnTimer();
             this.resetField();
         }
@@ -287,8 +295,12 @@ export class Battle {
      * draws all the moves chosen by the players
      */
     private drawMoves(): void{
-        (document.getElementById("time-name") as HTMLElement).innerHTML = "Break";
-        (document.getElementById("time-remaining")as HTMLElement).innerHTML = ""; 
+        const timerEl  = document.getElementById('timer')  as HTMLElement;
+        const breakL   = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR   = document.getElementById('breakRight') as HTMLElement;
+        if (timerEl) timerEl.style.display = 'none';
+        if (breakL) breakL.style.display = 'block';
+        if (breakR) breakR.style.display = 'block';
     }
 
     public get Canvas() : Canvas{
@@ -324,6 +336,22 @@ export class Battle {
         if (guestNameEl) guestNameEl.textContent = this.user2.name;
         if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
+    }
+
+    /**
+     * Positions the timer left or right and makes it visible.
+     */
+    private updateTimerPosition(): void {
+        const timerEl = document.getElementById('timer') as HTMLElement;
+        if (!timerEl) return;
+
+        timerEl.style.display = 'block';     // ensure visible
+        timerEl.classList.remove('left', 'right');
+        if (this.userTurn === this.user1) {
+            timerEl.classList.add('left');
+        } else {
+            timerEl.classList.add('right');
+        }
     }
 
     /** Call this whenever user1 scores */
