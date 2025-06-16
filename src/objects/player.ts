@@ -30,6 +30,16 @@ export class Player extends MovingObject {
     private static elHitbox = document.getElementById('pcHitbox') as HTMLElement;
     private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
     private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
+    private static closeBtn = document.getElementById('pcClose') as HTMLButtonElement;
+
+    // One‑time close‑button handler
+    static {
+        if (Player.closeBtn) {
+            Player.closeBtn.addEventListener('click', () => {
+                Player.card.style.display = 'none';
+            });
+        }
+    }
 
     protected _object : MovingObject = this;
 
