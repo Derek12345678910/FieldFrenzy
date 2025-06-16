@@ -235,6 +235,8 @@ export class Battle {
 
             p1.shotStage = 0; p2.shotStage = 0;
             p1.curPath = p1.stage; p2.curPath = p2.stage;
+            p1.position = p1.paths.get(p1.curPath) as Vector; 
+            p2.position = p2.paths.get(p2.curPath) as Vector; 
         }
         this.ball.curPath = this.ball.stage;
     }
