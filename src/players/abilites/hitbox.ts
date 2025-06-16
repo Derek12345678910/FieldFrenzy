@@ -5,7 +5,8 @@ export class extendedHitbox extends Hitbox{
         super(
             "Phantom Reach",
             "When activated, the player’s hitbox expands to steal the ball from opponents",
-            false
+            false,
+            1
         )
     }
 }
@@ -15,7 +16,8 @@ export class automaticSave extends Hitbox{
         super(
             "Immovable Object",
             "When activated, the goalkeeper’s hitbox expands to cover the entire net, blocking all incoming shots and abilities",
-            false
+            false,
+            2
         )
     }
 }

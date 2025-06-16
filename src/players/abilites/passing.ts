@@ -5,7 +5,8 @@ export class perfectPass extends Passing{
         super(
             "Thread Of Fate",
             "A fast and precise pass toward a targeted teammate",
-            false
+            false,
+            2
         )
     }
 }
@@ -15,7 +16,8 @@ export class curvePassing extends Passing{
         super(
             "Trivela",
             "A pass that can be curved, even around opponents",
-            false
+            false,
+            1
         )
     }
 }

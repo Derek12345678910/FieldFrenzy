@@ -5,7 +5,8 @@ export class curveShot extends Shooting{
         super(
             "Golden Boy",
             "Curves the shot",
-            false
+            false,
+            2
         )
     }
 }
@@ -15,7 +16,8 @@ export class automaticGoal extends Shooting{
         super(
             "Vickings Wrath",
             "Goal No Matter What",
-            false
+            false,
+            1
         )
     }
 }
@@ -25,7 +27,8 @@ export class longShot extends Shooting{
         super(
             "Rocket",
             "Increase the range and strength of the shot",
-            false
+            false,
+            1
         )
     }
 }
