@@ -1,19 +1,19 @@
 import { Passing } from "../abilitytypes.js"
 
-export class PerfectPass extends Passing{
+export class perfectPass extends Passing{
     public constructor(){
         super(
-            "Perfect Pass",
+            "Thread Of Fate",
             "A fast and precise pass toward a targeted teammate",
             false
         )
     }
 }
 
-export class CurvePassing extends Passing{
+export class curvePassing extends Passing{
     public constructor(){
         super(
-            "Curve Pass",
+            "Trivela",
             "A pass that can be curved, even around opponents",
             false
         )

@@ -1,16 +1,16 @@
 import { Shooting } from "../abilitytypes.js"
 
-export class CurveShot extends Shooting{
+export class curveShot extends Shooting{
     public constructor(){
         super(
-            "Curve SHOT",
+            "Golden Boy",
             "Curves the shot",
             false
         )
     }
 }
 
-export class AutomaticGoal extends Shooting{
+export class automaticGoal extends Shooting{
     public constructor(){
         super(
             "Vickings Wrath",
@@ -20,10 +20,10 @@ export class AutomaticGoal extends Shooting{
     }
 }
 
-export class LongShot extends Shooting{
+export class longShot extends Shooting{
     public constructor(){
         super(
-            "Long Shot",
+            "Rocket",
             "Increase the range and strength of the shot",
             false
         )
