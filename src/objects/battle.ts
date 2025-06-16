@@ -8,6 +8,7 @@ import { Ball } from "./ball.js";
 
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
+import { Movement } from "../datastructures/movement.js";
 
 export class Battle {
     private _canvas : Canvas;
@@ -321,8 +322,14 @@ export class Battle {
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
-            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 22, this.user1.colour, 1000);
-            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 22, this.user2.colour, 1000);
+            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), player: pl1, radius: 22, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), player: pl2, radius: 22, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1) as Pair<number>, player: pl1, radius: 22, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl1.stage - 1) as Pair<number>, player: pl2, radius: 22, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            this.Canvas.animateMovement(p1movement1, p1movement2);
+            this.Canvas.animateMovement(p2movement1, p2movement2);
         }
     }
 

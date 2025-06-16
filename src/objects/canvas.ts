@@ -20,12 +20,12 @@ export class Canvas {
   private coordDisplay: HTMLElement | null;
   private aspectRatio: number;
 
-  private _height : number;
-  private _width : number;
+  private _height: number;
+  private _width: number;
 
-  private battle : Battle;
+  private battle: Battle;
 
-  public constructor(canvasId: string, battle : Battle) {
+  public constructor(canvasId: string, battle: Battle) {
     this.battle = battle;
     const el = document.getElementById(canvasId);
     if (!(el instanceof HTMLCanvasElement)) {
@@ -153,11 +153,11 @@ export class Canvas {
     );
 
     // Draw penalty areas and goals for top and bottom halves
-    
+
 
   }
 
-  public get canvas() : HTMLCanvasElement{
+  public get canvas(): HTMLCanvasElement {
     return this._canvas;
   }
 
@@ -167,8 +167,8 @@ export class Canvas {
    * @param color   The fill color for the player's circle (e.g. "#FF0000").
    * @param radius  Radius of the circle in pixels
    */
-  public drawPlayers(team : Team, color: string, radius: number): void {
-    let playersList : List<Player> = team.allPlayers;
+  public drawPlayers(team: Team, color: string, radius: number): void {
+    let playersList: List<Player> = team.allPlayers;
     for (let i = 0; i < playersList.size(); i++) {
       let player = playersList.get(i) as Player;
 
@@ -184,21 +184,21 @@ export class Canvas {
       this.drawCircle(x, y, img, r, color);
 
       // draw the paths of the character
-      for(let i=player.curPath; i<player.stage + player.curPath; i++){
-        let destination : Pair<number> = player.destinations.get(i) as Pair<number>;
-        
-        let path : Vector = player.paths.get(i) as Vector
+      for (let i = player.curPath; i < player.stage + player.curPath; i++) {
+        let destination: Pair<number> = player.destinations.get(i) as Pair<number>;
 
-        let mx : number = destination.x;
-        let my : number = destination.y;
+        let path: Vector = player.paths.get(i) as Vector
+
+        let mx: number = destination.x;
+        let my: number = destination.y;
 
         this.drawCircle(mx, my, img, r, color);
 
-        let start : Pair<number> = path.position;
-        let dir : Pair<number> = path.direction;
+        let start: Pair<number> = path.position;
+        let dir: Pair<number> = path.direction;
 
-        let sx : number = start.x; let sy : number = start.y;
-        let dx : number = dir.x; let dy : number = dir.y;
+        let sx: number = start.x; let sy: number = start.y;
+        let dx: number = dir.x; let dy: number = dir.y;
 
         this.drawLine(sx, sy, dx, dy);
 
@@ -206,8 +206,8 @@ export class Canvas {
     }
   }
 
-  public drawPlayersReg(team : Team, color: string, radius: number): void {
-    let playersList : List<Player> = team.allPlayers;
+  public drawPlayersReg(team: Team, color: string, radius: number): void {
+    let playersList: List<Player> = team.allPlayers;
     for (let i = 0; i < playersList.size(); i++) {
       let player = playersList.get(i) as Player;
 
@@ -224,7 +224,7 @@ export class Canvas {
     }
   }
 
-  public drawBallReg(ball : Ball, color: string, radius: number){
+  public drawBallReg(ball: Ball, color: string, radius: number) {
 
     let posPair: Pair<number> = ball.position.position;
     let x: number = posPair.x; let y: number = posPair.y;
@@ -244,7 +244,7 @@ export class Canvas {
    * @param color colour of the team in possesion
    * @param radius radius of the circle in pixels
    */
-  public drawBall(ball : Ball, color: string, radius: number){
+  public drawBall(ball: Ball, color: string, radius: number) {
 
     let posPair: Pair<number> = ball.position.position;
     let x: number = posPair.x; let y: number = posPair.y;
@@ -257,28 +257,28 @@ export class Canvas {
 
     this.drawCircle(x, y, img, r, color);
 
-    for(let i=ball.curPath; i<ball.stage + ball.curPath; i++){
-      let destination : Pair<number> = ball.destinations.get(i) as Pair<number>;
-      
-      let path : Vector = ball.paths.get(i) as Vector
+    for (let i = ball.curPath; i < ball.stage + ball.curPath; i++) {
+      let destination: Pair<number> = ball.destinations.get(i) as Pair<number>;
 
-      let mx : number = destination.x;
-      let my : number = destination.y;
+      let path: Vector = ball.paths.get(i) as Vector
+
+      let mx: number = destination.x;
+      let my: number = destination.y;
 
       this.drawCircle(mx, my, img, r, color);
 
-      let start : Pair<number> = path.position;
-      let dir : Pair<number> = path.direction;
+      let start: Pair<number> = path.position;
+      let dir: Pair<number> = path.direction;
 
-      let sx : number = start.x; let sy : number = start.y;
-      let dx : number = dir.x; let dy : number = dir.y;
+      let sx: number = start.x; let sy: number = start.y;
+      let dx: number = dir.x; let dy: number = dir.y;
 
       this.drawLine(sx, sy, dx, dy);
 
     }
   }
 
-  private drawCircle(x : number, y : number, img : HTMLImageElement, r : number, color : string) : void{
+  private drawCircle(x: number, y: number, img: HTMLImageElement, r: number, color: string): void {
 
     this.ctx.save(); // Save current canvas state
 
@@ -299,7 +299,7 @@ export class Canvas {
 
   }
 
-  private drawLine(x : number, y : number, dx : number, dy : number){
+  private drawLine(x: number, y: number, dx: number, dy: number) {
     let ex = x + dx
     let ey = y + dy
     this.ctx.strokeStyle = "#FFFFFF";
@@ -310,11 +310,11 @@ export class Canvas {
     this.ctx.stroke();
   }
 
-  public get height() : number{
+  public get height(): number {
     return this._height;
   }
 
-  public get width() : number{
+  public get width(): number {
     return this._width;
   }
 
@@ -327,45 +327,83 @@ export class Canvas {
     this.drawField();
   }
 
-  private activeMovements: List<Movement> = new List<Movement>();
+  private isValidMovement(movement: Movement | null): boolean {
+    return (
+      movement !== null &&
+      movement.start !== null &&
+      movement.end !== null
+    );
+  }
 
-  public animateMovement(start: Pair<number>, end: Pair<number>, player: Player, radius: number, color: string, duration: number): void {
-    let movement: Movement = {start, end, player, radius, color, startTime: performance.now(), duration};
-    this.activeMovements.push(movement);
-    if (this.activeMovements.size() === 1) {
-      this.animateAll();
+  private isAnimating: boolean = false;
+
+  // first and second stage
+  private activeMovements: List<Pair<Movement | null>> = new List<Pair<Movement | null>>();
+
+  public animateMovement(movement1: Movement | null, movement2: Movement | null): void {
+    if (this.isValidMovement(movement1)) {
+      let movement: Pair<Movement | null> = new Pair(movement1, movement2);
+      this.activeMovements.push(movement);
+
+      // Only start animating once
+      if (!this.isAnimating) {
+        this.isAnimating = true;
+        requestAnimationFrame(this.animateAll);
+      }
     }
   }
 
   private animateAll = () => {
-    const now = performance.now();
+    const now: number = performance.now();
 
-    // Clear canvas before redrawing all characters
     this.clearCanvas();
 
-    // Keep only active movements
-    for(let i=0; i<this.activeMovements.size(); i++){
-      let { start, end, player, radius, color, startTime, duration } = this.activeMovements.get(i) as Movement;
+    for (let i = 0; i < this.activeMovements.size(); i++) {
+      let movementPair: Pair<Movement | null> = this.activeMovements.get(i) as Pair<Movement | null>;
 
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+      // First movement stage
+      if (movementPair.x !== null) {
+        let { start, end, player, radius, color, startTime, duration } = movementPair.x;
+        if (start && end) {
+          let progress = Math.min((now - startTime) / duration, 1);
+          let x = start.x + (end.x - start.x) * progress;
+          let y = start.y + (end.y - start.y) * progress;
 
-      const x = start.x + (end.x - start.x) * progress;
-      const y = start.y + (end.y - start.y) * progress;
+          this.drawCircle(x, y, player.image, radius, color);
 
-      this.drawCircle(x, y, player.image, radius, color);
+          if (progress >= 1) {
+            if (movementPair.y !== null) {
+              movementPair.y.startTime = now;
+              movementPair.x = null;
+            } else {
+              this.activeMovements.delete(i);
+              i--;
+            }
+          }
+        }
+      } 
+      else if (this.isValidMovement(movementPair.y) && movementPair.y !== null) {
+          let { start, end, player, radius, color, startTime, duration } = movementPair.y;
+          if (start && end) {
+            let progress = Math.min((now - startTime) / duration, 1);
+            let x = start.x + (end.x - start.x) * progress;
+            let y = start.y + (end.y - start.y) * progress;
 
-      // done animating
-      if(progress >= 1){
-        this.activeMovements.delete(i);
+            this.drawCircle(x, y, player.image, radius, color);
+
+            if (progress >= 1) {
+              this.activeMovements.delete(i);
+              i--;
+            }
+          }
+        }
       }
-    }
+
     if (this.activeMovements.size() > 0) {
       requestAnimationFrame(this.animateAll);
-    }
-    else {
-      // all animations are done
-      this.battle.resetField();
+    } else {
+      this.isAnimating = false;
+      this.battle.resetField(); // done with all animations
     }
   };
 
