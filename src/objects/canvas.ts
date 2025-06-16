@@ -7,6 +7,7 @@ import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
 import { Mirage } from "./mirage.js";
 import { Ball } from "./ball.js";
+import { Battle } from "./battle.js";
 
 import { Movement } from "../datastructures/movement.js";
 
@@ -22,7 +23,10 @@ export class Canvas {
   private _height : number;
   private _width : number;
 
-  public constructor(canvasId: string) {
+  private battle : Battle;
+
+  public constructor(canvasId: string, battle : Battle) {
+    this.battle = battle;
     const el = document.getElementById(canvasId);
     if (!(el instanceof HTMLCanvasElement)) {
       throw new Error(`Element with id "${canvasId}" is not a <canvas>.`);
@@ -358,6 +362,10 @@ export class Canvas {
     }
     if (this.activeMovements.size() > 0) {
       requestAnimationFrame(this.animateAll);
+    }
+    else {
+      // all animations are done
+      this.battle.resetField();
     }
   };
 

@@ -52,7 +52,7 @@ export class Battle {
 
     public constructor(user1 : User, user2 : User){
 
-        this._canvas = new Canvas("soccerField");
+        this._canvas = new Canvas("soccerField", this);
         this.user1 = user1;
         this.user2 = user2;
 
@@ -146,7 +146,6 @@ export class Battle {
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
         
         window.addEventListener("resize", () => {
-            console.log("A")
             this.Canvas.resizeCanvas();
             this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
             this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
@@ -235,8 +234,8 @@ export class Battle {
 
             p1.shotStage = 0; p2.shotStage = 0;
             p1.curPath = p1.stage; p2.curPath = p2.stage;
-            p1.position = p1.paths.get(p1.curPath) as Vector; 
-            p2.position = p2.paths.get(p2.curPath) as Vector; 
+            p1.position.position = p1.destinations.get(p1.curPath - 1) as Pair<number>; 
+            p2.position.position = p2.destinations.get(p2.curPath - 1) as Pair<number>; 
         }
         this.ball.curPath = this.ball.stage;
     }
@@ -339,7 +338,7 @@ export class Battle {
         this._actionPhase = num
     }
 
-    private resetField() : void{
+    public resetField() : void{
         this.Canvas.clearCanvas();
         this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
         this.Canvas.drawPlayersReg(this.user1.team, this.user1.colour, 10);
