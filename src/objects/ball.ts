@@ -19,26 +19,11 @@ export class Ball extends MovingObject{
 
     private MOVELIMIT : number = 20; // 20 units move limit
 
+    /** Controls whether the ball can move */
+    private _canMove : boolean = true;
+
     public constructor(hitbox : Pair<number>, size : Pair<number>, image : string){
         super(hitbox, size, image)
-    }
-
-    public get possession() : Player | null{
-        return this._possession;
-    }
-
-    public set possession(player : Player | null) {
-        this._possession = player;
-        // if the player has possession they cant move
-        if(player !== null) player.canRun =  false;
-    }
-
-    public get canBePossessed() : boolean{
-        return this._canBePossessed;
-    }
-
-    public set canBePossessed(canBe : boolean) {
-        this._canBePossessed = canBe;
     }
 
     public override calculatePath(x: number, y: number): void {
@@ -87,6 +72,32 @@ export class Ball extends MovingObject{
         // the possession is for now no one
         this._possession = null;
 
+    }
+
+    public get possession() : Player | null{
+        return this._possession;
+    }
+
+    public set possession(player : Player | null) {
+        this._possession = player;
+        // if the player has possession they cant move
+        if(player !== null) player.canRun =  false;
+    }
+
+    public get canBePossessed() : boolean{
+        return this._canBePossessed;
+    }
+
+    public set canBePossessed(canBe : boolean) {
+        this._canBePossessed = canBe;
+    }
+
+    public get canMove() : boolean{
+        return this._canMove;
+    }
+
+    public set canMove(can : boolean){
+        this._canMove = can;
     }
 
 }

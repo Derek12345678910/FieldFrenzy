@@ -211,6 +211,35 @@ export class Battle {
     }
 
     /**
+     * Checks if the player without the ball takes it
+     */
+    private checkPossessionChange() : void{
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        for(let i=0; i<otheruser.team.allPlayers.size(); i++){
+            let pl : Player = otheruser.team.allPlayers.get(i) as Player;
+            // touches ball
+            if(pl.touchingBall()){
+                this.ball.canMove = false;
+                this.ball.possession = pl;
+            }
+        }
+    }
+
+    /**
+     * Reset player stages and update them after a turn
+     */
+    private resetStages() : void{
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
+
+            p1.shotStage = 0; p2.shotStage = 0;
+            p1.curPath = p1.stage; p2.curPath = p2.stage;
+        }
+        this.ball.curPath = this.ball.stage;
+    }
+
+    /**
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
@@ -252,6 +281,7 @@ export class Battle {
             this.isTransitioning = true;
             this.resetField();
             this.drawMoves();
+            this.resetStages();
             // start the next round after 5 seconds
             setTimeout(()=>{
                 this.startNextRound();
@@ -264,6 +294,7 @@ export class Battle {
      */ 
     private startNextRound(){
         this.currentTurn = "user1";
+        this.userTurn = this.user1;
         this.isTransitioning = false;
         this.startTurnTimer();
     }
@@ -285,7 +316,13 @@ export class Battle {
      */
     private drawMoves(): void{
         console.log("Round over, drawing moves")
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
+            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 10, this.user1.colour, 1000);
+            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 10, this.user2.colour, 1000);
+        }
     }
 
     public get Canvas() : Canvas{

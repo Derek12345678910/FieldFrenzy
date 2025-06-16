@@ -8,6 +8,8 @@ import { Vector } from "../datastructures/vector.js";
 import { Mirage } from "./mirage.js";
 import { Ball } from "./ball.js";
 
+import { Movement } from "../datastructures/movement.js";
+
 /**
  * Controls canvas of the game
  */
@@ -159,7 +161,7 @@ export class Canvas {
    * Draws each Player in the provided list as a circle with a direction arrow.
    * @param playersList List<Player> to render.
    * @param color   The fill color for the player's circle (e.g. "#FF0000").
-   * @param radius  Radius of the circle in pixels (default = 10).
+   * @param radius  Radius of the circle in pixels
    */
   public drawPlayers(team : Team, color: string, radius: number): void {
     let playersList : List<Player> = team.allPlayers;
@@ -178,7 +180,7 @@ export class Canvas {
       this.drawCircle(x, y, img, r, color);
 
       // draw the paths of the character
-      for(let i=0; i<player.stage; i++){
+      for(let i=player.curPath; i<player.stage + player.curPath; i++){
         let destination : Pair<number> = player.destinations.get(i) as Pair<number>;
         
         let path : Vector = player.paths.get(i) as Vector
@@ -251,7 +253,7 @@ export class Canvas {
 
     this.drawCircle(x, y, img, r, color);
 
-    for(let i=0; i<ball.stage; i++){
+    for(let i=ball.curPath; i<ball.stage + ball.curPath; i++){
       let destination : Pair<number> = ball.destinations.get(i) as Pair<number>;
       
       let path : Vector = ball.paths.get(i) as Vector
@@ -283,7 +285,6 @@ export class Canvas {
 
     this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
 
-    // === Draw circular border ===
     this.ctx.beginPath();
     this.ctx.arc(x, y, r, 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
@@ -320,7 +321,45 @@ export class Canvas {
     this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
     this.drawField();
-}
+  }
+
+  private activeMovements: List<Movement> = new List<Movement>();
+
+  public animateMovement(start: Pair<number>, end: Pair<number>, player: Player, radius: number, color: string, duration: number): void {
+    let movement: Movement = {start, end, player, radius, color, startTime: performance.now(), duration};
+    this.activeMovements.push(movement);
+    if (this.activeMovements.size() === 1) {
+      this.animateAll();
+    }
+  }
+
+  private animateAll = () => {
+    const now = performance.now();
+
+    // Clear canvas before redrawing all characters
+    this.clearCanvas();
+
+    // Keep only active movements
+    for(let i=0; i<this.activeMovements.size(); i++){
+      let { start, end, player, radius, color, startTime, duration } = this.activeMovements.get(i) as Movement;
+
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const x = start.x + (end.x - start.x) * progress;
+      const y = start.y + (end.y - start.y) * progress;
+
+      this.drawCircle(x, y, player.image, radius, color);
+
+      // done animating
+      if(progress >= 1){
+        this.activeMovements.delete(i);
+      }
+    }
+    if (this.activeMovements.size() > 0) {
+      requestAnimationFrame(this.animateAll);
+    }
+  };
 
 
 }

@@ -12,6 +12,8 @@ export class User {
 
     private _colour : string;
 
+    private _usedAbility : boolean = false;
+
     public constructor(name : string, team : Team, colour : string){
         this._name = name;
         this._team = team;
@@ -41,6 +43,14 @@ export class User {
 
     public get colour() : string{
         return this._colour;
+    }
+
+    public get usedAbility() : boolean{
+        return this._usedAbility;
+    }
+
+    public set usedAbility(used : boolean){
+        this._usedAbility = used;
     }
 
 }

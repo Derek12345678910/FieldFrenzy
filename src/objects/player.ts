@@ -222,7 +222,10 @@ export class Player extends MovingObject {
         let ballPositionY: number = this.ball.position.position.y;
         let ballRadius: number = (this.ball.hitbox.x/2);
         if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
-            return true;
+            if(this.ball.canBePossessed){
+                return true;
+            }
+            else return false;
         }
         else{
             return false;
