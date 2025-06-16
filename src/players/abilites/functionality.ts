@@ -49,3 +49,13 @@ export class emperorsDribble extends Functionality{
         )
     }
 }
+
+export class disableAbility extends Functionality{
+    public constructor(){
+        super(
+            "Ability Jam",
+            "Disable the abilities of the opponent with the ball",
+            false
+        )
+    }
+}
