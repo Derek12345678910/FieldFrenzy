@@ -2,18 +2,26 @@
   "name": "simspace",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://github.com/Derek12345678910/FieldFrenzy#readme",
+  "bugs": {
+    "url": "https://github.com/Derek12345678910/FieldFrenzy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Derek12345678910/FieldFrenzy.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^18.19.100",
-    "typescript": "^5.8.3"
-  },
   "dependencies": {
     "live-server": "^1.2.2"
   },
-  "type": "module"
+  "devDependencies": {
+    "@types/node": "^18.19.100",
+    "typescript": "^5.8.3"
+  }
 }
