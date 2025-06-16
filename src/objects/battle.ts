@@ -257,6 +257,7 @@ export class Battle {
                 this.startNextRound();
             }, this.transistionDuration);
         }
+        console.log(this.currentTurn);
     }
 
     /**
@@ -264,6 +265,7 @@ export class Battle {
      */ 
     private startNextRound(){
         this.currentTurn = "user1";
+        this.userTurn = this.user1;
         this.isTransitioning = false;
         this.startTurnTimer();
     }
@@ -271,7 +273,8 @@ export class Battle {
      * draws the countdown on the canvas
      */
     private drawCountdown(): void{
-        console.log(this.timeRemaining);
+        (document.getElementById("time-name")as HTMLElement).innerHTML = `${this.userTurn.name}'s Turn`; 
+        (document.getElementById("time-remaining")as HTMLElement).innerHTML = String(this.timeRemaining/1000); 
     }
     /**
      * clears all the timers and intervals
@@ -284,8 +287,8 @@ export class Battle {
      * draws all the moves chosen by the players
      */
     private drawMoves(): void{
-        console.log("Round over, drawing moves")
-
+        (document.getElementById("time-name") as HTMLElement).innerHTML = "Break";
+        (document.getElementById("time-remaining")as HTMLElement).innerHTML = ""; 
     }
 
     public get Canvas() : Canvas{

@@ -29,3 +29,7 @@
   color: #ffffff;
   text-shadow: 0 0 8px rgba(255,255,255,0.75);
 }
+
+#scoreboard .timer{
+  text-align: center;
+}
