@@ -1,16 +1,26 @@
+import { User } from "./user.js";
+import { Player } from "./player.js";
+import { Team } from "./team.js";
+
+import { List } from "../datastructures/list.js";
+import { Pair } from "../datastructures/pair.js";
+
+/**
+ * Controls canvas of the game
+ */
 export class Canvas {
-  private canvas: HTMLCanvasElement;
+  private _canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private coordDisplay: HTMLElement | null;
   private aspectRatio: number;
 
-  constructor(canvasId: string) {
+  public constructor(canvasId: string) {
     const el = document.getElementById(canvasId);
     if (!(el instanceof HTMLCanvasElement)) {
       throw new Error(`Element with id "${canvasId}" is not a <canvas>.`);
     }
-    this.canvas = el;
-    const context = this.canvas.getContext('2d');
+    this._canvas = el;
+    const context = this._canvas.getContext('2d');
     if (!context) {
       throw new Error('Unable to get 2D drawing context.');
     }
@@ -18,18 +28,17 @@ export class Canvas {
 
     // Locate the coordinate display element
     this.coordDisplay = document.getElementById('coordDisplay');
-    // Add click listener to canvas
-    this.canvas.addEventListener('click', this.handleClick.bind(this));
 
     // Compute original aspect ratio from initial width/height attributes
-    this.aspectRatio = this.canvas.width / this.canvas.height;
+    this.aspectRatio = this._canvas.width / this._canvas.height;
 
     // Resize to fit window on load and attach resize handler
     window.addEventListener('resize', this.resizeCanvas.bind(this));
     this.resizeCanvas();
+
   }
 
-  private resizeCanvas(): void {
+  public resizeCanvas(): void {
     const { innerWidth, innerHeight } = window;
     const ratio = this.aspectRatio;
 
@@ -45,17 +54,17 @@ export class Canvas {
     }
 
     // Update canvas dimensions
-    this.canvas.width = newWidth;
-    this.canvas.height = newHeight;
+    this._canvas.width = newWidth;
+    this._canvas.height = newHeight;
 
     // Redraw field
     this.drawField();
   }
 
   private drawField(): void {
-    const { ctx, canvas } = this;
-    const width = canvas.width;
-    const height = canvas.height;
+    const { ctx, _canvas } = this;
+    const width = _canvas.width;
+    const height = _canvas.height;
 
     // Clear any previous drawing
     ctx.clearRect(0, 0, width, height);
@@ -129,14 +138,83 @@ export class Canvas {
 
   }
 
-  private handleClick(event: MouseEvent): void {
-    if (!this.coordDisplay) return;
-    const rect = this.canvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
-    // Compute coordinates with origin at bottom-left
-    const xCoord = Math.floor(clickX);
-    const yCoord = Math.floor(this.canvas.height - clickY);
-    this.coordDisplay.innerText = `(${xCoord}, ${yCoord})`;
+  public get canvas() : HTMLCanvasElement{
+    return this._canvas;
   }
+
+  /**
+   * Draws each Player in the provided list as a circle with a direction arrow.
+   * @param playersList List<Player> to render.
+   * @param color   The fill color for the player's circle (e.g. "#FF0000").
+   * @param radius  Radius of the circle in pixels (default = 10).
+   * @param lineLen Length of the direction line (default = 20).
+   */
+public drawPlayers(team: Team, color: string, radius: number, lineLen: number): void {
+  let playersList: List<Player> = team.allPlayers;
+  for (let i = 0; i < playersList.size(); i++) {
+    let player = playersList.get(i) as Player;
+
+    let posPair: Pair<number> = player.position.position;
+    let dirPair: Pair<number> = player.position.direction;
+    let x: number = posPair.x;
+    let y: number = posPair.y;
+    let dx: number = dirPair.x;
+    let dy: number = dirPair.y;
+
+    let r = radius;
+    let sz: Pair<number> = player.size;
+    r = (sz.x + sz.y) / 2;
+
+    let img: HTMLImageElement = player.image as HTMLImageElement;
+
+    // === Draw circular image ===
+    this.ctx.save(); // Save current canvas state
+
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.closePath();
+    this.ctx.clip();
+
+    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+
+    this.ctx.restore(); // Restore to remove clipping
+
+    // === Draw circular border ===
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+
+    // === Draw direction line ===
+    const ex = x + dx * lineLen;
+    const ey = y + dy * lineLen;
+    this.ctx.strokeStyle = "#FFFFFF";
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, y);
+    this.ctx.lineTo(ex, ey);
+    this.ctx.stroke();
+
+    // === Draw arrowhead ===
+    const ahLen = 6;
+    const ahWidth = 4;
+    const bx = ex - dx * ahLen;
+    const by = ey - dy * ahLen;
+    const px = -dy;
+    const py = dx;
+    const leftX = bx + px * ahWidth;
+    const leftY = by + py * ahWidth;
+    const rightX = bx - px * ahWidth;
+    const rightY = by - py * ahWidth;
+
+    this.ctx.fillStyle = "#FFFFFF";
+    this.ctx.beginPath();
+    this.ctx.moveTo(ex, ey);
+    this.ctx.lineTo(leftX, leftY);
+    this.ctx.lineTo(rightX, rightY);
+    this.ctx.closePath();
+    this.ctx.fill();
+}
+}
 }

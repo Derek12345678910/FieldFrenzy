@@ -7,24 +7,32 @@ export class Vector {
 
     private _position : Pair<number>;
     
-    private _magnitude : number;
+    private _direction : Pair<number>;
 
     /**
      * Create a 2D vector object
      * @param pos position of the vector
      * @param dir direction of the vector
      */
-    public constructor(pos : Pair<number>, mag : number){
+    public constructor(pos : Pair<number>, dir : Pair<number>){
         this._position = pos;
-        this._magnitude = mag;
+        this._direction = dir;
     }
 
     public get position() : Pair<number> {
         return this._position;
     }
 
-    public get magnitude() : number {
-        return this._magnitude;
+    public set position(newPos : Pair<number>){
+        this._position = this.position;
+    } 
+
+    public get direction() : Pair<number> {
+        return this._direction;
+    }
+
+    public set direction(newDir : Pair<number>) {
+        this._direction = newDir;
     }
 
 }
