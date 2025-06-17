@@ -28,7 +28,7 @@ export class Battle {
     // timer for each users turn
     private turnTimer : ReturnType<typeof setTimeout> | null = null;
     // duration of the timer 
-    private turnTimeLimit: number = 15000;
+    private turnTimeLimit: number = 5000;
     // time remaining for the user to make their moves
     private timeRemaining: number = this.turnTimeLimit;
     // countdown to make moves
@@ -235,8 +235,9 @@ export class Battle {
 
             p1.shotStage = 0; p2.shotStage = 0;
             p1.curPath = p1.stage; p2.curPath = p2.stage;
-            p1.position.position = p1.destinations.get(p1.curPath - 1) as Pair<number>; 
-            p2.position.position = p2.destinations.get(p2.curPath - 1) as Pair<number>; 
+            p1.ismoving = false; p2.ismoving = false;
+            p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
+            p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
         }
         this.ball.curPath = this.ball.stage;
     }
@@ -322,14 +323,22 @@ export class Battle {
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
-            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), player: pl1, radius: 22, color: this.user1.colour, startTime: performance.now(), duration: 1000};
-            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), player: pl2, radius: 22, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
 
-            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1) as Pair<number>, player: pl1, radius: 22, color: this.user1.colour, startTime: performance.now(), duration: 1000};
-            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl1.stage - 1) as Pair<number>, player: pl2, radius: 22, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1) as Pair<number>, obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1) as Pair<number>, obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
 
-            this.Canvas.animateMovement(p1movement1, p1movement2);
-            this.Canvas.animateMovement(p2movement1, p2movement2);
+            if(this.Canvas.isValidMovement(p1movement1)) {
+                pl1.ismoving = true;
+                this.Canvas.animateMovement(p1movement1, p1movement2);
+            }
+            if(this.Canvas.isValidMovement(p2movement1)) {
+                pl2.ismoving = true;
+                this.Canvas.animateMovement(p2movement1, p2movement2);
+            }
+            if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
+            if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
         }
     }
 

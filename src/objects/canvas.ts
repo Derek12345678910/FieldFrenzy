@@ -327,29 +327,44 @@ export class Canvas {
     this.drawField();
   }
 
-  private isValidMovement(movement: Movement | null): boolean {
-    return (
-      movement !== null &&
-      movement.start !== null &&
-      movement.end !== null
-    );
+  public isValidMovement(movement: Movement | null): boolean {
+    return (movement !== null && movement.start !== null && movement.end !== null);
+  }
+
+  private remainingPlayers : List<Pair<Player | User>> = new List<Pair<Player | User>>();
+
+  public addRemainingPlayer(player : Player, us : User) : void {
+    let pair : Pair<Player | User> = new Pair<Player | User>(player, us);
+    this.remainingPlayers.push(pair);
+  }
+
+  private drawRemainingPlayers() : void{
+    for(let i=0; i<this.remainingPlayers.size(); i++){
+      let pair : Pair<Player | User> = this.remainingPlayers.get(i) as Pair<Player | User>;
+      let pl : Player = pair.x as Player;
+      let user : User = pair.y as User;
+      let x : number = pl.position.position.x; 
+      let y : number = pl.position.position.y;
+      this.drawCircle(x, y, pl.image, 20, user.colour);
+    }
   }
 
   private isAnimating: boolean = false;
 
   // first and second stage
   private activeMovements: List<Pair<Movement | null>> = new List<Pair<Movement | null>>();
+  private complete: List<number> = new List<number>();
+  private animscomplete: number = 0;
 
   public animateMovement(movement1: Movement | null, movement2: Movement | null): void {
-    if (this.isValidMovement(movement1)) {
-      let movement: Pair<Movement | null> = new Pair(movement1, movement2);
-      this.activeMovements.push(movement);
+    let movement: Pair<Movement | null> = new Pair(movement1, movement2);
+    this.activeMovements.push(movement);
+    this.complete.push(1);
 
-      // Only start animating once
-      if (!this.isAnimating) {
-        this.isAnimating = true;
-        requestAnimationFrame(this.animateAll);
-      }
+    // Only start animating once
+    if (!this.isAnimating) {
+      this.isAnimating = true;
+      requestAnimationFrame(this.animateAll);
     }
   }
 
@@ -360,52 +375,57 @@ export class Canvas {
 
     for (let i = 0; i < this.activeMovements.size(); i++) {
       let movementPair: Pair<Movement | null> = this.activeMovements.get(i) as Pair<Movement | null>;
+      let stage: number = this.complete.get(i) as number;
 
       // First movement stage
-      if (movementPair.x !== null) {
-        let { start, end, player, radius, color, startTime, duration } = movementPair.x;
+      if (movementPair.x !== null && stage === 1) {
+        let { start, end, obj, radius, color, startTime, duration } = movementPair.x;
         if (start && end) {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
           let y = start.y + (end.y - start.y) * progress;
 
-          this.drawCircle(x, y, player.image, radius, color);
+          this.drawCircle(x, y, obj.image, radius, color);
 
           if (progress >= 1) {
-            if (movementPair.y !== null) {
+            if (this.isValidMovement(movementPair.y) && movementPair.y !== null) {
               movementPair.y.startTime = now;
-              movementPair.x = null;
-            } else {
-              this.activeMovements.delete(i);
-              i--;
+              this.complete.insert(2, i)
             }
-          }
-        }
-      } 
-      else if (this.isValidMovement(movementPair.y) && movementPair.y !== null) {
-          let { start, end, player, radius, color, startTime, duration } = movementPair.y;
-          if (start && end) {
-            let progress = Math.min((now - startTime) / duration, 1);
-            let x = start.x + (end.x - start.x) * progress;
-            let y = start.y + (end.y - start.y) * progress;
-
-            this.drawCircle(x, y, player.image, radius, color);
-
-            if (progress >= 1) {
-              this.activeMovements.delete(i);
-              i--;
+            else {
+              this.animscomplete++;
             }
           }
         }
       }
+      else if (this.isValidMovement(movementPair.y) && movementPair.y !== null && stage === 2) {
+        let { start, end, obj, radius, color, startTime, duration } = movementPair.y;
+        if (start && end) {
+          let progress = Math.min((now - startTime) / duration, 1);
+          let x = start.x + (end.x - start.x) * progress;
+          let y = start.y + (end.y - start.y) * progress;
 
-    if (this.activeMovements.size() > 0) {
+          this.drawCircle(x, y, obj.image, radius, color);
+
+          if (progress >= 1) {
+            this.animscomplete++;
+          }
+        }
+      }
+    }
+    if (this.animscomplete !== this.activeMovements.size()) {
+      this.drawRemainingPlayers();
       requestAnimationFrame(this.animateAll);
     } else {
       this.isAnimating = false;
       this.battle.resetField(); // done with all animations
+      this.activeMovements.empty();
+      this.complete.empty();
+      this.remainingPlayers.empty();
+      this.animscomplete = 0;
     }
   };
 
+  // doesnt work because im not drawing after its finished
 
 }
