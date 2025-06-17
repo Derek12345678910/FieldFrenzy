@@ -163,12 +163,12 @@ export class List<T> {
         return 0;
     }
 
-    /**
-     * Empty the list
-     */
-    public empty() : void{
-      for(let i=0; i<this.size(); i++){
-        this.delete(i);
-      }
+  /**
+   * Empty the list
+   */
+  public empty(): void {
+    for (let i = this.numItems - 1; i >= 0; i--) {
+      this.delete(i);
     }
+  }
 }
