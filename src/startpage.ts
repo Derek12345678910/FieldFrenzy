@@ -1,7 +1,40 @@
 import { List } from "./datastructures/list.js";
 import { Player } from "./objects/player.js";
 
+import * as Attackers from "./players/children/attacker.js";
+import * as Defenders from "./players/children/defender.js";
+import * as Utilities from "./players/children/utility.js";
+import * as Goalkeepers from "./players/children/goalie.js";
+
+const game_players: List<Player> = new List<Player>();
+game_players.push(new Goalkeepers.Buffon());
+game_players.push(new Goalkeepers.Courtois());
+game_players.push(new Goalkeepers.Hsiung());
+game_players.push(new Defenders.Alphonso());
+game_players.push(new Defenders.Maldini());
+game_players.push(new Defenders.VanDijk());
+game_players.push(new Utilities.DeBruyne());
+game_players.push(new Utilities.Derek());
+game_players.push(new Utilities.Iniesta());
+game_players.push(new Utilities.Modric());
+game_players.push(new Attackers.Cristiano());
+game_players.push(new Attackers.Haaland());
+game_players.push(new Attackers.Mbappe());
+game_players.push(new Attackers.Messi());
+game_players.push(new Attackers.Yamal());
+console.log(game_players);
+
+function getNames(data: List<Player>): List<string>{
+    let player_names: List<string> = new List<string>
+    for(let i=0;i<game_players.getData().length;i++){
+        player_names.push(game_players.getData()[i].name);
+    }
+    console.log(player_names);
+    return player_names;
+}
+
 let player_list: List<string> = new List<string>();
+/*
 player_list.push("Thibaut Courtois")
 player_list.push("Gianluigi Buffon")
 player_list.push("Derek Lau")
@@ -17,7 +50,7 @@ player_list.push("Cristiano Ronaldo");
 player_list.push("Lamine Yamal");
 player_list.push("Paolo Maldini");
 player_list.push("Andres Iniesta");
-console.log(player_list.sort(player_list.alphaAscendingSort));
+*/
 
 // battle button
 const BATTLEBUTTON: HTMLButtonElement = document.getElementById("battle-button") as HTMLButtonElement;
@@ -58,23 +91,81 @@ const DISPLAY = document.getElementById("players") as HTMLParagraphElement;
 
 
 function filter(): void{
+    
     let search = FILTERINPUT.value;
     console.log(search);
-    if(search === "pace"){
-
+    let indexes: List<number> = new List<number>;
+    if(search === "goalkeeper"){
+        for(let i=0;i<game_players.getData().length;i++){
+            if(game_players.getData()[i].field_position === "Goalkeeper"){
+                indexes.push(i);
+            }
+        }
     }
-    else if(search === "shot"){
-
+    else if(search === "defender"){
+            for(let i=0;i<game_players.getData().length;i++){
+            if(game_players.getData()[i].field_position === "Defender"){
+                indexes.push(i);
+            }
+        }
     }
-    
-    let result: number[] = player_list.binarySearch(search, player_list.getSortedData(), player_list.alphaAscendingSearch);
-    console.log(result);
+    else if(search === "midfielder"){
+            for(let i=0;i<game_players.getData().length;i++){
+            if(game_players.getData()[i].field_position === "Midfielder"){
+                indexes.push(i);
+            }
+        }
+    }
+    else if(search === "attacker"){
+            for(let i=0;i<game_players.getData().length;i++){
+            if(game_players.getData()[i].field_position === "Attacker"){
+                indexes.push(i);
+            }
+        }
+    }
+    else{
+        displayFiltered();
+    }
+    displayFiltered(indexes.getData());
+}
+
+function displayFiltered(indexes?: number[]): void{
     let html: string = ``
-    for(let i=0;i<result.length;i++){
-        html+=`${player_list.sortedData[result[i]]}  \n`
+    if(!indexes){
+        indexes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+    }
+    for(let i=0;i<indexes.length;i++){
+        html+=`
+        <div class="player-container">
+            <p class="player-name">${game_players.unsortedData[indexes[i]].name}</p>
+            <img class="player-image" src='${game_players.unsortedData[indexes[i]].image.src}'> 
+            <p class="player-position">Position: ${game_players.unsortedData[indexes[i]].field_position}</p>
+            <p class="player-pace">Pace: ${game_players.unsortedData[indexes[i]].speed}</p>
+            <p class="player-power">Kick: ${game_players.unsortedData[indexes[i]].power}</p>
+            <button type="button" id="team1-button" class="add-player-button">Add to team 1</button>
+            <button type="button" id="team2-button" class="add-player-button">Add to team 2</button>
+        </div>
+        \n`
     }
     console.log(html)
-    DISPLAY.innerText = html;
+    DISPLAY.innerHTML = html;
+        document.querySelectorAll('.add-player-button').forEach((button) =>{
+        button.addEventListener("click", () =>{
+            rosterPlayer("Yamal",button.id)
+        })
+    })
+}
+
+
+
+
+function rosterPlayer(player: string, team: string): void{
+    if(team === "team1-button"){
+        console.log("team1")
+    }
+    else[
+        console.log("team2")
+    ]
 }
 
 function displayUserOptions(page: string): void{
@@ -85,10 +176,64 @@ function displayUserOptions(page: string): void{
     else if(page === "players"){
         console.log("Display players");
         (document.getElementById("battle-options")as HTMLElement).style.display = "none";
-        (document.getElementById("player-display")as HTMLElement).style.display = "block"
+        (document.getElementById("player-display")as HTMLElement).style.display = "block";
+        displayFiltered();
     }
 }
 
+/**
+ * Returns player object based off inputted name, or Derek if name is not found
+ * @param player Player name to add
+ * @returns Player object
+ */
+export function addPlayer(player: string): Player{
+    if(player === "Courtois"){
+        return new Goalkeepers.Courtois()
+    }
+    else if(player === "Buffon"){
+        return new Goalkeepers.Buffon();
+    }
+    else if (player === "Lau") {
+        return new Utilities.Derek();
+    } 
+    else if (player === "Hsiung") {
+        return new Goalkeepers.Hsiung();
+    } 
+    else if (player === "Van Dijk") {
+        return new Defenders.VanDijk();
+    } 
+    else if (player === "Davies") {
+        return new Defenders.Alphonso();
+    } 
+    else if (player === "De Bruyne") {
+        return new Utilities.DeBruyne();
+    }
+    else if (player === "Modric") {
+        return new Utilities.Modric();
+    } 
+    else if (player === "Mbappe") {
+        return new Attackers.Mbappe();
+    } 
+    else if (player === "Haaland") {
+        return new Attackers.Haaland();
+    } 
+    else if (player === "Messi") {
+        return new Attackers.Messi();
+    } 
+    else if (player === "Ronaldo") {
+        return new Attackers.Cristiano()
+    } 
+    else if (player === "Yamal") {
+        return new Attackers.Yamal()
+    }  
+    else if (player === "Maldini") {
+        return new Defenders.Maldini()
+    } 
+    else if (player === "Iniesta") {
+        return new Utilities.Iniesta()
+    }
+    return new Utilities.Derek();
+}
 
 function startGame(){
     let user1name: string = (document.getElementById("user1-name")as HTMLInputElement).value;

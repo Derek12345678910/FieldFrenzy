@@ -18,7 +18,7 @@ export class Derek extends Utility{
             "Bum Derek",
             new Pair(15, 15),
             new Pair(20, 20),
-            "../src/players/Images/Lau.png",
+            "../Images/Lau.png",
             99,
             99,
             new functionalilty.certifiedBumMode()
@@ -32,7 +32,7 @@ export class Iniesta extends Utility{
             "Andres Iniesta",
             new Pair(25, 25),
             new Pair(20, 20),
-            "../src/players/Images/Iniesta.png",
+            "../Images/Iniesta.png",
             72,
             75,
             new passing.perfectPass()
@@ -46,7 +46,7 @@ export class Modric extends Utility{
             "Luka Modric",
             new Pair(25, 25),
             new Pair(20, 20),
-            "../src/players/Images/Modric.png",
+            "../Images/Modric.png",
             76,
             72,
             new passing.curvePassing()
@@ -60,7 +60,7 @@ export class DeBruyne extends Utility{
             "Kevin De Bruyne",
             new Pair(25, 25),
             new Pair(20, 20),
-            "../src/players/Images/DeBruyne.png",
+            "../Images/DeBruyne.png",
             87,
             67,
             new passing.perfectPass()

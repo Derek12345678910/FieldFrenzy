@@ -11,7 +11,7 @@ import { Mirage } from "./mirage.js";
 export class Player extends MovingObject {
     static container: HTMLElement = document.getElementById("optionDisplay") as HTMLElement;
     protected _object : MovingObject = this;
-
+    protected _field_position: string;
     protected _name : string;
 
     protected _power : number;
@@ -108,6 +108,10 @@ export class Player extends MovingObject {
 
     public get move() : string{
         return this._move;
+    }
+
+    public get field_position(): string{
+        return this._field_position;
     }
 
     public set move(move : string){
