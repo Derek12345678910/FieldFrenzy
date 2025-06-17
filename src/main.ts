@@ -12,9 +12,27 @@ import * as Goalkeepers from "./players/children/goalie.js";
 import { List } from "./datastructures/list.js";
 import { Vector } from "./datastructures/vector.js";
 import { Pair } from "./datastructures/pair.js";
-import { url } from "inspector";
 
 const path: string = window.location.pathname;
+
+const game_players: List<Player> = new List<Player>();
+game_players.push(new Goalkeepers.Buffon());
+game_players.push(new Goalkeepers.Courtois());
+game_players.push(new Goalkeepers.Hsiung());
+game_players.push(new Defenders.Alphonso());
+game_players.push(new Defenders.Maldini());
+game_players.push(new Defenders.VanDijk());
+game_players.push(new Utilities.DeBruyne());
+game_players.push(new Utilities.Derek());
+game_players.push(new Utilities.Iniesta());
+game_players.push(new Utilities.Modric());
+game_players.push(new Attackers.Cristiano());
+game_players.push(new Attackers.Haaland());
+game_players.push(new Attackers.Mbappe());
+game_players.push(new Attackers.Messi());
+game_players.push(new Attackers.Yamal());
+
+console.log(game_players);
 
 let urlParams = new URLSearchParams(window.location.search);
 let user1name = urlParams.get("name1");
