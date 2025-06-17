@@ -31,15 +31,7 @@ export class Player extends MovingObject {
     private static elAbilityName = document.getElementById('pcAbilityName') as HTMLElement;
     private static elAbilityDesc = document.getElementById('pcAbilityDesc') as HTMLElement;
     private static closeBtn = document.getElementById('pcClose') as HTMLButtonElement;
-
-    // One‑time close‑button handler
-    static {
-        if (Player.closeBtn) {
-            Player.closeBtn.addEventListener('click', () => {
-                Player.card.style.display = 'none';
-            });
-        }
-    }
+    private static _selected : boolean = false;
 
     protected _object : MovingObject = this;
 
@@ -157,7 +149,7 @@ export class Player extends MovingObject {
 
     public displayOptions(battle : Battle): void{
 
-        // add x button
+        Player.selected = true;
 
         Player.container.innerHTML = ''
         let options : List<string> = new List<string>();
@@ -218,6 +210,17 @@ export class Player extends MovingObject {
 
     public hideOptions() : void{
         Player.card.style.display = 'none';
+        Player._selected = false;
+    }
+
+    /** Closes the playercard */
+    static {
+        if (Player.closeBtn) {
+            Player.closeBtn.addEventListener('click', () => {
+                Player.card.style.display = 'none';
+                Player._selected = false;
+            });
+        }
     }
 
     /**
@@ -333,4 +336,11 @@ export class Player extends MovingObject {
         this._shotStage = stage;
     }
 
+    public static get selected() : boolean{
+        return Player._selected;
+    }
+
+    public static set selected(selected : boolean){
+        Player._selected = selected;
+    }
 }

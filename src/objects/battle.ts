@@ -80,6 +80,11 @@ export class Battle {
             // check if any team is clicked on
             let teamToCheck : Team = this.userTurn.team;
 
+            if(Player.selected === false){
+                this.selectedCharacter = null;
+                this.actionPhase = 0;
+            }
+
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
             let mouseY : number = event.clientY - rect.top;
@@ -146,7 +151,6 @@ export class Battle {
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
         
         window.addEventListener("resize", () => {
-            console.log("A")
             this.Canvas.resizeCanvas();
             this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
             this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
@@ -371,4 +375,5 @@ export class Battle {
         this._goal2 = val;
         this.updateScoreboard();
     }
+
 }
