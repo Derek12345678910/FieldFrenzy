@@ -6,6 +6,9 @@ import { Team } from "./team.js";
 
 import { Pair } from "../datastructures/pair.js";
 
+/**
+ * Represents a soccer ball or similar object that moves within a game field
+ */
 export class Ball extends MovingObject{
 
     private _possession : Player | null;
@@ -22,10 +25,22 @@ export class Ball extends MovingObject{
     /** Controls whether the ball can move */
     private _canMove : boolean = true;
 
+    /**
+     * Constructs a new Ball object with a hitbox, size, and image
+     * @param hitbox - A pair representing the ball's hitbox position
+     * @param size - A pair representing the size (width/height) of the ball
+     * @param image - Path or identifier of the ball's image/texture
+     */
     public constructor(hitbox : Pair<number>, size : Pair<number>, image : string){
         super(hitbox, size, image)
     }
 
+    /**
+     * Calculates the movement path for the ball toward a given destination
+     * Adds the path to the internal list and creates a mirage to simulate motion
+     * @param x - Target x-coordinate
+     * @param y - Target y-coordinate
+     */
     public override calculatePath(x: number, y: number): void {
         let lastPoint : Pair<number> = new Pair<number>(x, y);
 
@@ -74,28 +89,53 @@ export class Ball extends MovingObject{
 
     }
 
+    /**
+     * Gets the current player who has possession of the ball
+     * @returns A player instance or null if no one has possession
+     */
     public get possession() : Player | null{
         return this._possession;
     }
 
+    /**
+     * Sets the player who possesses the ball
+     * Disables the player's ability to run while in possession
+     * @param player - The player to assign possession to, or null
+     */
     public set possession(player : Player | null) {
         this._possession = player;
         // if the player has possession they cant move
         if(player !== null) player.canRun =  false;
     }
 
+    /**
+     * Indicates whether the ball is in a state that allows it to be possessed
+     * @returns True if the ball can be possessed, false otherwise
+     */
     public get canBePossessed() : boolean{
         return this._canBePossessed;
     }
 
+    /**
+     * Sets whether the ball can currently be possessed
+     * @param canBe - Boolean flag for possession eligibility
+     */
     public set canBePossessed(canBe : boolean) {
         this._canBePossessed = canBe;
     }
 
+    /**
+     * Checks whether the ball is currently allowed to move
+     * @returns True if the ball can move, false if movement is restricted
+     */
     public get canMove() : boolean{
         return this._canMove;
     }
 
+    /**
+     * Sets whether the ball is allowed to move
+     * @param can - Boolean flag indicating move permission
+     */
     public set canMove(can : boolean){
         this._canMove = can;
     }

@@ -9,6 +9,10 @@ import { Ball } from "./ball.js";
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
 
+/**
+ * Represents a Battle match between two users controlling soccer teams
+ * Handles game state, turn management, user input, drawing, and possession logic
+ */
 export class Battle {
     private _canvas : Canvas;
     
@@ -50,6 +54,11 @@ export class Battle {
 
     private teamPossession : User;
 
+    /**
+     * Create a new Battle instance with two users and initialize game state
+     * @param user1 - The first player participating
+     * @param user2 - The second player participating
+     */
     public constructor(user1 : User, user2 : User){
 
         this._canvas = new Canvas("soccerField");
@@ -161,8 +170,11 @@ export class Battle {
         this.startNextRound();
 
     }
+
     /**
-     * Starts the game and flips a coin determining who starts with ball
+     * Initializes game positions and performs a coin toss to decide who starts with the ball
+     * Positions goalies and players on the field
+     * @returns true if user1 starts with the ball, false if user2 starts
      */
     private gameStart() : boolean{
 
@@ -201,7 +213,8 @@ export class Battle {
     }
 
     /**
-     * When ball is moved to a new stage check if there is a new player on it to take poessession
+     * Checks if the ball has moved to a new stage and if any player from the current user's team
+     * is touching the ball to take possession
      */
     public checkNewPossession() : void{
         if(this.ball.stage !== 2){
@@ -216,7 +229,8 @@ export class Battle {
     }
 
     /**
-     * Checks if the player without the ball takes it
+     * Checks if any player on the opposing team is touching the ball and can take possession
+     * If so, disables ball movement and assigns possession to that player
      */
     private checkPossessionChange() : void{
         let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
@@ -231,8 +245,9 @@ export class Battle {
     }
 
     /**
-     * Reset player stages and update them after a turn
-     */
+    * Resets the stages of all players and the ball after a turn
+    * Resets shot stages to 0 and updates current paths to the latest stage
+    */
     private resetStages() : void{
         for(let i=0; i<this.user1.team.allPlayers.size(); i++){
             let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
@@ -245,8 +260,10 @@ export class Battle {
     }
 
     /**
-     * Starts the timer for the current turn
-     */
+    * Starts the turn timer for the current user’s turn
+    * Resets and displays the timer countdown and sets up the turn end callback
+    * Also hides the "BREAK" banners during active turns
+    */
     private startTurnTimer(): void{
         // hide BREAK banners
         const breakL = document.getElementById('breakLeft')  as HTMLElement;
@@ -273,8 +290,11 @@ export class Battle {
         this.drawCountdown();
     }
     /**
-     * Ends the current turn
-     */
+    * Ends the current turn and switches to the next state
+    * If current turn is user1, switches to user2 and restarts timer
+    * If current turn is user2, performs transition, animates moves, and starts next round after delay
+    * Also resets selected character and updates the field visuals accordingly
+    */
     private endCurrentTurn(): void{
         // clear timers and intervals
         this.clearTimers();
@@ -303,31 +323,37 @@ export class Battle {
     }
 
     /**
-     * Starts next round where each player chooses moves
-     */ 
-    private startNextRound(){
+    * Begins a new round of play
+    * Resets flags and sets current turn to user1, then starts their turn timer
+    */
+    private startNextRound() : void {
         this.currentTurn = "user1";
         this.userTurn = this.user1;
         this.isTransitioning = false;
         this.startTurnTimer();
     }
+
     /**
-     * draws the countdown on the canvas
+     * Updates the countdown timer display in the DOM
+     * Shows current user’s name and the remaining seconds
      */
     private drawCountdown(): void{
         (document.getElementById("time-name")as HTMLElement).innerHTML = `${this.userTurn.name}'s Turn`; 
         (document.getElementById("time-remaining")as HTMLElement).innerHTML = String(this.timeRemaining/1000); 
     }
+    
     /**
-     * clears all the timers and intervals
+     * Clears the turn timer timeout and the countdown interval if they exist
      */
     private clearTimers(): void{
         if(this.turnTimer) clearTimeout(this.turnTimer);
         if(this.countdownInterval) clearInterval(this.countdownInterval);
     }
+
     /**
-     * draws all the moves chosen by the players
-     */
+    * Animates and draws the moves chosen by players on both teams.
+    * Also manages the visibility of timer and break banners during animation.
+    */
     private drawMoves(): void{
         const timerEl  = document.getElementById('timer')  as HTMLElement;
         const breakL   = document.getElementById('breakLeft')  as HTMLElement;
@@ -344,18 +370,33 @@ export class Battle {
         }
     }
 
+    /**
+     * Getter for the Canvas instance used in the battle
+     * @returns The Canvas object used to draw the game
+     */
     public get Canvas() : Canvas{
         return this._canvas;
     }
-    
+
+    /**
+     * Getter for the current action phase
+     * @returns The current action phase as a number
+     */
     public get actionPhase() : number{
         return this._actionPhase;
     }
 
+    /**
+     * Setter for the current action phase
+     * @param num - The new action phase to set
+     */
     public set actionPhase(num : number){
         this._actionPhase = num
     }
 
+    /**
+     * Clears the canvas and redraws the ball and both teams in their current positions
+     */
     private resetField() : void{
         this.Canvas.clearCanvas();
         this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
@@ -364,8 +405,8 @@ export class Battle {
     }
 
     /**
-     * Updates the on‑screen scoreboard with the current team names and scores.
-     * Relies on four DOM elements: #homeName, #guestName, #homeScore, #guestScore
+     * Updates the scoreboard UI elements with the current user names and goal counts
+     * Assumes presence of DOM elements with IDs: homeName, guestName, homeScore, guestScore
      */
     private updateScoreboard(): void {
         const homeNameEl = document.getElementById('homeName');
@@ -380,7 +421,8 @@ export class Battle {
     }
 
     /**
-     * Positions the timer left or right and makes it visible.
+     * Positions the timer UI element either on the left or right side depending on which user's turn it is
+     * Also ensures the timer element is visible
      */
     private updateTimerPosition(): void {
         const timerEl = document.getElementById('timer') as HTMLElement;
@@ -395,13 +437,17 @@ export class Battle {
         }
     }
 
-    /** Call this whenever user1 scores */
+    /**
+     * Sets the score for user1 and updates the scoreboard display
+     */
     public set goal1(val: number) {
         this._goal1 = val;
         this.updateScoreboard();
     }
 
-    /** Call this whenever user2 scores */
+    /**
+     * Sets the score for user2 and updates the scoreboard display
+     */
     public set goal2(val: number) {
         this._goal2 = val;
         this.updateScoreboard();

@@ -1,19 +1,32 @@
-// pair data structure
-// mainly used for merge sort holding index and value
+/**
+ * Represents a key-value pair used in merge sort operations
+ * Useful for tracking original indices during sorting
+ */
 export class PairNode<T> {
+  /**
+   * Creates a new PairNode.
+   * @param val - The value of the node.
+   * @param index - The original index of the value.
+   */
   constructor(public val: T, public index: number) {}
 }
 
+/**
+ * A generic list class that supports dynamic array resizing,
+ * insertion, deletion, and sorting
+ */
 export class List<T> {
   public unsortedData: T[] = new Array<T>(10);
   public sortedData: T[] = new Array<T>(10);
   private numItems: number = 0;
   private startSize: number = 10;
 
-  // post: removes the element at index.
-  //  returns without removing if index is not between
-  //  0 and size() - 1
-  public delete(index: number) {
+  /**
+   * Removes the element at the specified index.
+   * Shrinks the array if it's only half full and larger than the start size
+   * @param index - The index of the item to delete
+   */
+  public delete(index: number) : void{
     // halve the size of the array if it is only half full and larger than the startSize
     if (
       this.numItems === this.unsortedData.length / 2 &&
@@ -35,16 +48,28 @@ export class List<T> {
     this.numItems--;
   }
 
+  /**
+   * Returns the number of items in the list
+   * @returns The size of the list
+   */
   public size(): number {
     return this.numItems;
   }
 
+  /**
+   * Checks if the list is empty
+   * @returns True if empty, otherwise false
+   */
   public isEmpty(): boolean {
     return this.numItems === 0;
   }
 
-  // inserts a number at a certain index, pushing everything from the right of it 1 space right
-  public insert(val: T, index: number) {
+  /**
+   * Inserts a value at a specific index, shifting later elements right
+   * @param val - Value to insert
+   * @param index - Position at which to insert the value
+   */
+  public insert(val: T, index: number) : void {
     if (this.numItems === this.unsortedData.length) {
       let newData: T[] = new Array<T>(this.numItems * 2);
 
@@ -64,19 +89,32 @@ export class List<T> {
     this.numItems++;
   }
 
+  /**
+   * Replaces the value at a given index with a new value
+   * @param val - New value to set
+   * @param index - Index to replace the value at
+   */
   public replace(val: T, index: number): void {
     if (index < 0 || index >= this.numItems) return;
     this.unsortedData[index] = val;
   }
 
+  /**
+   * Retrieves the value at a given index
+   * @param index - Index to access
+   * @returns The value at the index, or null if invalid index
+   */
   public get(index: number): T | null {
     if (index < 0 || index >= this.numItems) return null;
     return this.unsortedData[index];
   }
 
-  // ammoritized O(1)
-  // because the array will usually be big enough to O(1) add elements
-  public push(val: T) {
+  /**
+   * Appends a value to the end of the list
+   * Dynamically resizes the array if needed
+   * @param val - Value to add
+   */
+  public push(val: T) : void {
     if (this.numItems === this.unsortedData.length) {
       let newData: T[] = new Array<T>(this.numItems * 2);
 
@@ -90,10 +128,20 @@ export class List<T> {
     this.numItems++;
   }
 
+  /**
+   * Returns a shallow copy of the current data in the list
+   * @returns An array of the list's current values
+   */
   public getData(): T[] {
     return this.unsortedData.slice(0, this.numItems);
   }
 
+  /**
+   * Sorts the list using an iterative merge sort algorithm
+   * Stores the result in sortedData
+   * @param compareFn - Optional custom comparison function
+   * @returns A sorted array of the list's values
+   */
   public sort(compareFn?: (a: T, b: T) => number): T[] {
     const defaultCompare = (a: T, b: T): number => {
         if (a === b) return 0;
@@ -133,10 +181,26 @@ export class List<T> {
     }
     return this.sortedData;
     }
+
+  /**
+   * Compares two numbers for ascending order
+   * Larger numbers come first (descending behavior)
+   * @param a - First number
+   * @param b - Second number
+   * @returns 1 if a < b, -1 if a > b, 0 if equal
+   */
     public ascending(a: number, b:number): number{
         if (a === b) return 0;
         return a < b ? 1 : -1;
     }
+
+  /**
+   * Compares two strings lexicographically in ascending order (case-insensitive)
+   * Longer strings come after shorter ones if all characters are equal
+   * @param target - First string
+   * @param check - Second string
+   * @returns 1 if target < check, -1 if target > check, 0 if equal
+   */
     public alphaAscending(target: string, check:string): number{
         const len = Math.min(target.length,check.length);
         let a = target.toLowerCase();
