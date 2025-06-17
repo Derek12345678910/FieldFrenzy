@@ -58,6 +58,7 @@ export class Battle {
         this.user2 = user2;
 
         this.userTurn = user1;
+        this.updateTimerPosition();
 
         this.ball = new Ball(
             new Pair(15,15),
@@ -80,6 +81,11 @@ export class Battle {
 
             // check if any team is clicked on
             let teamToCheck : Team = this.userTurn.team;
+
+            if(Player.selected === false){
+                this.selectedCharacter = null;
+                this.actionPhase = 0;
+            }
 
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
@@ -250,6 +256,12 @@ export class Battle {
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
+        // hide BREAK banners
+        const breakL = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR = document.getElementById('breakRight') as HTMLElement;
+        if (breakL) breakL.style.display = 'none';
+        if (breakR) breakR.style.display = 'none';
+        this.updateTimerPosition();
         // Reset time
         this.timeRemaining = this.turnTimeLimit;
         // clear timers and intervals
@@ -279,6 +291,7 @@ export class Battle {
         if(this.currentTurn === "user1"){
             this.currentTurn = "user2";
             this.userTurn = this.user2;
+            this.updateTimerPosition();
             this.startTurnTimer();
             this.resetField();
             this.resetSelected();
@@ -295,9 +308,10 @@ export class Battle {
                 this.startNextRound();
             }, this.transistionDuration);
         }
+        console.log(this.currentTurn);
     }
 
-    private resetSelected() : void{
+    private resetSelected() : void{ 
         this.selectedCharacter = null;
         this.actionPhase = 0;
     }
@@ -315,7 +329,8 @@ export class Battle {
      * draws the countdown on the canvas
      */
     private drawCountdown(): void{
-        console.log(this.timeRemaining);
+        (document.getElementById("time-name")as HTMLElement).innerHTML = `${this.userTurn.name}'s Turn`; 
+        (document.getElementById("time-remaining")as HTMLElement).innerHTML = String(this.timeRemaining/1000); 
     }
     /**
      * clears all the timers and intervals
@@ -328,7 +343,12 @@ export class Battle {
      * draws all the moves chosen by the players
      */
     private drawMoves(): void{
-        console.log("Round over, drawing moves")
+        const timerEl  = document.getElementById('timer')  as HTMLElement;
+        const breakL   = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR   = document.getElementById('breakRight') as HTMLElement;
+        if (timerEl) timerEl.style.display = 'none';
+        if (breakL) breakL.style.display = 'block';
+        if (breakR) breakR.style.display = 'block';
         for(let i=0; i<this.user1.team.allPlayers.size(); i++){
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
@@ -393,6 +413,22 @@ export class Battle {
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
     }
 
+    /**
+     * Positions the timer left or right and makes it visible.
+     */
+    private updateTimerPosition(): void {
+        const timerEl = document.getElementById('timer') as HTMLElement;
+        if (!timerEl) return;
+
+        timerEl.style.display = 'block';     // ensure visible
+        timerEl.classList.remove('left', 'right');
+        if (this.userTurn === this.user1) {
+            timerEl.classList.add('left');
+        } else {
+            timerEl.classList.add('right');
+        }
+    }
+
     /** Call this whenever user1 scores */
     public set goal1(val: number) {
         this._goal1 = val;
@@ -404,4 +440,5 @@ export class Battle {
         this._goal2 = val;
         this.updateScoreboard();
     }
+
 }

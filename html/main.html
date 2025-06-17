@@ -27,6 +27,15 @@
   <link rel="stylesheet" href="../css/scoreboard.css">
 </head>
 <body>
+  <!-- Turn Timer (top‑left) -->
+  <div id="timer" class="left">
+    <div class="team-name" id="time-name"></div>
+    <div class="team-score" id="time-remaining"></div>
+  </div>
+  <!-- Break banners (hidden by default) -->
+  <div id="breakLeft"  class="break-banner left"  style="display:none;">BREAK</div>
+  <div id="breakRight" class="break-banner right" style="display:none;">BREAK</div>
+
   <!-- Scoreboard -->
   <div id="scoreboard">
     <div class="team">
@@ -44,6 +53,7 @@
   <div id="optionDisplay"></div>
   <!-- Player Information Box (hidden by default; CSS will style/position) -->
   <div id="playerCard" style="display:none">
+    <button id="pcClose" class="close-btn">×</button>
     <h3 id="pcName"></h3>
     <img id="pcImage" src="" alt="Player Image" />
     <p><strong>Power:</strong> <span id="pcPower"></span></p>

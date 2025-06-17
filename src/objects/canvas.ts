@@ -423,12 +423,6 @@ export class Canvas {
       this.complete.empty();
       this.remainingPlayers.empty();
       this.animscomplete = 0;
-      console.log(this.activeMovements)
-      console.log(this.complete)
-      console.log(this.remainingPlayers)
     }
   };
-
-  // doesnt work because im not drawing after its finished
-
 }
