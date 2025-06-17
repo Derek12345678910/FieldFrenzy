@@ -5,16 +5,100 @@ import { Team } from "./objects/team.js";
 import { Player } from "./objects/player.js";
 
 import * as Attackers from "./players/children/attacker.js";
+import * as Defenders from "./players/children/defender.js";
+import * as Utilities from "./players/children/utility.js";
+import * as Goalkeepers from "./players/children/goalie.js";
 
 import { List } from "./datastructures/list.js";
 import { Vector } from "./datastructures/vector.js";
 import { Pair } from "./datastructures/pair.js";
+import { url } from "inspector";
+
+const path: string = window.location.pathname;
+
+let urlParams = new URLSearchParams(window.location.search);
+let user1name = urlParams.get("name1");
+let user2name = urlParams.get("name1");
+let goalkeeper1 = urlParams.get("goalkeeper1");
+let goalkeeper2 = urlParams.get("goalkeeper2");
+let user1player1 = urlParams.get("1player1"); 
+let user1player2 = urlParams.get("1player2"); 
+let user1player3 = urlParams.get("1player3"); 
+let user2player1 = urlParams.get("2player1"); 
+let user2player2 = urlParams.get("2player2"); 
+let user2player3 = urlParams.get("2player3"); 
+
+
+let team1Players = [user1player1, user1player2, user1player3];
+let team2Players = [user2player1, user2player2, user2player3];
 
 let team11 : List<Player> = new List<Player>();
 let team22 : List<Player> = new List<Player>();
 
-let team1 : Team = new Team(team11, new Attackers.Yamal());
-let team2 : Team = new Team(team22, new Attackers.Yamal());
+for(let i=0;i<team1Players.length;i++){
+    team11.push(addPlayer(team1Players[i] as string));
+}
+
+for(let k=0;k<team2Players.length;k++){
+    team22.push(addPlayer(team2Players[k] as string));
+}
+
+/**
+ * Returns player object based off inputted name, or Derek if name is not found
+ * @param player Player name to add
+ * @returns Player object
+ */
+function addPlayer(player: string): Player{
+    if(player === "Courtois"){
+        return new Goalkeepers.Courtois()
+    }
+    else if(player === "Buffon"){
+        return new Goalkeepers.Buffon();
+    }
+    else if (player === "Lau") {
+        return new Utilities.Derek();
+    } 
+    else if (player === "Hsiung") {
+        return new Goalkeepers.Hsiung();
+    } 
+    else if (player === "Van Dijk") {
+        return new Defenders.VanDijk();
+    } 
+    else if (player === "Davies") {
+        return new Defenders.Alphonso();
+    } 
+    else if (player === "De Bruyne") {
+        return new Utilities.DeBruyne();
+    }
+    else if (player === "Modric") {
+        return new Utilities.Modric();
+    } 
+    else if (player === "Mbappe") {
+        return new Attackers.Mbappe();
+    } 
+    else if (player === "Haaland") {
+        return new Attackers.Haaland();
+    } 
+    else if (player === "Messi") {
+        return new Attackers.Messi();
+    } 
+    else if (player === "Ronaldo") {
+        return new Attackers.Cristiano()
+    } 
+    else if (player === "Yamal") {
+        return new Attackers.Yamal()
+    }  
+    else if (player === "Maldini") {
+        return new Defenders.Maldini()
+    } 
+    else if (player === "Iniesta") {
+        return new Utilities.Iniesta()
+    }
+    return new Utilities.Derek();
+}
+
+let team1 : Team = new Team(team11, addPlayer(goalkeeper1 as string));
+let team2 : Team = new Team(team22, addPlayer(goalkeeper2 as string));
 
 let user1 : User = new User(team1);
 let user2 : User = new User(team2);
@@ -22,14 +106,6 @@ let user2 : User = new User(team2);
 let battle : Battle = new Battle(user1, user2);
 
 let canvas : Canvas = battle.Canvas;
-
-team11.push(new Attackers.Yamal());
-team11.push(new Attackers.Yamal());
-team11.push(new Attackers.Yamal());
-
-team22.push(new Attackers.Yamal());
-team22.push(new Attackers.Yamal());
-team22.push(new Attackers.Yamal());
 
 const canvasWidth = canvas.canvas.width;
 const canvasHeight = canvas.canvas.height;

@@ -12,7 +12,7 @@ export class Mbappe extends Attacker{
             "Kylian Mbappe",
             new Pair(25, 25),
             new Pair(20, 20),
-            "./Images/Mbappe.png",
+            "../src/players/Images/Mbappe.png",
             90,
             97,
             new functionalilty.stunOpponent()
@@ -26,7 +26,7 @@ export class Haaland extends Attacker{
             "Earling Haaland",
             new Pair(30, 30),
             new Pair(20, 20),
-            "./Images/Haaland.png",
+            "../src/players/Images/Haaland.png",
             92,
             88,
             new shooting.automaticGoal()
@@ -43,7 +43,7 @@ export class Yamal extends Attacker{
             "Lamine Yamal",
             new Pair(25, 25),
             new Pair(20, 20),
-            "./Images/Yamal.png",
+            "../src/players/Images/Yamal.png",
             75,
             82,
             new shooting.curveShot()
@@ -57,7 +57,7 @@ export class Messi extends Attacker{
             "Lionel Messi",
             new Pair(20, 20),
             new Pair(20, 20),
-            "./Images/Messi.png",
+            "../src/players/Images/Messi.png",
             15,
             15,
             new shooting.curveShot()
@@ -71,7 +71,7 @@ export class Cristiano extends Attacker{
             "Cristiano Ronaldo",
             new Pair(30, 30),
             new Pair(20, 20),
-            "./Images/Ronaldo.png",
+            "../src/players/Images/Ronaldo.png",
             93,
             92,
             new shooting.longShot()

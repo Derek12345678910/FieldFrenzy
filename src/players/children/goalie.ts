@@ -16,7 +16,7 @@ export class Hsiung extends Goalie{
             "Jeremy Hsiung",
             new Pair(20, 20),
             new Pair(20, 20),
-            "./Images/Hsiung.png",
+            "../src/players/Images/Hsiung.png",
             20,
             64,
             new unique.theGreatWallOfChina()
@@ -30,7 +30,7 @@ export class Buffon extends Goalie{
             "Gigi Buffon",
             new Pair(30, 30),
             new Pair(20, 20),
-            "./Imnages/Buffon.png",
+            "../src/players/Images/Buffon.png",
             30,
             76,
             new hitbox.automaticSave()
@@ -44,7 +44,7 @@ export class Courtois extends Goalie{
             "Thibaut Courtois",
             new Pair(30, 30),
             new Pair(20, 20),
-            "./Images/Courtois.png",
+            "../src/players/Images/Courtois.png",
             70,
             70,
             new hitbox.automaticSave()

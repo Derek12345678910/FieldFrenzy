@@ -16,7 +16,7 @@ export class Maldini extends Defender{
             "Paolo Maldini",
             new Pair(35, 35),
             new Pair(20, 20),
-            "./Images/Maldini.png",
+            "../src/players/Images/Maldini.png",
             56,
             86,
             new functionalilty.disableAbility()
@@ -30,7 +30,7 @@ export class VanDijk extends Defender{
             "Virgil Van Dijk",
             new Pair(35, 35),
             new Pair(20, 20),
-            "./Images/VanDijk.png",
+            "../src/players/Images/VanDijk.png",
             60,
             78,
             new hitbox.extendedHitbox()
@@ -44,7 +44,7 @@ export class Alphonso extends Defender{
             "Alphonso Davies",
             new Pair(35, 35),
             new Pair(20, 20),
-            "./Images/Davies",
+            "../src/players/Images/Davies",
             66,
             95,
             new functionalilty.fasterSpeed()
