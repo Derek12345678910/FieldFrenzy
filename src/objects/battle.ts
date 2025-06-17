@@ -8,6 +8,7 @@ import { Ball } from "./ball.js";
 
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
+import { Movement } from "../datastructures/movement.js";
 
 export class Battle {
     private _canvas : Canvas;
@@ -52,7 +53,7 @@ export class Battle {
 
     public constructor(user1 : User, user2 : User){
 
-        this._canvas = new Canvas("soccerField");
+        this._canvas = new Canvas("soccerField", this);
         this.user1 = user1;
         this.user2 = user2;
 
@@ -239,9 +240,16 @@ export class Battle {
             let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
             p1.shotStage = 0; p2.shotStage = 0;
-            p1.curPath = p1.stage; p2.curPath = p2.stage;
+            p1.curPath += p1.stage; p2.curPath += p2.stage;
+            p1.stage = 0; p2.stage = 0;
+            p1.ismoving = false; p2.ismoving = false;
+            p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
+            p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
         }
-        this.ball.curPath = this.ball.stage;
+        this.ball.curPath += this.ball.stage;
+        this.ball.stage = 0;
+        this.ball.ismoving = false;
+        this.ball.position.position = (this.ball.curPath === 0) ? this.ball.position.position : this.ball.destinations.get(this.ball.curPath - 1) as Pair<number>; 
     }
 
     /**
@@ -286,6 +294,7 @@ export class Battle {
             this.updateTimerPosition();
             this.startTurnTimer();
             this.resetField();
+            this.resetSelected();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
         else if(this.currentTurn === "user2"){
@@ -302,10 +311,15 @@ export class Battle {
         console.log(this.currentTurn);
     }
 
+    private resetSelected() : void{ 
+        this.selectedCharacter = null;
+        this.actionPhase = 0;
+    }
+
     /**
      * Starts next round where each player chooses moves
      */ 
-    private startNextRound(){
+    private startNextRound() : void{
         this.currentTurn = "user1";
         this.userTurn = this.user1;
         this.isTransitioning = false;
@@ -339,8 +353,28 @@ export class Battle {
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
-            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 22, this.user1.colour, 1000);
-            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 22, this.user2.colour, 1000);
+            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            if(this.Canvas.isValidMovement(p1movement1)) {
+                pl1.ismoving = true;
+                this.Canvas.animateMovement(p1movement1, p1movement2);
+            }
+            if(this.Canvas.isValidMovement(p2movement1)) {
+                pl2.ismoving = true;
+                this.Canvas.animateMovement(p2movement1, p2movement2);
+            }
+            if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
+            if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
+        }
+        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        if(this.Canvas.isValidMovement(b1move)) {
+            this.ball.ismoving = true;
+            this.Canvas.animateMovement(b1move, b2move);
         }
     }
 
@@ -356,7 +390,7 @@ export class Battle {
         this._actionPhase = num
     }
 
-    private resetField() : void{
+    public resetField() : void{
         this.Canvas.clearCanvas();
         this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
         this.Canvas.drawPlayersReg(this.user1.team, this.user1.colour, 10);
