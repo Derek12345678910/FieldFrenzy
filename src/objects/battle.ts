@@ -81,6 +81,11 @@ export class Battle {
             // check if any team is clicked on
             let teamToCheck : Team = this.userTurn.team;
 
+            if(Player.selected === false){
+                this.selectedCharacter = null;
+                this.actionPhase = 0;
+            }
+
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
             let mouseY : number = event.clientY - rect.top;
@@ -147,7 +152,6 @@ export class Battle {
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
         
         window.addEventListener("resize", () => {
-            console.log("A")
             this.Canvas.resizeCanvas();
             this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
             this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
@@ -212,6 +216,35 @@ export class Battle {
     }
 
     /**
+     * Checks if the player without the ball takes it
+     */
+    private checkPossessionChange() : void{
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        for(let i=0; i<otheruser.team.allPlayers.size(); i++){
+            let pl : Player = otheruser.team.allPlayers.get(i) as Player;
+            // touches ball
+            if(pl.touchingBall()){
+                this.ball.canMove = false;
+                this.ball.possession = pl;
+            }
+        }
+    }
+
+    /**
+     * Reset player stages and update them after a turn
+     */
+    private resetStages() : void{
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
+
+            p1.shotStage = 0; p2.shotStage = 0;
+            p1.curPath = p1.stage; p2.curPath = p2.stage;
+        }
+        this.ball.curPath = this.ball.stage;
+    }
+
+    /**
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
@@ -260,6 +293,7 @@ export class Battle {
             this.isTransitioning = true;
             this.resetField();
             this.drawMoves();
+            this.resetStages();
             // start the next round after 5 seconds
             setTimeout(()=>{
                 this.startNextRound();
@@ -301,6 +335,13 @@ export class Battle {
         if (timerEl) timerEl.style.display = 'none';
         if (breakL) breakL.style.display = 'block';
         if (breakR) breakR.style.display = 'block';
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
+
+            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 22, this.user1.colour, 1000);
+            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 22, this.user2.colour, 1000);
+        }
     }
 
     public get Canvas() : Canvas{
@@ -365,4 +406,5 @@ export class Battle {
         this._goal2 = val;
         this.updateScoreboard();
     }
+
 }
