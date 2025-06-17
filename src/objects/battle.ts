@@ -240,8 +240,10 @@ export class Battle {
             p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
             p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
         }
-        this.ball.curPath = this.ball.stage;
+        this.ball.curPath += this.ball.stage;
         this.ball.stage = 0;
+        this.ball.ismoving = false;
+        this.ball.position.position = (this.ball.curPath === 0) ? this.ball.position.position : this.ball.destinations.get(this.ball.curPath - 1) as Pair<number>; 
     }
 
     /**
@@ -328,8 +330,8 @@ export class Battle {
             let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
             let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
 
-            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1) as Pair<number>, obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
-            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1) as Pair<number>, obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
 
             if(this.Canvas.isValidMovement(p1movement1)) {
                 pl1.ismoving = true;
@@ -342,7 +344,12 @@ export class Battle {
             if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
             if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
         }
-
+        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        if(this.Canvas.isValidMovement(b1move)) {
+            this.ball.ismoving = true;
+            this.Canvas.animateMovement(b1move, b2move);
+        }
     }
 
     public get Canvas() : Canvas{
