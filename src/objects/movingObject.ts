@@ -23,6 +23,9 @@ export abstract class MovingObject {
     // the stage of turn the object is on
     protected _stage : number = 0;
 
+    /** Represents whether or not the object is currently moving */
+    protected _ismoving : boolean = false;
+
     // store all paths that have happened (replay system or something if wanted)
     protected _paths : List<Vector> = new List<Vector>;
 
@@ -85,6 +88,14 @@ export abstract class MovingObject {
 
     public set stage(stage : number){
         this._stage = stage;
+    }
+
+    public get ismoving() : boolean{
+        return this._ismoving;
+    }
+
+    public set ismoving(move : boolean){
+        this._ismoving = move;
     }
 
     abstract calculatePath(x : number, y : number) : void

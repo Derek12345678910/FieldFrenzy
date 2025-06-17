@@ -8,6 +8,7 @@ import { Ball } from "./ball.js";
 
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
+import { Movement } from "../datastructures/movement.js";
 
 export class Battle {
     private _canvas : Canvas;
@@ -52,11 +53,12 @@ export class Battle {
 
     public constructor(user1 : User, user2 : User){
 
-        this._canvas = new Canvas("soccerField");
+        this._canvas = new Canvas("soccerField", this);
         this.user1 = user1;
         this.user2 = user2;
 
         this.userTurn = user1;
+        this.updateTimerPosition();
 
         this.ball = new Ball(
             new Pair(15,15),
@@ -79,6 +81,11 @@ export class Battle {
 
             // check if any team is clicked on
             let teamToCheck : Team = this.userTurn.team;
+
+            if(Player.selected === false){
+                this.selectedCharacter = null;
+                this.actionPhase = 0;
+            }
 
             let rect = this._canvas.canvas.getBoundingClientRect();
             let mouseX : number = event.clientX - rect.left;
@@ -111,7 +118,7 @@ export class Battle {
                 if(this.selectedCharacter !== null){
                     console.log(this.selectedCharacter)
                     if(this.selectedCharacter.object instanceof Player){
-                        this.selectedCharacter.object.hideOptions();
+                        Player.hideOptions();
                         if(this.selectedCharacter.object.move === "Move"){
                             this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                             this.selectedCharacter.object.stage++;
@@ -147,7 +154,6 @@ export class Battle {
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
         
         window.addEventListener("resize", () => {
-            console.log("A")
             this.Canvas.resizeCanvas();
             this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
             this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
@@ -210,9 +216,51 @@ export class Battle {
     }
 
     /**
+     * Checks if the player without the ball takes it
+     */
+    private checkPossessionChange() : void{
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        for(let i=0; i<otheruser.team.allPlayers.size(); i++){
+            let pl : Player = otheruser.team.allPlayers.get(i) as Player;
+            // touches ball
+            if(pl.touchingBall()){
+                this.ball.canMove = false;
+                this.ball.possession = pl;
+            }
+        }
+    }
+
+    /**
+     * Reset player stages and update them after a turn
+     */
+    private resetStages() : void{
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
+
+            p1.shotStage = 0; p2.shotStage = 0;
+            p1.curPath += p1.stage; p2.curPath += p2.stage;
+            p1.stage = 0; p2.stage = 0;
+            p1.ismoving = false; p2.ismoving = false;
+            p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
+            p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
+        }
+        this.ball.curPath += this.ball.stage;
+        this.ball.stage = 0;
+        this.ball.ismoving = false;
+        this.ball.position.position = (this.ball.curPath === 0) ? this.ball.position.position : this.ball.destinations.get(this.ball.curPath - 1) as Pair<number>; 
+    }
+
+    /**
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
+        // hide BREAK banners
+        const breakL = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR = document.getElementById('breakRight') as HTMLElement;
+        if (breakL) breakL.style.display = 'none';
+        if (breakR) breakR.style.display = 'none';
+        this.updateTimerPosition();
         // Reset time
         this.timeRemaining = this.turnTimeLimit;
         // clear timers and intervals
@@ -242,8 +290,10 @@ export class Battle {
         if(this.currentTurn === "user1"){
             this.currentTurn = "user2";
             this.userTurn = this.user2;
+            this.updateTimerPosition();
             this.startTurnTimer();
             this.resetField();
+            this.resetSelected();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
         else if(this.currentTurn === "user2"){
@@ -251,18 +301,28 @@ export class Battle {
             this.isTransitioning = true;
             this.resetField();
             this.drawMoves();
+            this.resetStages();
             // start the next round after 5 seconds
             setTimeout(()=>{
                 this.startNextRound();
             }, this.transistionDuration);
         }
+        console.log(this.currentTurn);
+    }
+
+    private resetSelected() : void{ 
+        this.selectedCharacter = null;
+        this.actionPhase = 0;
+        Player.selected = false;
+        Player.hideOptions();
     }
 
     /**
      * Starts next round where each player chooses moves
      */ 
-    private startNextRound(){
+    private startNextRound() : void{
         this.currentTurn = "user1";
+        this.userTurn = this.user1;
         this.isTransitioning = false;
         this.startTurnTimer();
     }
@@ -270,7 +330,8 @@ export class Battle {
      * draws the countdown on the canvas
      */
     private drawCountdown(): void{
-        console.log(this.timeRemaining);
+        (document.getElementById("time-name")as HTMLElement).innerHTML = `${this.userTurn.name}'s Turn`; 
+        (document.getElementById("time-remaining")as HTMLElement).innerHTML = String(this.timeRemaining/1000); 
     }
     /**
      * clears all the timers and intervals
@@ -283,8 +344,39 @@ export class Battle {
      * draws all the moves chosen by the players
      */
     private drawMoves(): void{
-        console.log("Round over, drawing moves")
+        const timerEl  = document.getElementById('timer')  as HTMLElement;
+        const breakL   = document.getElementById('breakLeft')  as HTMLElement;
+        const breakR   = document.getElementById('breakRight') as HTMLElement;
+        if (timerEl) timerEl.style.display = 'none';
+        if (breakL) breakL.style.display = 'block';
+        if (breakR) breakR.style.display = 'block';
+        for(let i=0; i<this.user1.team.allPlayers.size(); i++){
+            let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
+            let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
+            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            if(this.Canvas.isValidMovement(p1movement1)) {
+                pl1.ismoving = true;
+                this.Canvas.animateMovement(p1movement1, p1movement2);
+            }
+            if(this.Canvas.isValidMovement(p2movement1)) {
+                pl2.ismoving = true;
+                this.Canvas.animateMovement(p2movement1, p2movement2);
+            }
+            if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
+            if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
+        }
+        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        if(this.Canvas.isValidMovement(b1move)) {
+            this.ball.ismoving = true;
+            this.Canvas.animateMovement(b1move, b2move);
+        }
     }
 
     public get Canvas() : Canvas{
@@ -299,7 +391,7 @@ export class Battle {
         this._actionPhase = num
     }
 
-    private resetField() : void{
+    public resetField() : void{
         this.Canvas.clearCanvas();
         this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
         this.Canvas.drawPlayersReg(this.user1.team, this.user1.colour, 10);
@@ -322,6 +414,22 @@ export class Battle {
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
     }
 
+    /**
+     * Positions the timer left or right and makes it visible.
+     */
+    private updateTimerPosition(): void {
+        const timerEl = document.getElementById('timer') as HTMLElement;
+        if (!timerEl) return;
+
+        timerEl.style.display = 'block';     // ensure visible
+        timerEl.classList.remove('left', 'right');
+        if (this.userTurn === this.user1) {
+            timerEl.classList.add('left');
+        } else {
+            timerEl.classList.add('right');
+        }
+    }
+
     /** Call this whenever user1 scores */
     public set goal1(val: number) {
         this._goal1 = val;
@@ -333,4 +441,5 @@ export class Battle {
         this._goal2 = val;
         this.updateScoreboard();
     }
+
 }
