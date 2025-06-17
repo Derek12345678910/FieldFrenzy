@@ -234,12 +234,14 @@ export class Battle {
             let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
             p1.shotStage = 0; p2.shotStage = 0;
-            p1.curPath = p1.stage; p2.curPath = p2.stage;
+            p1.curPath += p1.stage; p2.curPath += p2.stage;
+            p1.stage = 0; p2.stage = 0;
             p1.ismoving = false; p2.ismoving = false;
             p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
             p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
         }
         this.ball.curPath = this.ball.stage;
+        this.ball.stage = 0;
     }
 
     /**
@@ -340,6 +342,7 @@ export class Battle {
             if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
             if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
         }
+
     }
 
     public get Canvas() : Canvas{
