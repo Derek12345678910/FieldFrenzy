@@ -28,7 +28,7 @@ export class Battle {
     // timer for each users turn
     private turnTimer : ReturnType<typeof setTimeout> | null = null;
     // duration of the timer 
-    private turnTimeLimit: number = 5000;
+    private turnTimeLimit: number = 15000;
     // time remaining for the user to make their moves
     private timeRemaining: number = this.turnTimeLimit;
     // countdown to make moves
@@ -281,6 +281,7 @@ export class Battle {
             this.userTurn = this.user2;
             this.startTurnTimer();
             this.resetField();
+            this.resetSelected();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
         else if(this.currentTurn === "user2"){
@@ -296,10 +297,15 @@ export class Battle {
         }
     }
 
+    private resetSelected() : void{
+        this.selectedCharacter = null;
+        this.actionPhase = 0;
+    }
+
     /**
      * Starts next round where each player chooses moves
      */ 
-    private startNextRound(){
+    private startNextRound() : void{
         this.currentTurn = "user1";
         this.userTurn = this.user1;
         this.isTransitioning = false;
