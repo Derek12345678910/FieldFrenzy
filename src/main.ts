@@ -100,8 +100,11 @@ function addPlayer(player: string): Player{
 let team1 : Team = new Team(team11, addPlayer(goalkeeper1 as string));
 let team2 : Team = new Team(team22, addPlayer(goalkeeper2 as string));
 
-let user1 : User = new User(team1);
-let user2 : User = new User(team2);
+let user1 : User = new User(user1name as string, team1, "Red");
+let user2 : User = new User(user2name as string, team2, "Blue");
+
+console.log(user1);
+console.log(user2);
 
 let battle : Battle = new Battle(user1, user2);
 
