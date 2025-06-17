@@ -148,6 +148,7 @@ export class Battle {
             this.Canvas.drawBall(this.ball, user2.colour, 10);
             this.teamPossession = user2;
         }
+        console.log(this.ball.isTouchingNet(this.Canvas));
         let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
         this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
@@ -166,7 +167,6 @@ export class Battle {
      * Starts the game and flips a coin determining who starts with ball
      */
     private gameStart() : boolean{
-
         this.user1.team.goalie.position = new Vector(new Pair(10, this.Canvas.height / 2), new Pair(0, 0));
 
         this.user2.team.goalie.position = new Vector(new Pair(this.Canvas.width - 10, this.Canvas.height / 2), new Pair(0, 0));
@@ -198,7 +198,6 @@ export class Battle {
             this.ball.possession = p3t2;
             return false;
         }
-
     }
 
     /**
