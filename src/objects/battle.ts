@@ -118,7 +118,7 @@ export class Battle {
                 if(this.selectedCharacter !== null){
                     console.log(this.selectedCharacter)
                     if(this.selectedCharacter.object instanceof Player){
-                        this.selectedCharacter.object.hideOptions();
+                        Player.hideOptions();
                         if(this.selectedCharacter.object.move === "Move"){
                             this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                             this.selectedCharacter.object.stage++;
@@ -314,6 +314,8 @@ export class Battle {
     private resetSelected() : void{ 
         this.selectedCharacter = null;
         this.actionPhase = 0;
+        Player.selected = false;
+        Player.hideOptions();
     }
 
     /**

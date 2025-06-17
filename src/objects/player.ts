@@ -208,7 +208,7 @@ export class Player extends MovingObject {
 
     }
 
-    public hideOptions() : void{
+    public static  hideOptions() : void{
         Player.card.style.display = 'none';
         Player._selected = false;
     }
