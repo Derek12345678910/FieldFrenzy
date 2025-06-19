@@ -11,8 +11,9 @@
       padding: 0;
       height: 100%;
       display: flex;
+      flex-direction: column;   /* stack scoreboard on top of canvas */
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       background-color: #000; /* optional: add contrast around the field */
     }
     body {
@@ -22,13 +23,49 @@
       display: block;
     }
   </style>
+  <link rel="stylesheet" href="../css/playercard.css">
+  <link rel="stylesheet" href="../css/scoreboard.css">
 </head>
 <body>
+  <!-- Turn Timer (top‑left) -->
+  <div id="timer" class="left">
+    <div class="team-name" id="time-name"></div>
+    <div class="team-score" id="time-remaining"></div>
+  </div>
+  <!-- Break banners (hidden by default) -->
+  <div id="breakLeft"  class="break-banner left"  style="display:none;">BREAK</div>
+  <div id="breakRight" class="break-banner right" style="display:none;">BREAK</div>
+
+  <!-- Scoreboard -->
+  <div id="scoreboard">
+    <div class="team">
+      <div id="homeName"  class="team-name"></div>
+      <div id="homeScore" class="team-score"></div>
+    </div>
+    <div class="team">
+      <div id="guestName"  class="team-name"></div>
+      <div id="guestScore" class="team-score"></div>
+    </div>
+  </div>
   <!-- Canvas element for the soccer field -->
-  <canvas id="soccerField" width="800" height="500"></canvas>
+  <canvas id="soccerField" width="800" height="360"></canvas>
   <div id="coordDisplay" style="position: absolute; top: 10px; right: 10px; color: #fff; font-size: 16px;"></div>
   <div id="optionDisplay"></div>
+  <!-- Player Information Box (hidden by default; CSS will style/position) -->
+  <div id="playerCard" style="display:none">
+    <button id="pcClose" class="close-btn">×</button>
+    <h3 id="pcName"></h3>
+    <img id="pcImage" src="" alt="Player Image" />
+    <p><strong>Power:</strong> <span id="pcPower"></span></p>
+    <p><strong>Speed:</strong> <span id="pcSpeed"></span></p>
+    <p><strong>Size:</strong> <span id="pcSize"></span></p>
+    <p><strong>Hitbox:</strong> <span id="pcHitbox"></span></p>
+    <p><strong>Ability:</strong> <span id="pcAbilityName"></span></p>
+    <p id="pcAbilityDesc"></p>
+    <!-- Action buttons will be injected here by Player.displayOptions() -->
+    <div id="optionButtons"></div>
+  </div>
   <!-- Import and initialize the Canvas class -->
-  <script type="module" src="../dist/main.js" defer></script>
+  <script type="module" src="../dist/main.js"></script>
 </body>
 </html>

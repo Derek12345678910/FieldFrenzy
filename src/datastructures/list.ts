@@ -289,5 +289,13 @@ export class List<T> {
         }
         return foundIndexes;
     } 
+  /**
+  * Empty the list
+  */
+  public empty(): void {
+    for (let i = this.numItems - 1; i >= 0; i--) {
+      this.delete(i);
+    }
+  }
 }
 
