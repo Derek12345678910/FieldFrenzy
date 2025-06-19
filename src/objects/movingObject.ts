@@ -31,6 +31,8 @@ export abstract class MovingObject {
 
     protected _destinations : List<Pair<number>> = new List<Pair<number>>();
     
+    protected _movementPosition : Pair<number>;
+    
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
         this._size = size;
@@ -45,6 +47,7 @@ export abstract class MovingObject {
 
     public set position(pos : Vector) {
         this._position = pos;
+        this._movementPosition = pos.position;
     }
 
     public get size() : Pair<number> {
@@ -96,6 +99,14 @@ export abstract class MovingObject {
 
     public set ismoving(move : boolean){
         this._ismoving = move;
+    }
+
+    public get movementPosition() : Pair<number>{
+        return this._movementPosition;
+    }
+
+    public set movementPosition(move : Pair<number>){
+        this._movementPosition = move;
     }
 
     abstract calculatePath(x : number, y : number) : void

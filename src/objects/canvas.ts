@@ -120,10 +120,7 @@ export class Canvas {
     const penaltyBoxHeight = height * 0.15;
     const sixYardBoxHeight = penaltyBoxHeight * 0.4;
     const sixYardBoxWidth = penaltyBoxWidth * 0.4;
-
-    console.log(width);
-    console.log(sixYardBoxWidth);
-    console.log(height);
+    
     // Left big penalty box
     ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = 2;
@@ -375,6 +372,7 @@ export class Canvas {
     const now: number = performance.now();
 
     this.clearCanvas();
+    this.battle.checkHits();
 
     for (let i = 0; i < this.activeMovements.size(); i++) {
       let movementPair: Pair<Movement | null> = this.activeMovements.get(i) as Pair<Movement | null>;
@@ -387,6 +385,9 @@ export class Canvas {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
           let y = start.y + (end.y - start.y) * progress;
+
+          obj.movementPosition.x = x;
+          obj.movementPosition.y = y;
 
           this.drawCircle(x, y, obj.image, radius, color);
 
@@ -407,6 +408,9 @@ export class Canvas {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
           let y = start.y + (end.y - start.y) * progress;
+
+          obj.movementPosition.x = x;
+          obj.movementPosition.y = y;
 
           this.drawCircle(x, y, obj.image, radius, color);
 

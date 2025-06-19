@@ -28,7 +28,7 @@ export class Battle {
     // timer for each users turn
     private turnTimer : ReturnType<typeof setTimeout> | null = null;
     // duration of the timer 
-    private turnTimeLimit: number = 15000;
+    private turnTimeLimit: number = 5000;
     // time remaining for the user to make their moves
     private timeRemaining: number = this.turnTimeLimit;
     // countdown to make moves
@@ -50,6 +50,11 @@ export class Battle {
     private ball : Ball;
 
     private teamPossession : User;
+
+    // if the game is running
+    private winner : User | null = null;
+
+    private scored : boolean = false;
 
     public constructor(user1 : User, user2 : User){
 
@@ -148,7 +153,6 @@ export class Battle {
             this.Canvas.drawBall(this.ball, user2.colour, 10);
             this.teamPossession = user2;
         }
-        console.log(this.ball.isTouchingNet(this.Canvas));
         let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
         this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
         this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
@@ -167,6 +171,9 @@ export class Battle {
      * Starts the game and flips a coin determining who starts with ball
      */
     private gameStart() : boolean{
+
+        this.scored = false;
+
         this.user1.team.goalie.position = new Vector(new Pair(10, this.Canvas.height / 2), new Pair(0, 0));
 
         this.user2.team.goalie.position = new Vector(new Pair(this.Canvas.width - 10, this.Canvas.height / 2), new Pair(0, 0));
@@ -248,6 +255,7 @@ export class Battle {
         this.ball.curPath += this.ball.stage;
         this.ball.stage = 0;
         this.ball.ismoving = false;
+        // change to spot stopped
         this.ball.position.position = (this.ball.curPath === 0) ? this.ball.position.position : this.ball.destinations.get(this.ball.curPath - 1) as Pair<number>; 
     }
 
@@ -255,29 +263,32 @@ export class Battle {
      * Starts the timer for the current turn
      */
     private startTurnTimer(): void{
-        // hide BREAK banners
-        const breakL = document.getElementById('breakLeft')  as HTMLElement;
-        const breakR = document.getElementById('breakRight') as HTMLElement;
-        if (breakL) breakL.style.display = 'none';
-        if (breakR) breakR.style.display = 'none';
-        this.updateTimerPosition();
-        // Reset time
-        this.timeRemaining = this.turnTimeLimit;
-        // clear timers and intervals
-        this.clearTimers();
+        
+        if(this.winner === null){
+            // hide BREAK banners
+            const breakL = document.getElementById('breakLeft')  as HTMLElement;
+            const breakR = document.getElementById('breakRight') as HTMLElement;
+            if (breakL) breakL.style.display = 'none';
+            if (breakR) breakR.style.display = 'none';
+            this.updateTimerPosition();
+            // Reset time
+            this.timeRemaining = this.turnTimeLimit;
+            // clear timers and intervals
+            this.clearTimers();
 
-        // end the turn after 15 seconds
-        this.turnTimer = setTimeout(()=>{
-            console.log("Switching Turn");
-            this.endCurrentTurn();
-        }, this.turnTimeLimit);
+            // end the turn after 15 seconds
+            this.turnTimer = setTimeout(()=>{
+                console.log("Switching Turn");
+                this.endCurrentTurn();
+            }, this.turnTimeLimit);
 
-        // draw the countdown once every second
-        this.countdownInterval = setInterval(()=>{
-            this.timeRemaining -= 1000;
+            // draw the countdown once every second
+            this.countdownInterval = setInterval(()=>{
+                this.timeRemaining -= 1000;
+                this.drawCountdown();
+            },1000);
             this.drawCountdown();
-        },1000);
-        this.drawCountdown();
+        }
     }
     /**
      * Ends the current turn
@@ -307,7 +318,6 @@ export class Battle {
                 this.startNextRound();
             }, this.transistionDuration);
         }
-        console.log(this.currentTurn);
     }
 
     private resetSelected() : void{ 
@@ -379,6 +389,18 @@ export class Battle {
         }
     }
 
+    public checkHits() : void{
+        // check for goal
+        let goalCheck : number = this.ball.isTouchingNet(this.Canvas);
+        if(goalCheck !== 3 && !this.scored){
+            this.scored = true;
+            if (goalCheck === 1) this.goal1 = this._goal1 + 1;
+            else if(goalCheck === 2) this.goal2 = this._goal2 + 1;
+            let teamScored : User = (goalCheck === 1) ? this.user1 : this.user2;
+            console.log("A")
+        }
+    }
+
     public get Canvas() : Canvas{
         return this._canvas;
     }
@@ -410,8 +432,11 @@ export class Battle {
 
         if (homeNameEl) homeNameEl.textContent = this.user1.name;
         if (guestNameEl) guestNameEl.textContent = this.user2.name;
+        console.log(this._goal1)
         if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
+        if(this._goal1 === 3) this.winner = this.user1;
+        if(this._goal2 === 3) this.winner = this.user2;
     }
 
     /**

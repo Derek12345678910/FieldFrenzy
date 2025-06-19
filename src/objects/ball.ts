@@ -78,26 +78,35 @@ export class Ball extends MovingObject{
     /**
      * Used to check if the ball is inside of the net 
      * @param canvas Game canvas
-     * @returns True if the ball is in the net, false if it is not
+     * @returns the team number that the ball is in or 3 if its not in a net
      */
-    public isTouchingNet(canvas: Canvas): boolean{
-        // width of the next (vertical on canvas)
-        let netWidth = (canvas.height - canvas.width*0.08)/2
-        // min y coord of the ball for it to be in the net
-        let minWidth = Math.ceil((canvas.height - netWidth)/2)
-        // max y coord of the ball for the ball to be in the net
-        let maxWidth = Math.floor(minWidth+netWidth);
-        console.log(netWidth);
-        console.log(minWidth);
-        console.log(maxWidth);
-        // if the ball is inside the net, return true
-        if((this.position.position.x-this.hitbox.x) <= 0 || (this.position.position.x+this.hitbox.x) >= canvas.width){
-            if(this.position.position.y >= minWidth && this.position.position.y <= maxWidth){
-                return true;
-            }
+    public isTouchingNet(canvas: Canvas): number {
+    // width of the net (vertical on canvas)
+    let netWidth = (canvas.height - canvas.width * 0.08) / 2;
+    
+    // min y coordinate of the ball for it to be in the net
+    let minWidth = Math.ceil((canvas.height - netWidth) / 2);
+    
+    // max y coordinate of the ball for the ball to be in the net
+    let maxWidth = Math.floor(minWidth + netWidth);
+
+    // Check if the ball is within the vertical net range
+    let inNetVertically = this._movementPosition.y >= minWidth && this._movementPosition.y <= maxWidth;
+
+    if (inNetVertically) {
+        // Check if touching the left edge (Team 1's net)
+        if ((this._movementPosition.x - this.hitbox.x) <= 0) {
+            return 1;
         }
-        return false;
+        // Check if touching the right edge (Team 2's net)
+        if ((this._movementPosition.x + this.hitbox.x) >= canvas.width) {
+            return 2;
+        }
     }
+
+    // Not in either net
+    return 3;
+}
 
     public get possession() : Player | null{
         return this._possession;
