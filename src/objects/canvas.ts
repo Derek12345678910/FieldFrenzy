@@ -419,7 +419,7 @@ export class Canvas {
 
         if (obj.stopMoving) {
           if (this.complete.get(i) !== 0) {
-            this.complete.insert(0, i);
+            this.complete.replace(0, i);
             this.animscomplete++;
           }
           this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
@@ -439,7 +439,7 @@ export class Canvas {
           if (progress >= 1) {
             if (this.isValidMovement(movementPair.y) && movementPair.y !== null) {
               movementPair.y.startTime = now;
-              this.complete.insert(2, i);
+              this.complete.replace(2, i);
             } else {
               this.animscomplete++;
             }
@@ -452,7 +452,7 @@ export class Canvas {
 
         if (obj.stopMoving) {
           if (this.complete.get(i) !== 0) {
-            this.complete.insert(0, i);
+            this.complete.replace(0, i);
             this.animscomplete++;
           }
           this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
