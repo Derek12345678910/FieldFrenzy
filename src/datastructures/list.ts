@@ -98,50 +98,70 @@ export class List<T> {
     return this.sortedData.slice(0, this.numItems);
   }
   
-  public sort(compareFn?: (a: T, b: T) => number): T[] {
-    const defaultCompare = (a: T, b: T): number => {
+  public sort(compareFn?: any): number[] {
+    if(typeof compareFn !== "function"){
+      return [];
+    }
+      let defaultCompare = (a: T, b: T): number => {
+          if (a === b) return 0;
+          return a < b ? 1 : -1;
+      };
+      const compare = compareFn ?? defaultCompare;
+
+      const arr = new Array<PairNode<T>>(this.numItems);
+      for (let i = 0; i < this.numItems; i++) {
+          arr[i] = new PairNode(this.unsortedData[i], i);
+      }
+
+      const aux: PairNode<T>[] = new Array(arr.length);
+
+      // Iterative Merge Sort
+      for (let width = 1; width < arr.length; width *= 2) {
+          for (let i = 0; i < arr.length; i += 2 * width) {
+              const left = i;
+              const mid = Math.min(i + width - 1, arr.length - 1);
+              const right = Math.min(i + 2 * width - 1, arr.length - 1);
+
+              let l = left, r = mid + 1, k = left;
+              while (l <= mid && r <= right) {
+                  if (compare(arr[r].val, arr[l].val) === 1) {
+                      aux[k++] = arr[r++];
+                  } else {
+                      aux[k++] = arr[l++];
+                  }
+              }
+              while (l <= mid) aux[k++] = arr[l++];
+              while (r <= right) aux[k++] = arr[r++];
+
+              for (let j = left; j <= right; j++) {
+                  arr[j] = aux[j];
+              }
+          }
+      }
+
+      for (let i = 0; i < arr.length; i++) {
+          this.sortedData[i] = this.unsortedData[arr[i].index];
+      }
+
+      // Create and return sorted index array without using .map
+      const sortedIndexes: number[] = new Array(arr.length);
+      for (let i = 0; i < arr.length; i++) {
+          sortedIndexes[i] = arr[i].index;
+      }
+
+      return sortedIndexes;
+    }
+
+    // compare function for searching numbers in ascending order
+    public ascendingSearch(a: number, b:number): number{
         if (a === b) return 0;
         return a < b ? 1 : -1;
-    };
-    const compare = compareFn ?? defaultCompare;
-
-    const arr = this.unsortedData.slice(0, this.numItems).map((val, i) => new PairNode(val, i));
-    const aux: PairNode<T>[] = new Array(arr.length);
-
-    // Iterative Merge Sort
-    for (let width = 1; width < arr.length; width *= 2) {
-        for (let i = 0; i < arr.length; i += 2 * width) {
-        const left = i;
-        const mid = Math.min(i + width - 1, arr.length - 1);
-        const right = Math.min(i + 2 * width - 1, arr.length - 1);
-
-        let l = left, r = mid + 1, k = left;
-        while (l <= mid && r <= right) {
-            if (compare(arr[r].val, arr[l].val) === 1) {
-            aux[k++] = arr[r++];
-            } else {
-            aux[k++] = arr[l++];
-            }
-        }
-        while (l <= mid) aux[k++] = arr[l++];
-        while (r <= right) aux[k++] = arr[r++];
-
-        for (let j = left; j <= right; j++) {
-            arr[j] = aux[j];
-        }   
-    }
     }
 
-    for (let i = 0; i < arr.length; i++) {
-        this.sortedData[i] = this.unsortedData[arr[i].index];
-    }
-    return this.sortedData;
-    }
-
-    // compare function for numbers in ascending order
-    public ascending(a: number, b:number): number{
+    // compare function for sorting numbers in ascending order
+    public ascendingSort(a: number, b:number): number{
         if (a === b) return 0;
-        return a < b ? 1 : -1;
+        return a < b ? -1 : 1;
     }
 
     // compare function for sorting in alphabetical order
@@ -153,13 +173,13 @@ export class List<T> {
             let aVal = a.charCodeAt(i);
             let bVal = b.charCodeAt(i);
             if(aVal === bVal){
-                continue;
+              continue;
             }
             else if(aVal<bVal){
-                return 1;
+              return 1;
             }
             else{
-                return -1;
+              return -1;
             }
         }
         if(a.length<b.length){
@@ -167,6 +187,33 @@ export class List<T> {
         }
         if(a.length>b.length){
             return -1;
+        }
+        return 0;
+    }
+    
+    // compare function for sorting in reverse alphabetical order
+    public alphaDescendingSort(target: string, check:string): number{
+        const len = Math.min(target.length,check.length);
+        let a = target.toLowerCase();
+        let b = check.toLowerCase();
+        for(let i=0;i<len;i++){
+            let aVal = a.charCodeAt(i);
+            let bVal = b.charCodeAt(i);
+            if(aVal === bVal){
+              continue;
+            }
+            else if(aVal<bVal){
+              return -1;
+            }
+            else{
+              return 1;
+            }
+        }
+        if(a.length<b.length){
+          return -1;
+        }
+        if(a.length>b.length){
+          return 1;
         }
         return 0;
     }   

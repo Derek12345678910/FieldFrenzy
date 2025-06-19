@@ -3,7 +3,7 @@ import { Battle } from "./objects/battle.js";
 import { User } from "./objects/user.js";
 import { Team } from "./objects/team.js";
 import { Player } from "./objects/player.js";
-import { addPlayer } from "./startpage.js";
+import { addPlayer } from "./utils.js";
 
 import * as Attackers from "./players/children/attacker.js";
 import * as Defenders from "./players/children/defender.js";
