@@ -8,6 +8,7 @@ import { Ball } from "./ball.js";
 
 import { Pair } from "../datastructures/pair.js";
 import { Vector } from "../datastructures/vector.js";
+import { Movement } from "../datastructures/movement.js";
 
 /**
  * Represents a Battle match between two users controlling soccer teams
@@ -21,8 +22,6 @@ export class Battle {
 
     private _goal1 : number = 0;
     private _goal2 : number = 0;
-
-    private STAGETIME : number = 5 // time it takes for a stage to complete
 
     // stores whose turn it is
     private currentTurn: string = "user1";
@@ -54,6 +53,13 @@ export class Battle {
 
     private teamPossession : User;
 
+    private possessionChanged : boolean = false;
+
+    // if the game is running
+    private winner : User | null = null;
+
+    private scored : User | null = null;
+
     /**
      * Create a new Battle instance with two users and initialize game state
      * @param user1 - The first player participating
@@ -61,7 +67,7 @@ export class Battle {
      */
     public constructor(user1 : User, user2 : User){
 
-        this._canvas = new Canvas("soccerField");
+        this._canvas = new Canvas("soccerField", this);
         this.user1 = user1;
         this.user2 = user2;
 
@@ -126,7 +132,7 @@ export class Battle {
                 if(this.selectedCharacter !== null){
                     console.log(this.selectedCharacter)
                     if(this.selectedCharacter.object instanceof Player){
-                        this.selectedCharacter.object.hideOptions();
+                        Player.hideOptions();
                         if(this.selectedCharacter.object.move === "Move"){
                             this.selectedCharacter.object.calculatePath(mouseX, mouseY);
                             this.selectedCharacter.object.stage++;
@@ -134,6 +140,7 @@ export class Battle {
                         else if(this.selectedCharacter.object.move === "Shoot"){
                             this.selectedCharacter.object.ball.calculatePath(mouseX, mouseY);
                             this.selectedCharacter.object.shotStage++;
+                            this.ball.possession = null;
                             this.selectedCharacter.object.canRun = true;
                             this.selectedCharacter.object.ball.stage++;
                         }
@@ -148,25 +155,8 @@ export class Battle {
                 }
             }
         });
-        if(this.gameStart()){
-            this.Canvas.drawBall(this.ball, user1.colour, 10);
-            this.teamPossession = user1;
-        }
-        else{
-            this.Canvas.drawBall(this.ball, user2.colour, 10);
-            this.teamPossession = user2;
-        }
-        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
-        this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
-        this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
-        
-        window.addEventListener("resize", () => {
-            this.Canvas.resizeCanvas();
-            this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
-            this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
-            this.Canvas.drawBall(this.ball, this.teamPossession.colour, 10);
-        });
 
+        this.gameStart(null);
         this.startNextRound();
 
     }
@@ -174,9 +164,17 @@ export class Battle {
     /**
      * Initializes game positions and performs a coin toss to decide who starts with the ball
      * Positions goalies and players on the field
-     * @returns true if user1 starts with the ball, false if user2 starts
      */
-    private gameStart() : boolean{
+    private gameStart(starting : User | null) : void{
+
+        this.scored = null;
+
+        // reset the objects
+        this.user1.team.resetPlayers();
+        this.user2.team.resetPlayers();
+        this.ball.fullReset();
+
+        this.Canvas.clearCanvas();
 
         this.user1.team.goalie.position = new Vector(new Pair(10, this.Canvas.height / 2), new Pair(0, 0));
 
@@ -197,19 +195,24 @@ export class Battle {
         p2t2.position = new Vector(new Pair(this.Canvas.width - 400, this.Canvas.height / 2), new Pair(0, 0));
         p3t2.position = new Vector(new Pair(this.Canvas.width / 2 + 50, this.Canvas.height / 2), new Pair(0, 0));
 
+        let coinToss : number = Math.random();
         // coin toss
-        if(Math.random() < 0.5){
+        if((coinToss < 0.5 && starting === null) || starting === this.user1){
             // heads --> user 1 ball
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 - 30, this.Canvas.height / 2), new Pair(0, 0));
             this.ball.possession = p3t1;
-            return true;
+            this.Canvas.drawBall(this.ball, this.user1.colour, 10);
+            this.teamPossession = this.user1;
         }
-        else {
+        else if((coinToss > 0.5 && starting === null) || starting === this.user2) {
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 + 30, this.Canvas.height / 2), new Pair(0, 0));
             this.ball.possession = p3t2;
-            return false;
+            this.Canvas.drawBall(this.ball, this.user2.colour, 10);
+            this.teamPossession = this.user2;
         }
-
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        this.Canvas.drawPlayers(this.userTurn.team, this.userTurn.colour, 10);
+        this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
     }
 
     /**
@@ -218,11 +221,10 @@ export class Battle {
      */
     public checkNewPossession() : void{
         if(this.ball.stage !== 2){
-            for(let i=0; i<this.userTurn.team.allPlayers.size(); i++){
-                let pl : Player = this.userTurn.team.allPlayers.get(i) as Player;
+            for(let i=0; i<this.teamPossession.team.allPlayers.size(); i++){
+                let pl : Player = this.teamPossession.team.allPlayers.get(i) as Player;
                 if(pl.touchingBallStage()){
-                    console.log(pl);
-                    this.ball.possession = pl;
+                    this.changePossession(pl, false);
                 }
             }
         }
@@ -233,30 +235,69 @@ export class Battle {
      * If so, disables ball movement and assigns possession to that player
      */
     private checkPossessionChange() : void{
-        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        let otheruser : User = (this.teamPossession === this.user1) ? this.user2 : this.user1;
+        console.log(otheruser.name)
         for(let i=0; i<otheruser.team.allPlayers.size(); i++){
             let pl : Player = otheruser.team.allPlayers.get(i) as Player;
             // touches ball
-            if(pl.touchingBall()){
-                this.ball.canMove = false;
-                this.ball.possession = pl;
-            }
+            if(this.ball.possession !== pl){
+                if(pl.touchingBall()){
+                    this.changePossession(pl, true);
+                    this.possessionChanged = true;
+                    console.log(this.teamPossession.name)
+                } 
+            }   
         }
     }
 
+    /**
+     * Changes ball possession
+     * @param newPl player of new poessession
+     * @param animating whether or not the check is in aniamtion
+     */ 
+    private changePossession(newPl : Player, animating : boolean) : void { 
+        let team : User = (this.user1.team.inTeam(newPl)) ? this.user1 : this.user2;
+        console.log(team.name)
+        let curPl : Player | null = this.ball.possession;
+        if(curPl !== null){
+            curPl.canRun = true;
+        }
+        this.ball.possession = newPl;
+        this.teamPossession = team;
+        if(animating){
+            this.ball.position.position = newPl.movementPosition
+            newPl.stopMoving = true;
+            this.ball.stopMoving = true;
+        }
+    }
+
+    // should have made this in moving object
     /**
     * Resets the stages of all players and the ball after a turn
     * Resets shot stages to 0 and updates current paths to the latest stage
     */
     private resetStages() : void{
+
+        this.possessionChanged = false;
+
         for(let i=0; i<this.user1.team.allPlayers.size(); i++){
             let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
             p1.shotStage = 0; p2.shotStage = 0;
-            p1.curPath = p1.stage; p2.curPath = p2.stage;
+            p1.curPath += p1.stage; p2.curPath += p2.stage;
+            p1.stage = 0; p2.stage = 0;
+            p1.ismoving = false; p2.ismoving = false;
+            p1.stopMoving = false; p2.stopMoving = false;
+            p1.position.position = p1.movementPosition
+            p2.position.position = p2.movementPosition
         }
-        this.ball.curPath = this.ball.stage;
+        this.ball.curPath += this.ball.stage;
+        this.ball.stage = 0;
+        this.ball.ismoving = false;
+        this.ball.canMove = true;
+        this.ball.stopMoving = false;
+        this.ball.position.position = this.ball.movementPosition
     }
 
     /**
@@ -265,29 +306,32 @@ export class Battle {
     * Also hides the "BREAK" banners during active turns
     */
     private startTurnTimer(): void{
-        // hide BREAK banners
-        const breakL = document.getElementById('breakLeft')  as HTMLElement;
-        const breakR = document.getElementById('breakRight') as HTMLElement;
-        if (breakL) breakL.style.display = 'none';
-        if (breakR) breakR.style.display = 'none';
-        this.updateTimerPosition();
-        // Reset time
-        this.timeRemaining = this.turnTimeLimit;
-        // clear timers and intervals
-        this.clearTimers();
+        
+        if(this.winner === null){
+            // hide BREAK banners
+            const breakL = document.getElementById('breakLeft')  as HTMLElement;
+            const breakR = document.getElementById('breakRight') as HTMLElement;
+            if (breakL) breakL.style.display = 'none';
+            if (breakR) breakR.style.display = 'none';
+            this.updateTimerPosition();
+            // Reset time
+            this.timeRemaining = this.turnTimeLimit;
+            // clear timers and intervals
+            this.clearTimers();
 
-        // end the turn after 15 seconds
-        this.turnTimer = setTimeout(()=>{
-            console.log("Switching Turn");
-            this.endCurrentTurn();
-        }, this.turnTimeLimit);
+            // end the turn after 15 seconds
+            this.turnTimer = setTimeout(()=>{
+                console.log("Switching Turn");
+                this.endCurrentTurn();
+            }, this.turnTimeLimit);
 
-        // draw the countdown once every second
-        this.countdownInterval = setInterval(()=>{
-            this.timeRemaining -= 1000;
+            // draw the countdown once every second
+            this.countdownInterval = setInterval(()=>{
+                this.timeRemaining -= 1000;
+                this.drawCountdown();
+            },1000);
             this.drawCountdown();
-        },1000);
-        this.drawCountdown();
+        }
     }
     /**
     * Ends the current turn and switches to the next state
@@ -306,6 +350,7 @@ export class Battle {
             this.updateTimerPosition();
             this.startTurnTimer();
             this.resetField();
+            this.resetSelected();
         }
         // if it was just user2's turn, do the transition, and display moves on canvas
         else if(this.currentTurn === "user2"){
@@ -319,7 +364,13 @@ export class Battle {
                 this.startNextRound();
             }, this.transistionDuration);
         }
-        console.log(this.currentTurn);
+    }
+
+    private resetSelected() : void{ 
+        this.selectedCharacter = null;
+        this.actionPhase = 0;
+        Player.selected = false;
+        Player.hideOptions();
     }
 
     /**
@@ -330,6 +381,11 @@ export class Battle {
         this.currentTurn = "user1";
         this.userTurn = this.user1;
         this.isTransitioning = false;
+        if(this.scored !== null){
+            // give other team ball
+            let otherTeam : User = (this.scored === this.user1) ? this.user2 : this.user1
+            this.gameStart(otherTeam)
+        }
         this.startTurnTimer();
     }
 
@@ -355,6 +411,7 @@ export class Battle {
     * Also manages the visibility of timer and break banners during animation.
     */
     private drawMoves(): void{
+        // needs fixing on the way ball moves before player gets to it
         const timerEl  = document.getElementById('timer')  as HTMLElement;
         const breakL   = document.getElementById('breakLeft')  as HTMLElement;
         const breakR   = document.getElementById('breakRight') as HTMLElement;
@@ -365,8 +422,46 @@ export class Battle {
             let pl1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let pl2 : Player = this.user2.team.allPlayers.get(i) as Player;
 
-            this.Canvas.animateMovement(pl1.position.position, pl1.destinations.get(0) as Pair<number>, pl1, 22, this.user1.colour, 1000);
-            this.Canvas.animateMovement(pl2.position.position, pl2.destinations.get(0) as Pair<number>, pl2, 22, this.user2.colour, 1000);
+            let p1movement1 : Movement = {start: pl1.position.position, end: pl1.destinations.get(pl1.curPath), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement1 : Movement = {start: pl2.position.position, end: pl2.destinations.get(pl2.curPath), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            let p1movement2 : Movement = {start: pl1.destinations.get(pl1.curPath), end: pl1.destinations.get(pl1.curPath + pl1.stage - 1), obj: pl1, radius: 20, color: this.user1.colour, startTime: performance.now(), duration: 1000};
+            let p2movement2 : Movement = {start: pl2.destinations.get(pl2.curPath), end: pl2.destinations.get(pl2.curPath + pl2.stage - 1), obj: pl2, radius: 20, color: this.user2.colour, startTime: performance.now(), duration: 1000};
+
+            if(this.Canvas.isValidMovement(p1movement1)) {
+                pl1.ismoving = true;
+                this.Canvas.animateMovement(p1movement1, p1movement2); 
+            }
+            if(this.Canvas.isValidMovement(p2movement1)) {
+                pl2.ismoving = true;
+                this.Canvas.animateMovement(p2movement1, p2movement2);
+            }
+            if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
+            if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
+        }
+        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 15, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 15, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        if(this.Canvas.isValidMovement(b1move)) {
+            this.ball.ismoving = true;
+            this.Canvas.animateMovement(b1move, b2move);
+        }
+    }
+
+    /**
+     * Checks if there are hits mid animation
+     */
+    public checkHits() : void{
+        // check for goal
+        let goalCheck : number = this.ball.isTouchingNet(this.Canvas);
+        if(goalCheck !== 3 && !this.scored){
+            let teamScored : User = (goalCheck === 2) ? this.user1 : this.user2;
+            this.scored = teamScored;
+            if (goalCheck === 2) this.goal1 = this._goal1 + 1;
+            else if(goalCheck === 1) this.goal2 = this._goal2 + 1;
+        }
+        // check for possession change
+        if(!this.possessionChanged){ 
+            this.checkPossessionChange();
         }
     }
 
@@ -397,7 +492,7 @@ export class Battle {
     /**
      * Clears the canvas and redraws the ball and both teams in their current positions
      */
-    private resetField() : void{
+    public resetField() : void{
         this.Canvas.clearCanvas();
         this.Canvas.drawBallReg(this.ball, this.teamPossession.colour, 10);
         this.Canvas.drawPlayersReg(this.user1.team, this.user1.colour, 10);
@@ -418,6 +513,11 @@ export class Battle {
         if (guestNameEl) guestNameEl.textContent = this.user2.name;
         if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
+        if(this._goal1 === 3) this.winner = this.user1;
+        if(this._goal2 === 3) this.winner = this.user2;
+        if(this.winner !== null){
+            console.log(`${this.winner.name} WINS!`);
+        }
     }
 
     /**

@@ -54,8 +54,6 @@ export class Player extends MovingObject {
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
-    private MOVELIMIT : number = 20; // 20 units move limit
-
     /** Can do an action */
     protected _canMove : boolean = true;
 
@@ -67,6 +65,17 @@ export class Player extends MovingObject {
         this._power = power;
         this._speed = speed;
         this._ability = ability;
+    }
+
+    /**
+     * Fully reset
+     */
+    public fullReset() : void{
+        this._shotStage = 0;
+        this.maxPathPoint = null;
+        this._canMove = true;
+        this._canRun = true;
+        this.reset();
     }
 
     public calculatePath(x : number, y : number) : void {
@@ -208,7 +217,7 @@ export class Player extends MovingObject {
 
     }
 
-    public hideOptions() : void{
+    public static  hideOptions() : void{
         Player.card.style.display = 'none';
         Player._selected = false;
     }
@@ -227,12 +236,12 @@ export class Player extends MovingObject {
      * Checks if the ball is within the player's hitbox
      */
     public touchingBall(): boolean{
-        let hitboxRight: number = this.position.position.x+(this.hitbox.x/2);
-        let hitboxLeft: number = this.position.position.x-(this.hitbox.x/2);
-        let hitboxTop: number = this.position.position.y+(this.hitbox.y/2);
-        let hitboxBottom: number = this.position.position.y-(this.hitbox.y/2);
-        let ballPositionX: number = this.ball.position.position.x;
-        let ballPositionY: number = this.ball.position.position.y;
+        let hitboxRight: number = this.movementPosition.x+(this.hitbox.x/2);
+        let hitboxLeft: number = this.movementPosition.x-(this.hitbox.x/2);
+        let hitboxTop: number = this.movementPosition.y+(this.hitbox.y/2);
+        let hitboxBottom: number = this.movementPosition.y-(this.hitbox.y/2);
+        let ballPositionX: number = this.ball.movementPosition.x;
+        let ballPositionY: number = this.ball.movementPosition.y;
         let ballRadius: number = (this.ball.hitbox.x/2);
         if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
             if(this.ball.canBePossessed){
@@ -261,86 +270,154 @@ export class Player extends MovingObject {
         return false;
     }
 
-    public canAct() : boolean{
-
-        if(this._ball.possession === this){
-            if(this._ball.stage === 2){
+    /**
+     * Determines if the player can perform an action.
+     * @returns {boolean} `true` if the player can act; otherwise, `false`.
+     */
+    public canAct(): boolean {
+        if (this._ball.possession === this) {
+            if (this._ball.stage === 2) {
                 return false;
             }
         }
 
-        if(this._stage + this._shotStage === 2){
+        if (this._stage + this._shotStage === 2) {
             return false;
         }
 
-        if(!this._canMove){
+        if (!this._canMove) {
             return false;
         }
 
         return true;
     }
 
-    public get power() : number {
-        return this._power;
+    /**
+     * Gets the power level of the player.
+     * @returns {number} The player's power.
+     */
+    public get power(): number {
+    return this._power;
     }
 
-    public get speed() : number {
-        return this._speed;
+    /**
+     * Gets the speed level of the player.
+     * @returns {number} The player's speed.
+     */
+    public get speed(): number {
+    return this._speed;
     }
 
-    public get name() : string{
-        return this._name;
+    /**
+     * Gets the name of the player.
+     * @returns {string} The player's name.
+     */
+    public get name(): string {
+    return this._name;
     }
 
-    public get ball() : Ball{
-        return this._ball;
-    }
-    
-    public set ball(ball : Ball){
-        this._ball = ball;
-    }
-
-    public get object() : MovingObject{
-        return this._object;
+    /**
+     * Gets the ball currently associated with the player.
+     * @returns {Ball} The ball.
+     */
+    public get ball(): Ball {
+    return this._ball;
     }
 
-    public get move() : string{
-        return this._move;
+    /**
+     * Sets the ball associated with the player.
+     * @param {Ball} ball - The new ball object.
+     */
+    public set ball(ball: Ball) {
+    this._ball = ball;
     }
 
-    public set move(move : string){
-        this._move = move;
+    /**
+     * Gets the underlying moving object representing the player.
+     * @returns {MovingObject} The moving object.
+     */
+    public get object(): MovingObject {
+    return this._object;
     }
 
-    public get canMove() : boolean{
-        return this._canMove;
+    /**
+     * Gets the move type or name associated with the player.
+     * @returns {string} The move.
+     */
+    public get move(): string {
+    return this._move;
     }
 
-    public set canMove(can : boolean){
-        this._canMove = can;
+    /**
+     * Sets the move type or name for the player.
+     * @param {string} move - The move.
+     */
+    public set move(move: string) {
+    this._move = move;
     }
 
-    public get canRun() : boolean{
-        return this._canRun;
+    /**
+     * Gets whether the player can move.
+     * @returns {boolean} `true` if the player can move; otherwise, `false`.
+     */
+    public get canMove(): boolean {
+    return this._canMove;
     }
 
-    public set canRun(can : boolean){
-        this._canRun = can;
+    /**
+     * Sets the ability of the player to move.
+     * @param {boolean} can - Whether the player can move.
+     */
+    public set canMove(can: boolean) {
+    this._canMove = can;
     }
 
-    public get shotStage() : number {
-        return this._shotStage;
+    /**
+     * Gets whether the player can run.
+     * @returns {boolean} `true` if the player can run; otherwise, `false`.
+     */
+    public get canRun(): boolean {
+    return this._canRun;
     }
 
-    public set shotStage(stage : number) {
-        this._shotStage = stage;
+    /**
+     * Sets the ability of the player to run.
+     * @param {boolean} can - Whether the player can run.
+     */
+    public set canRun(can: boolean) {
+    this._canRun = can;
     }
 
-    public static get selected() : boolean{
-        return Player._selected;
+    /**
+     * Gets the current shot stage of the player.
+     * @returns {number} The shot stage.
+     */
+    public get shotStage(): number {
+    return this._shotStage;
     }
 
-    public static set selected(selected : boolean){
-        Player._selected = selected;
+    /**
+     * Sets the shot stage for the player.
+     * @param {number} stage - The new shot stage.
+     */
+    public set shotStage(stage: number) {
+    this._shotStage = stage;
     }
+
+    /**
+     * Gets whether a player is currently selected.
+     * @returns {boolean} `true` if selected; otherwise, `false`.
+     */
+    public static get selected(): boolean {
+    return Player._selected;
+    }
+
+    /**
+     * Sets whether a player is selected.
+     * @param {boolean} selected - Whether the player is selected.
+     */
+    public static set selected(selected: boolean) {
+    Player._selected = selected;
+    }
+
 }

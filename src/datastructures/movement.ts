@@ -1,5 +1,5 @@
 import { Pair } from "./pair.js";
-import { Player } from "../objects/player";
+import { MovingObject } from "../objects/movingObject.js";
 
 /**
  * Represents a movement event in the game or simulation
@@ -7,9 +7,9 @@ import { Player } from "../objects/player";
  * point to an ending point over a period of time, with visual styling
  */
 export type Movement = {
-  start: Pair<number>;
-  end: Pair<number>;
-  player: Player;
+  start: Pair<number> | null;
+  end: Pair<number> | null;
+  obj: MovingObject;
   radius: number;
   color: string;
   startTime: number;

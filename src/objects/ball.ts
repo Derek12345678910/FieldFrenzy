@@ -5,6 +5,7 @@ import { Mirage } from "./mirage.js";
 import { Team } from "./team.js";
 
 import { Pair } from "../datastructures/pair.js";
+import { Canvas } from "./canvas.js";
 
 /**
  * Represents a soccer ball or similar object that moves within a game field
@@ -18,9 +19,7 @@ export class Ball extends MovingObject{
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
-    private _canBePossessed : boolean; // checks if the ball is able to possessed
-
-    private MOVELIMIT : number = 20; // 20 units move limit
+    private _canBePossessed : boolean = true; // checks if the ball is able to possessed
 
     /** Controls whether the ball can move */
     private _canMove : boolean = true;
@@ -33,6 +32,11 @@ export class Ball extends MovingObject{
      */
     public constructor(hitbox : Pair<number>, size : Pair<number>, image : string){
         super(hitbox, size, image)
+    }
+
+    public fullReset() : void{
+        this.maxPathPoint = null;
+        this.reset(); 
     }
 
     /**
@@ -84,10 +88,40 @@ export class Ball extends MovingObject{
         // push into paths
         this._paths.push(newPath);
 
-        // the possession is for now no one
-        this._possession = null;
-
     }
+
+    /**
+     * Used to check if the ball is inside of the net 
+     * @param canvas Game canvas
+     * @returns the team number that the ball is in or 3 if its not in a net
+     */
+    public isTouchingNet(canvas: Canvas): number {
+    // width of the net (vertical on canvas)
+    let netWidth = (canvas.height - canvas.width * 0.08) / 2;
+    
+    // min y coordinate of the ball for it to be in the net
+    let minWidth = Math.ceil((canvas.height - netWidth) / 2);
+    
+    // max y coordinate of the ball for the ball to be in the net
+    let maxWidth = Math.floor(minWidth + netWidth);
+
+    // Check if the ball is within the vertical net range
+    let inNetVertically = this._movementPosition.y >= minWidth && this._movementPosition.y <= maxWidth;
+
+    if (inNetVertically) {
+        // Check if touching the left edge (Team 1's net)
+        if ((this._movementPosition.x - this.hitbox.x) <= 0) {
+            return 1;
+        }
+        // Check if touching the right edge (Team 2's net)
+        if ((this._movementPosition.x + this.hitbox.x) >= canvas.width) {
+            return 2;
+        }
+    }
+
+    // Not in either net
+    return 3;
+}
 
     /**
      * Gets the current player who has possession of the ball
