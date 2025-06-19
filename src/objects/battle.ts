@@ -77,7 +77,7 @@ export class Battle {
         this.ball = new Ball(
             new Pair(15,15),
             new Pair(15,15),
-            "../assets/ball.png"
+            "../Images/Ball.png"
         )
 
         // add ball to players

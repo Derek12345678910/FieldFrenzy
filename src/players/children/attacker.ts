@@ -1,19 +1,90 @@
-import { Attacker } from "../playertypes.js";
-
+import { Attacker, Utility } from "../playertypes.js";
 import { Pair } from "../../datastructures/pair.js";
 
-import * as shooting from "../abilites/shooting.js"
+import * as functionalilty from "../abilites/functionality.js";
+import * as shooting from "../abilites/shooting.js";
 
-export class Yamal extends Attacker{
-    public constructor(){
+/**
+ * Kylian Mbappe: a fast and technical attacker with the Ghost Dribble ability.
+ */
+export class Mbappe extends Attacker {
+    public constructor() {
+        super(
+            "Kylian Mbappe",
+            new Pair(25, 25),
+            new Pair(20, 20),
+            "../Images/Mbappe.png",
+            90,
+            97,
+            new functionalilty.stunOpponent()
+        );
+    }
+}
+
+/**
+ * Erling Haaland: a powerful striker with the Automatic Goal ability.
+ */
+export class Haaland extends Attacker {
+    public constructor() {
+        super(
+            "Erling Haaland",
+            new Pair(30, 30),
+            new Pair(20, 20),
+            "../Images/Haaland.png",
+            92,
+            88,
+            new shooting.automaticGoal()
+        );
+    }
+}
+
+/**
+ * Lamine Yamal: a young, agile attacker with a curved shot ability.
+ */
+export class Yamal extends Attacker {
+    public constructor() {
         super(
             "Lamine Yamal",
-            new Pair(5, 5),
+            new Pair(25, 25),
             new Pair(20, 20),
-            "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3bb3/live/817192c0-3b28-11f0-b0d7-71720076f013.jpg",
-            15,
-            15,
-            new shooting.CurveShot(),
-        )
+            "../Images/Yamal.png",
+            75,
+            82,
+            new shooting.curveShot()
+        );
+    }
+}
+
+/**
+ * Lionel Messi: a legendary playmaker known for precision and curve shots.
+ */
+export class Messi extends Attacker {
+    public constructor() {
+        super(
+            "Lionel Messi",
+            new Pair(20, 20),
+            new Pair(20, 20),
+            "../Images/Messi.png",
+            94,
+            80,
+            new shooting.curveShot()
+        );
+    }
+}
+
+/**
+ * Cristiano Ronaldo: a powerful forward with a long-range shooting ability.
+ */
+export class Cristiano extends Attacker {
+    public constructor() {
+        super(
+            "Cristiano Ronaldo",
+            new Pair(30, 30),
+            new Pair(20, 20),
+            "../Images/Ronaldo.png",
+            92,
+            80,
+            new shooting.longShot()
+        );
     }
 }

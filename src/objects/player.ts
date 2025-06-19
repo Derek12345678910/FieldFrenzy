@@ -12,12 +12,6 @@ import { User } from "./user.js";
 
 export class Player extends MovingObject {
 
-    // name
-    // image
-    // stats --> power, speed, size
-    // choice of move --> ability, move, shoot
-    // ability description
-
     /** Where the option buttons (Shoot/Move/Ability) will be rendered */
     static container: HTMLElement = document.getElementById("optionButtons") as HTMLElement;
 
@@ -34,6 +28,8 @@ export class Player extends MovingObject {
     private static _selected : boolean = false;
 
     protected _object : MovingObject = this;
+    
+    protected _field_position: string;
 
     protected _name : string;
 
@@ -294,7 +290,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the power level of the player.
-     * @returns {number} The player's power.
+     * @returns The player's power.
      */
     public get power(): number {
     return this._power;
@@ -302,7 +298,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the speed level of the player.
-     * @returns {number} The player's speed.
+     * @returns The player's speed.
      */
     public get speed(): number {
     return this._speed;
@@ -310,7 +306,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the name of the player.
-     * @returns {string} The player's name.
+     * @returns The player's name.
      */
     public get name(): string {
     return this._name;
@@ -318,7 +314,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the ball currently associated with the player.
-     * @returns {Ball} The ball.
+     * @returns The ball.
      */
     public get ball(): Ball {
     return this._ball;
@@ -326,7 +322,7 @@ export class Player extends MovingObject {
 
     /**
      * Sets the ball associated with the player.
-     * @param {Ball} ball - The new ball object.
+     * @param ball - The new ball object.
      */
     public set ball(ball: Ball) {
     this._ball = ball;
@@ -334,7 +330,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the underlying moving object representing the player.
-     * @returns {MovingObject} The moving object.
+     * @returns The moving object.
      */
     public get object(): MovingObject {
     return this._object;
@@ -342,7 +338,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the move type or name associated with the player.
-     * @returns {string} The move.
+     * @returns The move.
      */
     public get move(): string {
     return this._move;
@@ -350,7 +346,7 @@ export class Player extends MovingObject {
 
     /**
      * Sets the move type or name for the player.
-     * @param {string} move - The move.
+     * @param move - The move.
      */
     public set move(move: string) {
     this._move = move;
@@ -358,7 +354,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets whether the player can move.
-     * @returns {boolean} `true` if the player can move; otherwise, `false`.
+     * @returns`true` if the player can move; otherwise, `false`.
      */
     public get canMove(): boolean {
     return this._canMove;
@@ -366,7 +362,7 @@ export class Player extends MovingObject {
 
     /**
      * Sets the ability of the player to move.
-     * @param {boolean} can - Whether the player can move.
+     * @param can - Whether the player can move.
      */
     public set canMove(can: boolean) {
     this._canMove = can;
@@ -374,7 +370,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets whether the player can run.
-     * @returns {boolean} `true` if the player can run; otherwise, `false`.
+     * @returns `true` if the player can run; otherwise, `false`.
      */
     public get canRun(): boolean {
     return this._canRun;
@@ -382,7 +378,7 @@ export class Player extends MovingObject {
 
     /**
      * Sets the ability of the player to run.
-     * @param {boolean} can - Whether the player can run.
+     * @param can - Whether the player can run.
      */
     public set canRun(can: boolean) {
     this._canRun = can;
@@ -390,7 +386,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets the current shot stage of the player.
-     * @returns {number} The shot stage.
+     * @returns The shot stage.
      */
     public get shotStage(): number {
     return this._shotStage;
@@ -398,7 +394,7 @@ export class Player extends MovingObject {
 
     /**
      * Sets the shot stage for the player.
-     * @param {number} stage - The new shot stage.
+     * @param stage - The new shot stage.
      */
     public set shotStage(stage: number) {
     this._shotStage = stage;
@@ -406,7 +402,7 @@ export class Player extends MovingObject {
 
     /**
      * Gets whether a player is currently selected.
-     * @returns {boolean} `true` if selected; otherwise, `false`.
+     * @returns `true` if selected; otherwise, `false`.
      */
     public static get selected(): boolean {
     return Player._selected;
@@ -414,10 +410,14 @@ export class Player extends MovingObject {
 
     /**
      * Sets whether a player is selected.
-     * @param {boolean} selected - Whether the player is selected.
+     * @param selected - Whether the player is selected.
      */
     public static set selected(selected: boolean) {
     Player._selected = selected;
+    }
+
+    public get field_position() : string{
+        return this._field_position;
     }
 
 }
