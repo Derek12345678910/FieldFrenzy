@@ -1,19 +1,17 @@
 import { Utility } from "../playertypes.js";
-
 import { Pair } from "../../datastructures/pair.js";
 
-import * as unique from "../abilites/unique.js"
+import * as unique from "../abilites/unique.js";
+import * as hitbox from "../abilites/hitbox.js";
+import * as functionalilty from "../abilites/functionality.js";
+import * as shooting from "../abilites/shooting.js";
+import * as passing from "../abilites/passing.js";
 
-import * as hitbox from "../abilites/hitbox.js"
-
-import * as functionalilty from "../abilites/functionality.js"
-
-import * as shooting from "../abilites/shooting.js"
-
-import * as passing from "../abilites/passing.js"
-
-export class Derek extends Utility{
-    public constructor(){
+/**
+ * Bum Derek: a cursed player with the Certified Bum Mode ability that instantly loses the game.
+ */
+export class Derek extends Utility {
+    public constructor() {
         super(
             "Bum Derek",
             new Pair(15, 15),
@@ -22,12 +20,15 @@ export class Derek extends Utility{
             99,
             99,
             new functionalilty.certifiedBumMode()
-        )
+        );
     }
 }
 
-export class Iniesta extends Utility{
-    public constructor(){
+/**
+ * Andres Iniesta: a legendary playmaker with precise passing using the Thread Of Fate ability.
+ */
+export class Iniesta extends Utility {
+    public constructor() {
         super(
             "Andres Iniesta",
             new Pair(25, 25),
@@ -36,12 +37,15 @@ export class Iniesta extends Utility{
             72,
             75,
             new passing.perfectPass()
-        )
+        );
     }
 }
 
-export class Modric extends Utility{
-    public constructor(){
+/**
+ * Luka Modric: a versatile midfielder with curved passing skills using the Trivela ability.
+ */
+export class Modric extends Utility {
+    public constructor() {
         super(
             "Luka Modric",
             new Pair(25, 25),
@@ -50,12 +54,15 @@ export class Modric extends Utility{
             76,
             72,
             new passing.curvePassing()
-        )
+        );
     }
 }
 
-export class DeBruyne extends Utility{
-    public constructor(){
+/**
+ * Kevin De Bruyne: a sharp-eyed passer with the Thread Of Fate ability for precision distribution.
+ */
+export class DeBruyne extends Utility {
+    public constructor() {
         super(
             "Kevin De Bruyne",
             new Pair(25, 25),
@@ -64,6 +71,6 @@ export class DeBruyne extends Utility{
             87,
             67,
             new passing.perfectPass()
-        )
+        );
     }
 }

@@ -10,7 +10,7 @@ const path: string = window.location.pathname;
 
 let urlParams = new URLSearchParams(window.location.search);
 let user1name = urlParams.get("name1");
-let user2name = urlParams.get("name1");
+let user2name = urlParams.get("name2");
 let goalkeeper1 = urlParams.get("goalkeeper1");
 let goalkeeper2 = urlParams.get("goalkeeper2");
 let user1player1 = urlParams.get("1player1"); 

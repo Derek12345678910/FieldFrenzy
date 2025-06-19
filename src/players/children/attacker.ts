@@ -1,13 +1,14 @@
 import { Attacker, Utility } from "../playertypes.js";
-
 import { Pair } from "../../datastructures/pair.js";
 
-import * as functionalilty from "../abilites/functionality.js"
+import * as functionalilty from "../abilites/functionality.js";
+import * as shooting from "../abilites/shooting.js";
 
-import * as shooting from "../abilites/shooting.js"
-
-export class Mbappe extends Attacker{
-    public constructor(){
+/**
+ * Kylian Mbappe: a fast and technical attacker with the Ghost Dribble ability.
+ */
+export class Mbappe extends Attacker {
+    public constructor() {
         super(
             "Kylian Mbappe",
             new Pair(25, 25),
@@ -16,12 +17,15 @@ export class Mbappe extends Attacker{
             90,
             97,
             new functionalilty.stunOpponent()
-        )
+        );
     }
 }
 
-export class Haaland extends Attacker{
-    public constructor(){
+/**
+ * Erling Haaland: a powerful striker with the Automatic Goal ability.
+ */
+export class Haaland extends Attacker {
+    public constructor() {
         super(
             "Erling Haaland",
             new Pair(30, 30),
@@ -30,15 +34,15 @@ export class Haaland extends Attacker{
             92,
             88,
             new shooting.automaticGoal()
-        )
+        );
     }
 }
 
 /**
- * Lamine Yamal Object
+ * Lamine Yamal: a young, agile attacker with a curved shot ability.
  */
-export class Yamal extends Attacker{
-    public constructor(){
+export class Yamal extends Attacker {
+    public constructor() {
         super(
             "Lamine Yamal",
             new Pair(25, 25),
@@ -47,12 +51,15 @@ export class Yamal extends Attacker{
             75,
             82,
             new shooting.curveShot()
-        )
+        );
     }
 }
 
-export class Messi extends Attacker{
-    public constructor(){
+/**
+ * Lionel Messi: a legendary playmaker known for precision and curve shots.
+ */
+export class Messi extends Attacker {
+    public constructor() {
         super(
             "Lionel Messi",
             new Pair(20, 20),
@@ -61,12 +68,15 @@ export class Messi extends Attacker{
             94,
             80,
             new shooting.curveShot()
-        )
+        );
     }
 }
 
-export class Cristiano extends Attacker{
-    public constructor(){
+/**
+ * Cristiano Ronaldo: a powerful forward with a long-range shooting ability.
+ */
+export class Cristiano extends Attacker {
+    public constructor() {
         super(
             "Cristiano Ronaldo",
             new Pair(30, 30),
@@ -75,6 +85,6 @@ export class Cristiano extends Attacker{
             92,
             80,
             new shooting.longShot()
-        )
+        );
     }
 }

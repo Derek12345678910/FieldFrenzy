@@ -4,6 +4,9 @@ export class PairNode<T> {
   constructor(public val: T, public index: number) {}
 }
 
+/**
+ * list data structure O(1) ammoritized push
+ */
 export class List<T> {
   public unsortedData: T[] = new Array<T>(10);
   public sortedData: T[] = new Array<T>(10);

@@ -15,6 +15,11 @@ export class Team {
 
     private teamSize : number;
 
+    /**
+     * Create team structure
+     * @param players players
+     * @param goalie goalie
+     */
     public constructor(players : List<Player>, goalie : Player){
         
         this._allPlayers = new List<Player>();

@@ -12,12 +12,6 @@ import { User } from "./user.js";
 
 export class Player extends MovingObject {
 
-    // name
-    // image
-    // stats --> power, speed, size
-    // choice of move --> ability, move, shoot
-    // ability description
-
     /** Where the option buttons (Shoot/Move/Ability) will be rendered */
     static container: HTMLElement = document.getElementById("optionButtons") as HTMLElement;
 
