@@ -54,8 +54,6 @@ export class Player extends MovingObject {
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
-    private MOVELIMIT : number = 20; // 20 units move limit
-
     /** Can do an action */
     protected _canMove : boolean = true;
 
@@ -67,6 +65,17 @@ export class Player extends MovingObject {
         this._power = power;
         this._speed = speed;
         this._ability = ability;
+    }
+
+    /**
+     * Fully reset
+     */
+    public fullReset() : void{
+        this._shotStage = 0;
+        this.maxPathPoint = null;
+        this._canMove = true;
+        this._canRun = true;
+        this.reset();
     }
 
     public calculatePath(x : number, y : number) : void {

@@ -35,6 +35,13 @@ export class Team {
         return false;
     }
 
+    public resetPlayers() : void{
+        for(let i=0; i<this._allPlayers.size(); i++){
+            let pl : Player = this._allPlayers.get(i) as Player;
+            pl.fullReset();
+        }
+    }
+
     public get goalie() : Player {
         return this._goalie;
     }

@@ -18,13 +18,16 @@ export class Ball extends MovingObject{
 
     private _canBePossessed : boolean; // checks if the ball is able to possessed
 
-    private MOVELIMIT : number = 20; // 20 units move limit
-
     /** Controls whether the ball can move */
     private _canMove : boolean = true;
 
     public constructor(hitbox : Pair<number>, size : Pair<number>, image : string){
         super(hitbox, size, image)
+    }
+
+    public fullReset() : void{
+        this.maxPathPoint = null;
+        this.reset();
     }
 
     public override calculatePath(x: number, y: number): void {

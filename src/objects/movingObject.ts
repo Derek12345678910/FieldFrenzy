@@ -41,6 +41,18 @@ export abstract class MovingObject {
         this._image.src = this._imageSrc;
     }
 
+    /**
+     * Reset the players
+     */
+    public reset() : void{
+        this._curPath = 0;
+        this._mirage = null;
+        this._stage = 0;
+        this._ismoving = false;
+        this._paths = new List<Vector>;
+        this._destinations = new List<Pair<number>>();
+    }
+
     public get position() : Vector{
         return this._position;
     }

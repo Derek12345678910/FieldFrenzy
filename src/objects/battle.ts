@@ -54,7 +54,7 @@ export class Battle {
     // if the game is running
     private winner : User | null = null;
 
-    private scored : boolean = false;
+    private scored : User | null = null;
 
     public constructor(user1 : User, user2 : User){
 
@@ -145,34 +145,25 @@ export class Battle {
                 }
             }
         });
-        if(this.gameStart()){
-            this.Canvas.drawBall(this.ball, user1.colour, 10);
-            this.teamPossession = user1;
-        }
-        else{
-            this.Canvas.drawBall(this.ball, user2.colour, 10);
-            this.teamPossession = user2;
-        }
-        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
-        this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
-        this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
-        
-        window.addEventListener("resize", () => {
-            this.Canvas.resizeCanvas();
-            this.Canvas.drawPlayers(this.userTurn.team, user1.colour, 10);
-            this.Canvas.drawPlayersReg(otheruser.team, otheruser.colour, 10);
-            this.Canvas.drawBall(this.ball, this.teamPossession.colour, 10);
-        });
 
+        this.gameStart(null);
         this.startNextRound();
 
     }
+
     /**
      * Starts the game and flips a coin determining who starts with ball
      */
-    private gameStart() : boolean{
+    private gameStart(starting : User | null) : void{
 
-        this.scored = false;
+        this.scored = null;
+
+        // reset the objects
+        this.user1.team.resetPlayers();
+        this.user2.team.resetPlayers();
+        this.ball.fullReset();
+
+        this.Canvas.clearCanvas();
 
         this.user1.team.goalie.position = new Vector(new Pair(10, this.Canvas.height / 2), new Pair(0, 0));
 
@@ -193,18 +184,24 @@ export class Battle {
         p2t2.position = new Vector(new Pair(this.Canvas.width - 400, this.Canvas.height / 2), new Pair(0, 0));
         p3t2.position = new Vector(new Pair(this.Canvas.width / 2 + 50, this.Canvas.height / 2), new Pair(0, 0));
 
+        let coinToss : number = Math.random();
         // coin toss
-        if(Math.random() < 0.5){
+        if((coinToss < 0.5 && starting === null) || starting === this.user1){
             // heads --> user 1 ball
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 - 30, this.Canvas.height / 2), new Pair(0, 0));
             this.ball.possession = p3t1;
-            return true;
+            this.Canvas.drawBall(this.ball, this.user1.colour, 10);
+            this.teamPossession = this.user1;
         }
-        else {
+        else if((coinToss > 0.5 && starting === null) || starting === this.user2) {
             this.ball.position = new Vector(new Pair(this.Canvas.width / 2 + 30, this.Canvas.height / 2), new Pair(0, 0));
             this.ball.possession = p3t2;
-            return false;
+            this.Canvas.drawBall(this.ball, this.user2.colour, 10);
+            this.teamPossession = this.user2;
         }
+        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        this.Canvas.drawPlayers(this.userTurn.team, this.userTurn.colour, 10);
+        this.Canvas.drawPlayers(otheruser.team, otheruser.colour, 10);
     }
 
     /**
@@ -334,6 +331,11 @@ export class Battle {
         this.currentTurn = "user1";
         this.userTurn = this.user1;
         this.isTransitioning = false;
+        if(this.scored !== null){
+            // give other team ball
+            let otherTeam : User = (this.scored === this.user1) ? this.user2 : this.user1
+            this.gameStart(otherTeam)
+        }
         this.startTurnTimer();
     }
     /**
@@ -381,8 +383,8 @@ export class Battle {
             if(!pl1.ismoving) this.Canvas.addRemainingPlayer(pl1, this.user1);
             if(!pl2.ismoving) this.Canvas.addRemainingPlayer(pl2, this.user2);
         }
-        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
-        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 20, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b1move : Movement = {start: this.ball.position.position, end: this.ball.destinations.get(this.ball.curPath), obj: this.ball, radius: 15, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
+        let b2move : Movement = {start: this.ball.destinations.get(this.ball.curPath), end: this.ball.destinations.get(this.ball.curPath + this.ball.stage - 1), obj: this.ball, radius: 15, color: this.teamPossession.colour, startTime: performance.now(), duration: 1000};
         if(this.Canvas.isValidMovement(b1move)) {
             this.ball.ismoving = true;
             this.Canvas.animateMovement(b1move, b2move);
@@ -393,11 +395,10 @@ export class Battle {
         // check for goal
         let goalCheck : number = this.ball.isTouchingNet(this.Canvas);
         if(goalCheck !== 3 && !this.scored){
-            this.scored = true;
-            if (goalCheck === 1) this.goal1 = this._goal1 + 1;
-            else if(goalCheck === 2) this.goal2 = this._goal2 + 1;
-            let teamScored : User = (goalCheck === 1) ? this.user1 : this.user2;
-            console.log("A")
+            let teamScored : User = (goalCheck === 2) ? this.user1 : this.user2;
+            this.scored = teamScored;
+            if (goalCheck === 2) this.goal1 = this._goal1 + 1;
+            else if(goalCheck === 1) this.goal2 = this._goal2 + 1;
         }
     }
 
@@ -432,11 +433,13 @@ export class Battle {
 
         if (homeNameEl) homeNameEl.textContent = this.user1.name;
         if (guestNameEl) guestNameEl.textContent = this.user2.name;
-        console.log(this._goal1)
         if (homeScoreEl) homeScoreEl.textContent = String(this._goal1);
         if (guestScoreEl)guestScoreEl.textContent = String(this._goal2);
         if(this._goal1 === 3) this.winner = this.user1;
         if(this._goal2 === 3) this.winner = this.user2;
+        if(this.winner !== null){
+            console.log(`${this.winner.name} WINS!`);
+        }
     }
 
     /**
