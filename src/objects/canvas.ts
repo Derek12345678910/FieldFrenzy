@@ -1,3 +1,4 @@
+// Imports for game logic and data structures
 import { User } from "./user.js";
 import { Player } from "./player.js";
 import { Team } from "./team.js";
@@ -50,18 +51,18 @@ export class Canvas {
 
     this._height = this._canvas.height;
     this._width = this._canvas.width;
-
   }
 
+  /**
+   * Adjust canvas size to window size while preserving aspect ratio
+   */
   public resizeCanvas(): void {
     const { innerWidth } = window;
-    // Subtract scoreboard height (if present) so canvas fits without scrolling
     const scoreboard = document.getElementById('scoreboard');
     const scoreboardH = scoreboard ? scoreboard.getBoundingClientRect().height : 0;
     const innerHeight = window.innerHeight - scoreboardH;
     const ratio = this.aspectRatio;
 
-    // Determine the maximum dimensions that fit the window while preserving aspect ratio
     let newWidth: number;
     let newHeight: number;
     if (innerWidth / innerHeight > ratio) {
@@ -72,79 +73,80 @@ export class Canvas {
       newHeight = Math.floor(newWidth / ratio);
     }
 
-    // Update canvas dimensions
     this._canvas.width = newWidth;
     this._canvas.height = newHeight;
 
-    // Redraw field
-    this.drawField();
+    this.drawField(); // Redraw field with updated size
   }
 
+  /**
+   * Draws the soccer field background and markings
+   */
   private drawField(): void {
     const { ctx, _canvas } = this;
     const width = _canvas.width;
     const height = _canvas.height;
 
-    // Clear any previous drawing
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height); // Clear canvas
 
-    // Draw green field background
-    ctx.fillStyle = '#006400'; // dark green
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#006400'; // Field color
+    ctx.fillRect(0, 0, width, height); // Draw field background
 
-    // Center circle and center line
+    // Center elements
     const centerX = width / 2;
     const centerY = height / 2;
     const centerCircleRadius = Math.min(width, height) * 0.1;
-    // Center dot (small white filled circle)
+
+    // Draw center dot
     ctx.beginPath();
     ctx.fillStyle = '#FFFFFF';
     ctx.arc(centerX, centerY, 2, 0, 2 * Math.PI);
     ctx.fill();
 
-    // Center circle (white outline)
+    // Draw center circle
     ctx.beginPath();
     ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = 2;
     ctx.arc(centerX, centerY, centerCircleRadius, 0, 2 * Math.PI);
     ctx.stroke();
 
-    // Center line
+    // Draw center line
     ctx.beginPath();
     ctx.moveTo(centerX, 0);
     ctx.lineTo(centerX, height);
     ctx.stroke();
 
-    // Define penalty and six-yard box dimensions
+    // Box dimensions
     const penaltyBoxWidth = width * 0.2;
     const penaltyBoxHeight = height * 0.15;
     const sixYardBoxHeight = penaltyBoxHeight * 0.4;
     const sixYardBoxWidth = penaltyBoxWidth * 0.4;
-    
-    // Left big penalty box
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 2;
+
+    // Left penalty box
     ctx.strokeRect(
       0,
       (height - penaltyBoxWidth) / 2,
       penaltyBoxHeight,
       penaltyBoxWidth
     );
-    // Left small penalty box
+
+    // Left six-yard box
     ctx.strokeRect(
       0,
       (height - sixYardBoxWidth) / 2,
       sixYardBoxHeight,
       sixYardBoxWidth
     );
-    // Right big penalty box
+
+    // Right penalty box
     ctx.strokeRect(
       width - penaltyBoxHeight,
       (height - penaltyBoxWidth) / 2,
       penaltyBoxHeight,
       penaltyBoxWidth
     );
-    // Right small penalty box
+
+    // Right six-yard box
     ctx.strokeRect(
       width - sixYardBoxHeight,
       (height - sixYardBoxWidth) / 2,
@@ -152,9 +154,7 @@ export class Canvas {
       sixYardBoxWidth
     );
 
-    // Draw penalty areas and goals for top and bottom halves
-
-
+    // Additional goals or areas can be drawn here
   }
 
   public get canvas(): HTMLCanvasElement {
@@ -162,10 +162,7 @@ export class Canvas {
   }
 
   /**
-   * Draws each Player in the provided list as a circle with a direction arrow.
-   * @param playersList List<Player> to render.
-   * @param color   The fill color for the player's circle (e.g. "#FF0000").
-   * @param radius  Radius of the circle in pixels
+   * Draws each player with their future path vectors and destination points
    */
   public drawPlayers(team: Team, color: string, radius: number): void {
     let playersList: List<Player> = team.allPlayers;
@@ -173,135 +170,134 @@ export class Canvas {
       let player = playersList.get(i) as Player;
 
       let posPair: Pair<number> = player.position.position;
-      let x: number = posPair.x; let y: number = posPair.y;
+      let x: number = posPair.x;
+      let y: number = posPair.y;
 
-      let r = radius;
       let sz: Pair<number> = player.size;
-      r = (sz.x + sz.y) / 2;
+      let r = (sz.x + sz.y) / 2;
 
       let img: HTMLImageElement = player.image as HTMLImageElement;
 
-      this.drawCircle(x, y, img, r, color);
+      this.drawCircle(x, y, img, r, color); // Draw player
 
-      // draw the paths of the character
+      // Draw movement paths and destinations
       for (let i = player.curPath; i < player.stage + player.curPath; i++) {
-        let destination: Pair<number> = player.destinations.get(i) as Pair<number>;
+        let destination = player.destinations.get(i) as Pair<number>;
+        let path = player.paths.get(i) as Vector;
 
-        let path: Vector = player.paths.get(i) as Vector
+        let mx = destination.x;
+        let my = destination.y;
 
-        let mx: number = destination.x;
-        let my: number = destination.y;
+        this.drawCircle(mx, my, img, r, color); // Destination marker
 
-        this.drawCircle(mx, my, img, r, color);
+        let sx = path.position.x;
+        let sy = path.position.y;
+        let dx = path.direction.x;
+        let dy = path.direction.y;
 
-        let start: Pair<number> = path.position;
-        let dir: Pair<number> = path.direction;
-
-        let sx: number = start.x; let sy: number = start.y;
-        let dx: number = dir.x; let dy: number = dir.y;
-
-        this.drawLine(sx, sy, dx, dy);
-
+        this.drawLine(sx, sy, dx, dy); // Direction arrow
       }
     }
   }
 
+  /**
+   * Draw only the current positions of the players without their path
+   */
   public drawPlayersReg(team: Team, color: string, radius: number): void {
     let playersList: List<Player> = team.allPlayers;
     for (let i = 0; i < playersList.size(); i++) {
       let player = playersList.get(i) as Player;
 
-      let posPair: Pair<number> = player.position.position;
-      let x: number = posPair.x; let y: number = posPair.y;
+      let posPair = player.position.position;
+      let x = posPair.x;
+      let y = posPair.y;
 
-      let r = radius;
-      let sz: Pair<number> = player.size;
-      r = (sz.x + sz.y) / 2;
+      let sz = player.size;
+      let r = (sz.x + sz.y) / 2;
 
-      let img: HTMLImageElement = player.image as HTMLImageElement;
+      let img = player.image as HTMLImageElement;
 
       this.drawCircle(x, y, img, r, color);
     }
   }
 
-  public drawBallReg(ball: Ball, color: string, radius: number) {
+  /**
+   * Draw ball without paths
+   */
+  public drawBallReg(ball: Ball, color: string, radius: number): void {
+    let posPair = ball.position.position;
+    let x = posPair.x;
+    let y = posPair.y;
 
-    let posPair: Pair<number> = ball.position.position;
-    let x: number = posPair.x; let y: number = posPair.y;
+    let sz = ball.size;
+    let r = (sz.x + sz.y) / 2;
 
-    let r = radius;
-    let sz: Pair<number> = ball.size;
-    r = (sz.x + sz.y) / 2;
-
-    let img: HTMLImageElement = ball.image as HTMLImageElement;
+    let img = ball.image as HTMLImageElement;
 
     this.drawCircle(x, y, img, r, color);
   }
 
   /**
-   * Draws the ball on the field
-   * @param ball ball object to draw
-   * @param color colour of the team in possesion
-   * @param radius radius of the circle in pixels
+   * Draw the ball with its movement path and future destinations
    */
-  public drawBall(ball: Ball, color: string, radius: number) {
+  public drawBall(ball: Ball, color: string, radius: number): void {
+    let posPair = ball.position.position;
+    let x = posPair.x;
+    let y = posPair.y;
 
-    let posPair: Pair<number> = ball.position.position;
-    let x: number = posPair.x; let y: number = posPair.y;
+    let sz = ball.size;
+    let r = (sz.x + sz.y) / 2;
 
-    let r = radius;
-    let sz: Pair<number> = ball.size;
-    r = (sz.x + sz.y) / 2;
-
-    let img: HTMLImageElement = ball.image as HTMLImageElement;
+    let img = ball.image as HTMLImageElement;
 
     this.drawCircle(x, y, img, r, color);
 
     for (let i = ball.curPath; i < ball.stage + ball.curPath; i++) {
-      let destination: Pair<number> = ball.destinations.get(i) as Pair<number>;
+      let destination = ball.destinations.get(i) as Pair<number>;
+      let path = ball.paths.get(i) as Vector;
 
-      let path: Vector = ball.paths.get(i) as Vector
-
-      let mx: number = destination.x;
-      let my: number = destination.y;
+      let mx = destination.x;
+      let my = destination.y;
 
       this.drawCircle(mx, my, img, r, color);
 
-      let start: Pair<number> = path.position;
-      let dir: Pair<number> = path.direction;
-
-      let sx: number = start.x; let sy: number = start.y;
-      let dx: number = dir.x; let dy: number = dir.y;
+      let sx = path.position.x;
+      let sy = path.position.y;
+      let dx = path.direction.x;
+      let dy = path.direction.y;
 
       this.drawLine(sx, sy, dx, dy);
-
     }
   }
 
+  /**
+   * Draw a circle with an image clipped inside and an outline
+   */
   private drawCircle(x: number, y: number, img: HTMLImageElement, r: number, color: string): void {
-
-    this.ctx.save(); // Save current canvas state
+    this.ctx.save(); // Save canvas state
 
     this.ctx.beginPath();
     this.ctx.arc(x, y, r, 0, 2 * Math.PI);
     this.ctx.closePath();
-    this.ctx.clip();
+    this.ctx.clip(); // Clip image to circle
 
-    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+    this.ctx.drawImage(img, x - r, y - r, r * 2, r * 2); // Draw clipped image
 
     this.ctx.beginPath();
     this.ctx.arc(x, y, r, 0, 2 * Math.PI);
     this.ctx.strokeStyle = color;
     this.ctx.lineWidth = 2;
-    this.ctx.stroke();
+    this.ctx.stroke(); // Outline
 
-    this.ctx.restore(); // Restore to remove clipping
-
+    this.ctx.restore(); // Restore state
   }
 
-  private drawLine(x: number, y: number, dx: number, dy: number) {
-    let ex = x + dx
-    let ey = y + dy
+  /**
+   * Draws a direction line from (x, y) by offset (dx, dy)
+   */
+  private drawLine(x: number, y: number, dx: number, dy: number): void {
+    let ex = x + dx;
+    let ey = y + dy;
     this.ctx.strokeStyle = "#FFFFFF";
     this.ctx.lineWidth = 2;
     this.ctx.beginPath();
@@ -319,7 +315,7 @@ export class Canvas {
   }
 
   /**
-   * Clear the canvas of drawing
+   * Clears everything from the canvas
    */
   public clearCanvas(): void {
     this.ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
@@ -327,79 +323,109 @@ export class Canvas {
     this.drawField();
   }
 
+  /**
+   * Determines whether a given movement is valid.
+   * @param {Movement | null} movement - The movement object to validate.
+   * @returns {boolean} True if the movement and its start and end points are not null.
+   */
   public isValidMovement(movement: Movement | null): boolean {
     return (movement !== null && movement.start !== null && movement.end !== null);
   }
 
-  private remainingPlayers : List<Pair<Player | User>> = new List<Pair<Player | User>>();
+  /** List of players who have remaining movements to be drawn. */
+  private remainingPlayers: List<Pair<Player | User>> = new List<Pair<Player | User>>();
 
-  public addRemainingPlayer(player : Player, us : User) : void {
-    let pair : Pair<Player | User> = new Pair<Player | User>(player, us);
+  /**
+   * Adds a player and their corresponding user to the list of remaining players.
+   * @param {Player} player - The player to be added.
+   * @param {User} us - The associated user object.
+   */
+  public addRemainingPlayer(player: Player, us: User): void {
+    let pair: Pair<Player | User> = new Pair<Player | User>(player, us);
     this.remainingPlayers.push(pair);
   }
 
-  private drawRemainingPlayers() : void{
-    for(let i=0; i<this.remainingPlayers.size(); i++){
-      let pair : Pair<Player | User> = this.remainingPlayers.get(i) as Pair<Player | User>;
-      let pl : Player = pair.x as Player;
-      let user : User = pair.y as User;
-      let x : number = pl.position.position.x; 
-      let y : number = pl.position.position.y;
-      if(pl.stopMoving){
-        // doesnt show if only 1 move because it shows for 0.0001 sec
+  /**
+   * Draws all players with remaining movements on the canvas.
+   */
+  private drawRemainingPlayers(): void {
+    for (let i = 0; i < this.remainingPlayers.size(); i++) {
+      let pair: Pair<Player | User> = this.remainingPlayers.get(i) as Pair<Player | User>;
+      let pl: Player = pair.x as Player;
+      let user: User = pair.y as User;
+      let x: number = pl.position.position.x;
+      let y: number = pl.position.position.y;
+
+      if (pl.stopMoving) {
+        // Draws a yellow circle for players that stopped moving.
         this.drawCircle(x, y, pl.image, 20, "#FFD700");
+      } else {
+        this.drawCircle(x, y, pl.image, 20, user.colour);
       }
-      else this.drawCircle(x, y, pl.image, 20, user.colour);
     }
   }
 
+  /** Indicates whether an animation is currently running. */
   private isAnimating: boolean = false;
 
-  // first and second stage
+  /** Queue of movement pairs to animate (two stages per object). */
   private activeMovements: List<Pair<Movement | null>> = new List<Pair<Movement | null>>();
+
+  /** Tracks the stage of each movement in activeMovements (0, 1, or 2). */
   private complete: List<number> = new List<number>();
+
+  /** Counter for completed animations. */
   private animscomplete: number = 0;
 
+  /**
+   * Starts animating a pair of movements for an object.
+   * @param {Movement | null} movement1 - The first stage of the movement.
+   * @param {Movement | null} movement2 - The second stage of the movement.
+   */
   public animateMovement(movement1: Movement | null, movement2: Movement | null): void {
     let movement: Pair<Movement | null> = new Pair(movement1, movement2);
     this.activeMovements.push(movement);
-    this.complete.push(1);
+    this.complete.push(1); // Begin with the first stage
 
-    // Only start animating once
+    // Start the animation loop if not already animating
     if (!this.isAnimating) {
       this.isAnimating = true;
       requestAnimationFrame(this.animateAll);
     }
   }
 
+  /**
+   * Animates all queued movements frame by frame using requestAnimationFrame.
+   * Handles two-stage movement, drawing, and final cleanup.
+   */
   private animateAll = () => {
     const now: number = performance.now();
 
     this.clearCanvas();
     this.battle.checkHits();
-
     this.drawRemainingPlayers();
 
-    let canMove : boolean = true;
+    let canMove: boolean = true;
 
     for (let i = 0; i < this.activeMovements.size(); i++) {
       let movementPair: Pair<Movement | null> = this.activeMovements.get(i) as Pair<Movement | null>;
       let stage: number = this.complete.get(i) as number;
 
       canMove = true;
-      
+
       // First movement stage
       if (movementPair.x !== null && (stage === 1 || stage === 0)) {
         let { start, end, obj, radius, color, startTime, duration } = movementPair.x;
-        // ball was stopped
-        if (obj.stopMoving){
-          if(this.complete.get(i) as number !== 0){
-            this.complete.insert(0, i)
+
+        if (obj.stopMoving) {
+          if (this.complete.get(i) !== 0) {
+            this.complete.insert(0, i);
             this.animscomplete++;
           }
           this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
           canMove = false;
         }
+
         if (start && end && canMove) {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
@@ -413,25 +439,26 @@ export class Canvas {
           if (progress >= 1) {
             if (this.isValidMovement(movementPair.y) && movementPair.y !== null) {
               movementPair.y.startTime = now;
-              this.complete.insert(2, i)
-            }
-            else {
+              this.complete.insert(2, i);
+            } else {
               this.animscomplete++;
             }
           }
         }
       }
+      // Second movement stage
       else if (this.isValidMovement(movementPair.y) && movementPair.y !== null && (stage === 2 || stage === 0)) {
-
         let { start, end, obj, radius, color, startTime, duration } = movementPair.y;
-        if (obj.stopMoving){
-          if(this.complete.get(i) as number !== 0){
-            this.complete.insert(0, i)
+
+        if (obj.stopMoving) {
+          if (this.complete.get(i) !== 0) {
+            this.complete.insert(0, i);
             this.animscomplete++;
           }
           this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
           canMove = false;
         }
+
         if (start && end && canMove) {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
@@ -448,11 +475,14 @@ export class Canvas {
         }
       }
     }
+
+    // Continue animation loop if not finished
     if (this.animscomplete !== this.activeMovements.size()) {
       requestAnimationFrame(this.animateAll);
     } else {
+      // Animation complete: reset everything
       this.isAnimating = false;
-      this.battle.resetField(); // done with all animations
+      this.battle.resetField();
       this.activeMovements.empty();
       this.complete.empty();
       this.remainingPlayers.empty();

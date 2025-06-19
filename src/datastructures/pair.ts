@@ -1,5 +1,6 @@
 /**
- * Is a Pair that holds an x value and y value
+ * A generic Pair class that holds two values, typically representing
+ * coordinates or any related pair data
  */
 export class Pair<T>{
 
