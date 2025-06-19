@@ -26,10 +26,15 @@ export abstract class MovingObject {
     /** Represents whether or not the object is currently moving */
     protected _ismoving : boolean = false;
 
+    /** Tells the code whether or not the object just stops moving */
+    protected _stopMoving : boolean = false;
+
     // store all paths that have happened (replay system or something if wanted)
     protected _paths : List<Vector> = new List<Vector>;
 
     protected _destinations : List<Pair<number>> = new List<Pair<number>>();
+    
+    protected _movementPosition : Pair<number>;
     
     protected constructor(hitbox : Pair<number>, size : Pair<number>, image : string) {
         this._hitbox = hitbox;
@@ -39,12 +44,26 @@ export abstract class MovingObject {
         this._image.src = this._imageSrc;
     }
 
+    /**
+     * Reset the players
+     */
+    public reset() : void{
+        this._curPath = 0;
+        this._mirage = null;
+        this._stage = 0;
+        this._ismoving = false;
+        this._paths = new List<Vector>;
+        this._destinations = new List<Pair<number>>();
+        this._stopMoving = false;
+    }
+
     public get position() : Vector{
         return this._position;
     }
 
     public set position(pos : Vector) {
         this._position = pos;
+        this._movementPosition = pos.position;
     }
 
     public get size() : Pair<number> {
@@ -96,6 +115,22 @@ export abstract class MovingObject {
 
     public set ismoving(move : boolean){
         this._ismoving = move;
+    }
+
+    public get movementPosition() : Pair<number>{
+        return this._movementPosition;
+    }
+
+    public set movementPosition(move : Pair<number>){
+        this._movementPosition = move;
+    }
+
+    public get stopMoving() : boolean{
+        return this._stopMoving;
+    }
+
+    public set stopMoving(move : boolean){
+        this._stopMoving = move;
     }
 
     abstract calculatePath(x : number, y : number) : void

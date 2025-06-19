@@ -120,10 +120,7 @@ export class Canvas {
     const penaltyBoxHeight = height * 0.15;
     const sixYardBoxHeight = penaltyBoxHeight * 0.4;
     const sixYardBoxWidth = penaltyBoxWidth * 0.4;
-
-    console.log(width);
-    console.log(sixYardBoxWidth);
-    console.log(height);
+    
     // Left big penalty box
     ctx.strokeStyle = '#FFFFFF';
     ctx.lineWidth = 2;
@@ -348,7 +345,11 @@ export class Canvas {
       let user : User = pair.y as User;
       let x : number = pl.position.position.x; 
       let y : number = pl.position.position.y;
-      this.drawCircle(x, y, pl.image, 20, user.colour);
+      if(pl.stopMoving){
+        // doesnt show if only 1 move because it shows for 0.0001 sec
+        this.drawCircle(x, y, pl.image, 20, "#FFD700");
+      }
+      else this.drawCircle(x, y, pl.image, 20, user.colour);
     }
   }
 
@@ -375,18 +376,37 @@ export class Canvas {
     const now: number = performance.now();
 
     this.clearCanvas();
+    this.battle.checkHits();
+
+    this.drawRemainingPlayers();
+
+    let canMove : boolean = true;
 
     for (let i = 0; i < this.activeMovements.size(); i++) {
       let movementPair: Pair<Movement | null> = this.activeMovements.get(i) as Pair<Movement | null>;
       let stage: number = this.complete.get(i) as number;
 
+      canMove = true;
+      
       // First movement stage
-      if (movementPair.x !== null && stage === 1) {
+      if (movementPair.x !== null && (stage === 1 || stage === 0)) {
         let { start, end, obj, radius, color, startTime, duration } = movementPair.x;
-        if (start && end) {
+        // ball was stopped
+        if (obj.stopMoving){
+          if(this.complete.get(i) as number !== 0){
+            this.complete.insert(0, i)
+            this.animscomplete++;
+          }
+          this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
+          canMove = false;
+        }
+        if (start && end && canMove) {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
           let y = start.y + (end.y - start.y) * progress;
+
+          obj.movementPosition.x = x;
+          obj.movementPosition.y = y;
 
           this.drawCircle(x, y, obj.image, radius, color);
 
@@ -401,12 +421,24 @@ export class Canvas {
           }
         }
       }
-      else if (this.isValidMovement(movementPair.y) && movementPair.y !== null && stage === 2) {
+      else if (this.isValidMovement(movementPair.y) && movementPair.y !== null && (stage === 2 || stage === 0)) {
+
         let { start, end, obj, radius, color, startTime, duration } = movementPair.y;
-        if (start && end) {
+        if (obj.stopMoving){
+          if(this.complete.get(i) as number !== 0){
+            this.complete.insert(0, i)
+            this.animscomplete++;
+          }
+          this.drawCircle(obj.movementPosition.x, obj.movementPosition.y, obj.image, radius, "#FFD700");
+          canMove = false;
+        }
+        if (start && end && canMove) {
           let progress = Math.min((now - startTime) / duration, 1);
           let x = start.x + (end.x - start.x) * progress;
           let y = start.y + (end.y - start.y) * progress;
+
+          obj.movementPosition.x = x;
+          obj.movementPosition.y = y;
 
           this.drawCircle(x, y, obj.image, radius, color);
 
@@ -417,7 +449,6 @@ export class Canvas {
       }
     }
     if (this.animscomplete !== this.activeMovements.size()) {
-      this.drawRemainingPlayers();
       requestAnimationFrame(this.animateAll);
     } else {
       this.isAnimating = false;
