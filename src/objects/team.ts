@@ -2,6 +2,9 @@ import { Player } from "./player.js"
 
 import { List } from "../datastructures/list.js"
 
+/**
+ * Team object holding all the players on a team
+ */
 export class Team {
 
     private _goalie : Player;
@@ -25,16 +28,24 @@ export class Team {
         this.teamSize = this._allPlayers.size();
     }
 
+    /**
+     * checks if a player is in a team
+     * @param player player
+     * @returns true if in team
+     */
     public inTeam(player : Player) : boolean{
         for(let i=0; i<this._allPlayers.size(); i++){
             let pl : Player = this._allPlayers.get(i) as Player;
-            if(player = pl){
+            if(player === pl){
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Resets all the players
+     */
     public resetPlayers() : void{
         for(let i=0; i<this._allPlayers.size(); i++){
             let pl : Player = this._allPlayers.get(i) as Player;

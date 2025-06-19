@@ -26,6 +26,9 @@ export abstract class MovingObject {
     /** Represents whether or not the object is currently moving */
     protected _ismoving : boolean = false;
 
+    /** Tells the code whether or not the object just stops moving */
+    protected _stopMoving : boolean = false;
+
     // store all paths that have happened (replay system or something if wanted)
     protected _paths : List<Vector> = new List<Vector>;
 
@@ -51,6 +54,7 @@ export abstract class MovingObject {
         this._ismoving = false;
         this._paths = new List<Vector>;
         this._destinations = new List<Pair<number>>();
+        this._stopMoving = false;
     }
 
     public get position() : Vector{
@@ -119,6 +123,14 @@ export abstract class MovingObject {
 
     public set movementPosition(move : Pair<number>){
         this._movementPosition = move;
+    }
+
+    public get stopMoving() : boolean{
+        return this._stopMoving;
+    }
+
+    public set stopMoving(move : boolean){
+        this._stopMoving = move;
     }
 
     abstract calculatePath(x : number, y : number) : void

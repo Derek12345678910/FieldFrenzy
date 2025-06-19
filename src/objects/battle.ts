@@ -19,8 +19,6 @@ export class Battle {
     private _goal1 : number = 0;
     private _goal2 : number = 0;
 
-    private STAGETIME : number = 5 // time it takes for a stage to complete
-
     // stores whose turn it is
     private currentTurn: string = "user1";
     private userTurn : User;
@@ -50,6 +48,8 @@ export class Battle {
     private ball : Ball;
 
     private teamPossession : User;
+
+    private possessionChanged : boolean = false;
 
     // if the game is running
     private winner : User | null = null;
@@ -131,6 +131,7 @@ export class Battle {
                         else if(this.selectedCharacter.object.move === "Shoot"){
                             this.selectedCharacter.object.ball.calculatePath(mouseX, mouseY);
                             this.selectedCharacter.object.shotStage++;
+                            this.ball.possession = null;
                             this.selectedCharacter.object.canRun = true;
                             this.selectedCharacter.object.ball.stage++;
                         }
@@ -206,14 +207,14 @@ export class Battle {
 
     /**
      * When ball is moved to a new stage check if there is a new player on it to take poessession
+     * ONLY FOR ONE TEAM(team with ball)
      */
     public checkNewPossession() : void{
         if(this.ball.stage !== 2){
-            for(let i=0; i<this.userTurn.team.allPlayers.size(); i++){
-                let pl : Player = this.userTurn.team.allPlayers.get(i) as Player;
+            for(let i=0; i<this.teamPossession.team.allPlayers.size(); i++){
+                let pl : Player = this.teamPossession.team.allPlayers.get(i) as Player;
                 if(pl.touchingBallStage()){
-                    console.log(pl);
-                    this.ball.possession = pl;
+                    this.changePossession(pl, false);
                 }
             }
         }
@@ -223,21 +224,50 @@ export class Battle {
      * Checks if the player without the ball takes it
      */
     private checkPossessionChange() : void{
-        let otheruser : User = (this.userTurn === this.user1) ? this.user2 : this.user1;
+        let otheruser : User = (this.teamPossession === this.user1) ? this.user2 : this.user1;
+        console.log(otheruser.name)
         for(let i=0; i<otheruser.team.allPlayers.size(); i++){
             let pl : Player = otheruser.team.allPlayers.get(i) as Player;
             // touches ball
-            if(pl.touchingBall()){
-                this.ball.canMove = false;
-                this.ball.possession = pl;
-            }
+            if(this.ball.possession !== pl){
+                if(pl.touchingBall()){
+                    this.changePossession(pl, true);
+                    this.possessionChanged = true;
+                    console.log(this.teamPossession.name)
+                }
+            }   
         }
     }
 
     /**
+     * Changes ball possession
+     * @param newPl player of new poessession
+     * @param animating whether or not the check is in aniamtion
+     */
+    private changePossession(newPl : Player, animating : boolean) : void { 
+        let team : User = (this.user1.team.inTeam(newPl)) ? this.user1 : this.user2;
+        console.log(team.name)
+        let curPl : Player | null = this.ball.possession;
+        if(curPl !== null){
+            curPl.canRun = true;
+        }
+        this.ball.possession = newPl;
+        this.teamPossession = team;
+        if(animating){
+            this.ball.position.position = newPl.movementPosition
+            newPl.stopMoving = true;
+            this.ball.stopMoving = true;
+        }
+    }
+
+    // should have made this in moving object
+    /**
      * Reset player stages and update them after a turn
      */
     private resetStages() : void{
+
+        this.possessionChanged = false;
+
         for(let i=0; i<this.user1.team.allPlayers.size(); i++){
             let p1 : Player = this.user1.team.allPlayers.get(i) as Player;
             let p2 : Player = this.user2.team.allPlayers.get(i) as Player;
@@ -246,14 +276,16 @@ export class Battle {
             p1.curPath += p1.stage; p2.curPath += p2.stage;
             p1.stage = 0; p2.stage = 0;
             p1.ismoving = false; p2.ismoving = false;
-            p1.position.position = (p1.curPath === 0) ? p1.position.position : p1.destinations.get(p1.curPath - 1) as Pair<number>; 
-            p2.position.position = (p2.curPath === 0) ? p2.position.position : p2.destinations.get(p2.curPath - 1) as Pair<number>; 
+            p1.stopMoving = false; p2.stopMoving = false;
+            p1.position.position = p1.movementPosition
+            p2.position.position = p2.movementPosition
         }
         this.ball.curPath += this.ball.stage;
         this.ball.stage = 0;
         this.ball.ismoving = false;
-        // change to spot stopped
-        this.ball.position.position = (this.ball.curPath === 0) ? this.ball.position.position : this.ball.destinations.get(this.ball.curPath - 1) as Pair<number>; 
+        this.ball.canMove = true;
+        this.ball.stopMoving = false;
+        this.ball.position.position = this.ball.movementPosition
     }
 
     /**
@@ -356,6 +388,7 @@ export class Battle {
      * draws all the moves chosen by the players
      */
     private drawMoves(): void{
+        // needs fixing on the way ball moves before player gets to it
         const timerEl  = document.getElementById('timer')  as HTMLElement;
         const breakL   = document.getElementById('breakLeft')  as HTMLElement;
         const breakR   = document.getElementById('breakRight') as HTMLElement;
@@ -399,6 +432,10 @@ export class Battle {
             this.scored = teamScored;
             if (goalCheck === 2) this.goal1 = this._goal1 + 1;
             else if(goalCheck === 1) this.goal2 = this._goal2 + 1;
+        }
+        // check for possession change
+        if(!this.possessionChanged){
+            this.checkPossessionChange();
         }
     }
 

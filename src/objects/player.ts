@@ -236,12 +236,12 @@ export class Player extends MovingObject {
      * Checks if the ball is within the player's hitbox
      */
     public touchingBall(): boolean{
-        let hitboxRight: number = this.position.position.x+(this.hitbox.x/2);
-        let hitboxLeft: number = this.position.position.x-(this.hitbox.x/2);
-        let hitboxTop: number = this.position.position.y+(this.hitbox.y/2);
-        let hitboxBottom: number = this.position.position.y-(this.hitbox.y/2);
-        let ballPositionX: number = this.ball.position.position.x;
-        let ballPositionY: number = this.ball.position.position.y;
+        let hitboxRight: number = this.movementPosition.x+(this.hitbox.x/2);
+        let hitboxLeft: number = this.movementPosition.x-(this.hitbox.x/2);
+        let hitboxTop: number = this.movementPosition.y+(this.hitbox.y/2);
+        let hitboxBottom: number = this.movementPosition.y-(this.hitbox.y/2);
+        let ballPositionX: number = this.ball.movementPosition.x;
+        let ballPositionY: number = this.ball.movementPosition.y;
         let ballRadius: number = (this.ball.hitbox.x/2);
         if((ballPositionX+ballRadius>=hitboxLeft) && (ballPositionX-ballRadius)<=hitboxRight && (ballPositionY+ballRadius)>=hitboxBottom && (ballPositionY-ballRadius)<=hitboxTop){
             if(this.ball.canBePossessed){

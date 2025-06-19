@@ -16,7 +16,7 @@ export class Ball extends MovingObject{
     /** Final point */
     protected maxPathPoint : Pair<number> | null; // is the last point on the path
 
-    private _canBePossessed : boolean; // checks if the ball is able to possessed
+    private _canBePossessed : boolean = true; // checks if the ball is able to possessed
 
     /** Controls whether the ball can move */
     private _canMove : boolean = true;
@@ -72,9 +72,6 @@ export class Ball extends MovingObject{
 
         // push into paths
         this._paths.push(newPath);
-
-        // the possession is for now no one
-        this._possession = null;
 
     }
 
